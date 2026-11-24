@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Blades of the Crown — iPad Mini Tactical Deck</title>
+<style>
+  :root {
+    --bg: #0b080d;
+    --panel: #140f19;
+    --panel-2: #1c1523;
+    --plum: #3a1847;
+    --gold: #d4af37;
+    --gold-bright: #f5d76e;
+    --gold-line: rgba(212, 175, 55, 0.28);
+    --text: #f5eff8;
+    --muted: #b2a3bc;
+    --crimson: #e34c5e;
+    --emerald: #3dd68c;
+    --sky: #56c2f5;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Top Command Bar */
+  .cmd-bar {
+    background: linear-gradient(90deg, #120b17 0%, #24112c 55%, #120b17 100%);
+    border-bottom: 1px solid var(--gold-line);
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .gang-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .gang-badge {
+    background: linear-gradient(135deg, var(--gold), #a67c19);
+    color: #0b080d;
+    font-weight: 900;
+    font-size: 0.7rem;
+    padding: 3px 7px;
+    border-radius: 5px;
+    letter-spacing: 0.08em;
+    flex-shrink: 0;
+  }
+
+  .gang-title h1 {
+    font-size: 0.95rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--gold-bright);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .gang-stats-mini {
+    font-size: 0.72rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .cmd-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .btn-pill {
+    background: rgba(212, 175, 55, 0.14);
+    border: 1px solid var(--gold);
+    color: var(--gold-bright);
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 6px 10px;
+    border-radius: 999px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
+
+  .btn-pill.playbook {
+    background: linear-gradient(135deg, #d4af37, #b3871d);
+    color: #0b080d;
+    border-color: var(--gold-bright);
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.35);
+  }
+
+  /* Main Split Workspace */
+  .workspace {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 230px 1fr;
+    min-height: 0;
+  }
+
+  @media (max-width: 720px) {
+    .workspace {
+      grid-template-columns: 165px 1fr;
+    }
+  }
+
+  /* Left Roster Rail */
+  .roster-rail {
+    background: #0e0a12;
+    border-right: 1px solid var(--gold-line);
+    overflow-y: auto;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .fighter-thumb {
+    position: relative;
+    height: 74px;
+    border-radius: 11px;
+    border: 1px solid rgba(212, 175, 55, 0.22);
+    background: linear-gradient(135deg, #1b1224, #0e0a12);
+    overflow: hidden;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-end;
+    padding: 7px 9px;
+    transition: border-color 0.15s, transform 0.12s;
+    flex-shrink: 0;
+  }
+
+  .fighter-thumb.active {
+    border: 2px solid var(--gold-bright);
+    box-shadow: 0 0 14px rgba(212, 175, 55, 0.32);
+  }
+
+  .fighter-thumb img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    opacity: 0.72;
+  }
+
+  .thumb-vignette {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, rgba(11, 8, 13, 0.92) 0%, rgba(11, 8, 13, 0.55) 62%, rgba(212, 175, 55, 0.15) 100%),
+      linear-gradient(180deg, transparent 20%, rgba(11, 8, 13, 0.94) 100%);
+    pointer-events: none;
+  }
+
+  .thumb-info {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+  }
+
+  .thumb-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.64rem;
+    font-weight: 800;
+    color: var(--gold);
+  }
+
+  .thumb-name {
+    font-size: 0.86rem;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.15;
+  }
+
+  .thumb-role {
+    font-size: 0.65rem;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Right Fighter Detail Pane */
+  .detail-pane {
+    overflow-y: auto;
+    padding: 12px 14px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* Hero Card Header */
+  .fighter-hero {
+    position: relative;
+    border-radius: 14px;
+    border: 1px solid var(--gold-line);
+    background: linear-gradient(135deg, #24122d 0%, #130e18 75%);
+    padding: 14px 16px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .hero-bg-art {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 52%;
+    object-fit: cover;
+    object-position: top center;
+    opacity: 0.28;
+    mask-image: linear-gradient(90deg, transparent 0%, black 65%);
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 65%);
+    pointer-events: none;
+  }
+
+  .hero-portrait {
+    position: relative;
+    width: 78px;
+    height: 92px;
+    border-radius: 11px;
+    border: 1.5px solid var(--gold);
+    background: #0b080d;
+    overflow: hidden;
+    flex-shrink: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    color: var(--gold);
+    font-weight: 800;
+    text-align: center;
+  }
+
+  .hero-portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+  }
+
+  .hero-meta {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .hero-kicker {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+  }
+
+  .hero-meta h2 {
+    font-size: 1.45rem;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.1;
+  }
+
+  .hero-sub {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .injury-pill {
+    display: inline-block;
+    margin-top: 6px;
+    background: rgba(227, 76, 94, 0.2);
+    border: 1px solid var(--crimson);
+    color: #ff9ea9;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+
+  /* 12-Stat Strip */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 4px;
+    background: var(--panel);
+    border: 1px solid var(--gold-line);
+    border-radius: 12px;
+    padding: 8px 6px;
+    text-align: center;
+  }
+
+  @media (max-width: 640px) {
+    .stat-grid {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+  }
+
+  .st-box .lbl {
+    display: block;
+    font-size: 0.64rem;
+    font-weight: 800;
+    color: var(--gold);
+  }
+
+  .st-box .val {
+    display: block;
+    font-size: 0.92rem;
+    font-weight: 900;
+    color: #fff;
+  }
+
+  /* Section Tabs */
+  .sub-tabs {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+  }
+
+  .sub-tab {
+    background: var(--panel);
+    border: 1px solid rgba(212, 175, 55, 0.22);
+    color: var(--muted);
+    font-size: 0.76rem;
+    font-weight: 800;
+    padding: 7px 12px;
+    border-radius: 9px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .sub-tab.active {
+    background: linear-gradient(135deg, rgba(212,175,55,0.24), rgba(58,24,71,0.75));
+    border-color: var(--gold);
+    color: var(--gold-bright);
+  }
+
+  /* Cards & Tables */
+  .card-box {
+    background: var(--panel);
+    border: 1px solid rgba(212, 175, 55, 0.22);
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+
+  .card-box h3 {
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .wpn-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+  }
+
+  .wpn-table th {
+    text-align: left;
+    color: var(--gold);
+    font-size: 0.66rem;
+    text-transform: uppercase;
+    padding: 5px 6px;
+    border-bottom: 1px solid var(--gold-line);
+  }
+
+  .wpn-table td {
+    padding: 7px 6px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    vertical-align: top;
+  }
+
+  .wpn-name {
+    font-weight: 800;
+    color: var(--gold-bright);
+  }
+
+  .traits-text {
+    color: var(--muted);
+    font-size: 0.72rem;
+  }
+
+  .tactic-callout {
+    border-left: 3px solid var(--emerald);
+    background: rgba(61, 214, 140, 0.08);
+    padding: 9px 12px;
+    border-radius: 0 9px 9px 0;
+    margin-bottom: 9px;
+    font-size: 0.84rem;
+  }
+
+  .watchout-callout {
+    border-left: 3px solid var(--crimson);
+    background: rgba(227, 76, 94, 0.1);
+    padding: 9px 12px;
+    border-radius: 0 9px 9px 0;
+    font-size: 0.84rem;
+    color: #ffd3d8;
+  }
+
+  .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .chip {
+    background: rgba(58, 24, 71, 0.45);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    padding: 4px 9px;
+    border-radius: 6px;
+    font-size: 0.76rem;
+    font-weight: 600;
+  }
+
+  .notes-area {
+    width: 100%;
+    min-height: 92px;
+    background: #0d0911;
+    border: 1px solid var(--gold-line);
+    border-radius: 9px;
+    color: var(--text);
+    padding: 9px;
+    font-family: inherit;
+    font-size: 0.82rem;
+    resize: vertical;
+  }
+
+  /* Playbook Modal */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 3, 8, 0.86);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+  }
+
+  .modal-backdrop.open {
+    display: flex;
+  }
+
+  .modal-sheet {
+    background: #130e18;
+    border: 1.5px solid var(--gold);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 920px;
+    max-height: 90dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.75);
+  }
+
+  .modal-head {
+    background: linear-gradient(90deg, #271230, #160f1d);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--gold-line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .modal-head h2 {
+    font-size: 1rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--gold-bright);
+  }
+
+  .close-btn {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--gold-line);
+    color: #fff;
+    font-weight: 800;
+    padding: 5px 11px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .pb-tabs {
+    display: flex;
+    gap: 6px;
+    padding: 10px 16px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    overflow-x: auto;
+    flex-shrink: 0;
+  }
+
+  .pb-tab {
+    background: transparent;
+    border: none;
+    border-bottom: 2.5px solid transparent;
+    color: var(--muted);
+    font-weight: 800;
+    font-size: 0.78rem;
+    padding: 7px 10px 9px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .pb-tab.active {
+    color: var(--gold-bright);
+    border-bottom-color: var(--gold);
+  }
+
+  .modal-body {
+    padding: 14px 16px 24px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  .pb-panel { display: none; flex-direction: column; gap: 11px; }
+  .pb-panel.active { display: flex; }
+
+  .pb-card {
+    background: var(--panel-2);
+    border: 1px solid rgba(212, 175, 55, 0.22);
+    border-radius: 11px;
+    padding: 11px 13px;
+  }
+
+  .pb-card h4 {
+    color: var(--gold-bright);
+    font-size: 0.86rem;
+    margin-bottom: 5px;
+  }
+
+  .pb-card ul {
+    padding-left: 18px;
+    color: #e4daea;
+  }
+
+  .pb-card li { margin-bottom: 5px; }
+
+  .target-card {
+    background: #191220;
+    border: 1px solid rgba(212, 175, 55, 0.26);
+    border-left: 4px solid var(--gold);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+
+  .target-card.priority-1 { border-left-color: var(--crimson); }
+  .target-card.priority-late { border-left-color: var(--sky); }
+
+  .target-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+
+  .target-name {
+    font-weight: 900;
+    color: #fff;
+    font-size: 0.9rem;
+  }
+
+  .posture-badge {
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: rgba(212, 175, 55, 0.16);
+    color: var(--gold-bright);
+    border: 1px solid var(--gold-line);
+  }
+
+  .hunters-line {
+    font-size: 0.75rem;
+    color: var(--emerald);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+</style>
+</head>
+<body>
+
+<header class="cmd-bar">
+  <div class="gang-title">
+    <span class="gang-badge">ESCHER</span>
+    <div>
+      <h1>Blades of the Crown</h1>
+      <div class="gang-stats-mini">Rating: 1,250 • Wealth: 1,250 • Credits: 0 • Rep: 3 • 10 Fighters</div>
+    </div>
+  </div>
+  <div class="cmd-actions">
+    <button class="btn-pill playbook" id="open-playbook">⚔️ Tactical Playbook</button>
+    <a href="bible.html" class="btn-pill">📖 Character Bible</a>
+  </div>
+</header>
+
+<div class="workspace">
+  <aside class="roster-rail" id="roster-rail"></aside>
+  <main class="detail-pane" id="detail-pane"></main>
+</div>
+
+<!-- Vertical Underhive Tactical Playbook Modal -->
+<div class="modal-backdrop" id="playbook-modal">
+  <div class="modal-sheet">
+    <div class="modal-head">
+      <h2>⚔️ Vertical Underhive Tactical Playbook</h2>
+      <button class="close-btn" id="close-playbook">✕ Close</button>
+    </div>
+    <div class="pb-tabs">
+      <button class="pb-tab active" data-pb="core">1. Crossfire & Phases</button>
+      <button class="pb-tab" data-pb="blue">2. vs Blue Harvest (Outcasts)</button>
+      <button class="pb-tab" data-pb="ryan">3. vs Ryan's Enforcers</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Tab 1: Core Battle Plan & Phases -->
+      <div class="pb-panel active" id="pb-core">
+        <div class="pb-card">
+          <h4>Core Battle Plan & 3-Way Crossfire Protocol</h4>
+          <ul>
+            <li><strong>Core Strategy:</strong> Anchor high ground early with <strong>Copperhead</strong>, control mid-tier approaches with paired Lasguns and <strong>Miss Whips</strong>, and use <strong>Her Majesty's Overseer + Group Activation (2)</strong> to launch <strong>Black Widow</strong> or Toxin juves onto exposed enemies and upper objectives.</li>
+            <li><strong>Avoid the Central Killing Floor Early:</strong> Let Blue Harvest's heavy guns/Vandoth and Ryan's Enforcer Bolters/Concussion templates wear down each other's heavy armour first.</li>
+            <li><strong>Anti-Blast Spacing (&gt;3"):</strong> Keep fighters spaced more than 3" apart against Blast templates and Enforcer Photon Flash Flares.</li>
+          </ul>
+        </div>
+
+        <div class="pb-card">
+          <h4>Phase 1 — Deployment & Turn 1 (Claim High Ground & Stage)</h4>
+          <ul>
+            <li><strong>Establish Copperhead's Overlook:</strong> Move Copperhead onto a Tier 2 or Tier 3 perch with cover and fall protection. <em>Suspensors + Spring Up</em> let her climb, stand, and unleash Rapid Fire (2) Heavy Stubber bursts freely.</li>
+            <li><strong>Hide Key Strike Pieces:</strong> Keep <strong>Black Widow</strong> and <strong>Her Majesty</strong> tucked behind solid Tier 1/2 bulkheads out of heavy sightlines while staging within 12" of each other.</li>
+            <li><strong>Split Climb Across Two Routes:</strong> Advance <strong>Nightshade, Mamba &amp; Scorpio</strong> on mid-levels for Lasgun pinning, while <strong>Vixen, Fang &amp; Talon</strong> sprint up a secondary ladder to avoid bottlenecks.</li>
+          </ul>
+        </div>
+
+        <div class="pb-card">
+          <h4>Phase 2 — Turns 2–3 (Pin Overwatch & Execute the Slingshot)</h4>
+          <ul>
+            <li><strong>Pin to Block Overwatch (Not Melee Stance):</strong> Charging a Prone &amp; Pinned enemy makes them stand up into engagement. Always shoot dangerous shooters with Lasguns <em>before</em> moving to strip Overwatch while Black Widow crosses open lanes.</li>
+            <li><strong>3-Step Overseer Slingshot:</strong>
+              1) Activate <strong>Her Majesty</strong> using <em>Group Activation (2)</em> with up to two nearby eligible fighters.<br>
+              2) Spend Her Majesty's <em>Overseer (Double)</em> action to grant <strong>Black Widow</strong> (or an objective runner) two immediate actions up a vertical route into cover.<br>
+              3) Immediately take Black Widow's own normal activation in the group sequence to strike before the opponent can respond.
+            </li>
+            <li><strong>Zone Narrow Gantries:</strong> Position <strong>Miss Whips</strong> on catwalk bridges and ladder landings — her 3" Versatile Shock whip hits rushers before base contact.</li>
+          </ul>
+        </div>
+
+        <div class="pb-card">
+          <h4>Phase 3 — Endgame & Capture Window (3" Toxin Strike)</h4>
+          <ul>
+            <li><strong>Zero Reaction Attacks (3" Combat Virtuoso):</strong> <em>Combat Virtuoso</em> gives Black Widow's Stiletto sword <strong>Versatile (3")</strong>. Move within 3" (with LoS across railings/gaps) and Fight without entering base contact — enemies without a 3" weapon get <strong>zero reaction attacks</strong>.</li>
+            <li><strong>Subdue Priority Targets Alive:</strong> Trigger <strong>Chem-synth</strong> before striking leaders/specialists. Toxin bypasses Toughness and armour saves completely, sending targets straight to Seriously Injured for clean scenario captures.</li>
+            <li><strong>Lock Down Objectives:</strong> Park <em>Fast Learner</em> Little Sisters (<strong>Vixen, Fang, Talon</strong>) on the upper objective while Copperhead and Lasgunners suppress late counter-pushes.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Tab 2: Blue Harvest Hit-List -->
+      <div class="pb-panel" id="pb-blue">
+        <div class="target-card priority-1">
+          <div class="target-top">
+            <span class="target-name">#1 — Dutch (Champion | Autocannon Knockback, Unwieldy, Grapnel, Cameleoline)</span>
+            <span class="posture-badge">Posture: Duck &amp; Cover → Flank</span>
+          </div>
+          <div class="hunters-line">Assigned Hunters: Copperhead (Pin) + Black Widow (3" Strike) / Little Sisters</div>
+          <p>Top threat + high Champion XP. Eliminating him removes their only long-range gun and stops Knockback ledge drops. Never cross open catwalks in his sightline Turn 1; pin him with Copperhead or lasguns to block Overwatch, then slingshot Black Widow up a blind route for a 3" Versatile strike.</p>
+        </div>
+
+        <div class="target-card">
+          <div class="target-top">
+            <span class="target-name">#2 — Quaid (Champion | Plasma Pistol, Autopistol, Gunfighter, Mesh + Undersuit)</span>
+            <span class="posture-badge">Posture: Out-Range / Ambush</span>
+          </div>
+          <div class="hunters-line">Assigned Hunters: Copperhead (20"+) / Her Majesty (Boltgun) / Black Widow</div>
+          <p>Glass cannon (T3, 2W) inside 12" that pays full Champion XP. Out-range him at 12"–24" with Copperhead or Her Majesty's Boltgun, or pin him with a lasgun before Black Widow engages.</p>
+        </div>
+
+        <div class="target-card">
+          <div class="target-top">
+            <span class="target-name">#3 — Kali-dont (Hive Scum | Chainsword, Autopistol, Frenzon)</span>
+            <span class="posture-badge">Posture: Zone &amp; Counter</span>
+          </div>
+          <div class="hunters-line">Assigned Hunters: Miss Whips (3" Shock) / Lasgun Sisters</div>
+          <p>Fast Frenzon melee threat (T3, 1W). Intercept him on narrow bridges with Miss Whips' 3" Versatile/Shock reach before his Chainsword can swing, or pin him at range with lasguns.</p>
+        </div>
+
+        <div class="target-card">
+          <div class="target-top">
+            <span class="target-name">#4 — Kimble, Harry Tasker, Jack Slater &amp; Ben Richards (1x Specialist + 3x Scum)</span>
+            <span class="posture-badge">Posture: Attack Aggressively</span>
+          </div>
+          <div class="hunters-line">Assigned Hunters: Vixen / Fang / Talon + Lasgun Sisters</div>
+          <p>Soft T3, 1W gangers armed with Autogun &amp; Lasguns. Dropping 2–3 forces early Bottle checks and feeds <em>Fast Learner</em> XP to your Little Sisters.</p>
+        </div>
+
+        <div class="target-card priority-late">
+          <div class="target-top">
+            <span class="target-name">#5 — Vandoth the Fallen (Bounty Hunter | T4, 3W, Heavy Carapace, Stimm-slugs, Boltgun)</span>
+            <span class="posture-badge">Posture: Avoid Early → 3" Toxin Late</span>
+          </div>
+          <div class="hunters-line">Assigned Hunters: Black Widow (3" Versatile + Chem-synth)</div>
+          <p>Walking fortress (T4, 2+ initial armour, Crushing Blow, Fearsome). Ignore and avoid his sightlines early while he trades shots with Ryan's Enforcers; in the endgame, hit him from 3" Versatile range with Black Widow's Chem-synth + Toxin Stiletto sword to bypass his T4 and 2+ carapace armour completely.</p>
+        </div>
+      </div>
+
+      <!-- Tab 3: Ryan's Enforcers Hit-List -->
+      <div class="pb-panel" id="pb-ryan">
+        <div class="target-card priority-1">
+          <div class="target-top">
+            <span class="target-name">#1 — Palanite Captain / Sergeants (Bolters &amp; Command)</span>
+            <span class="posture-badge">Posture: Pin Overwatch → Toxin Assassinate</span>
+          </div>
+          <div class="hunters-line">Assigned Hunters: Lasgun Sisters (Pin) + Black Widow (3" Chem-synth Strike)</div>
+          <p>Enforcer Bolters (S4, AP-1, D2) shred T3 Escher in open corridors. Keep Her Majesty and Miss Whips out of Bolter lanes, strip Overwatch with Lasgun pinning, and use Black Widow's 3" Toxin strike to bypass their 4+ Flak/Armoured Undersuit saves.</p>
+        </div>
+
+        <div class="target-card">
+          <div class="target-top">
+            <span class="target-name">#2 — Subjugators (Vigilance Pattern Shields &amp; Concussion Carbines / Grenade Launchers)</span>
+            <span class="posture-badge">Posture: Space &gt;3" &amp; Flank Shields</span>
+          </div>
+          <div class="hunters-line">Assigned Hunters: Black Widow (Flank 3") / Little Sisters (Toxin Knives)</div>
+          <p>Concussion Blast templates knock fighters off upper gantries and trigger automatic pinning. Keep fighters spaced <strong>&gt;3" apart</strong> and away from unguarded ledges; flank Vigilance shields with mobile Little Sisters and Toxin knives.</p>
+        </div>
+
+        <div class="target-card">
+          <div class="target-top">
+            <span class="target-name">#3 — Palanite Patrolmen (Bolters, Shotguns &amp; Photon Flash Flares)</span>
+            <span class="posture-badge">Posture: High-Ground Crossfire</span>
+          </div>
+          <div class="hunters-line">Assigned Hunters: Copperhead (Heavy Stubber) + Nightshade / Mamba / Scorpio</div>
+          <p>Keep fighters &gt;3" apart so a single Photon Flash Flare cannot blind multiple activists. Use Copperhead's elevated Rapid Fire (2) Heavy Stubber to pin Patrolmen before they climb into short shotgun range.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const FIGHTERS = [
+  {
+    "id": "hermajesty",
+    "num": "01",
+    "name": "Her Majesty",
+    "role": "Gang Queen \u2022 Leader",
+    "rating": 245,
+    "stats": {
+      "M": "5\"",
+      "WS": "3+",
+      "BS": "3+",
+      "S": "3",
+      "T": "3",
+      "W": "2",
+      "I": "2+",
+      "A": "3",
+      "Ld": "5+",
+      "Cl": "5+",
+      "Wil": "6+",
+      "Int": "7+"
+    },
+    "weapons": [
+      {
+        "name": "Boltgun",
+        "rngS": "12\"",
+        "rngL": "24\"",
+        "accS": "+1",
+        "accL": "-",
+        "str": "4",
+        "ap": "-1",
+        "d": "2",
+        "am": "6+",
+        "traits": "Rapid Fire (1)"
+      },
+      {
+        "name": "Needle pistol",
+        "rngS": "4\"",
+        "rngL": "9\"",
+        "accS": "+2",
+        "accL": "-",
+        "str": "-",
+        "ap": "-1",
+        "d": "-",
+        "am": "6+",
+        "traits": "Scarce, Sidearm, Silent, Toxin"
+      }
+    ],
+    "wargear": [
+      "Armoured undersuit",
+      "Mesh armour"
+    ],
+    "skills": [
+      "Overseer"
+    ],
+    "rules": [
+      "Gang Leader",
+      "Tools of the Trade",
+      "Gang Hierarchy (Leader)",
+      "Group Activation (2)"
+    ],
+    "injury": "Old Battle Wound",
+    "verticalJob": "Tempo Engine: Stay behind solid Tier 1/2 cover within 12\" of your strike team to slingshot Black Widow or objective runners up vertical routes via Overseer + Group Activation (2).",
+    "watchout": "Carries Old Battle Wound \u2014 never expose her to long-range heavy fire (Dutch's Autocannon or Enforcer Bolters) early in the game.",
+    "quote": "A throne is merely a chair until someone bleeds to keep you off it. Hold the line, darlings\u2014and try not to get blood on the gold."
+  },
+  {
+    "id": "blackwidow",
+    "num": "02",
+    "name": "Black Widow",
+    "role": "Death-Maiden \u2022 Champion",
+    "rating": 295,
+    "stats": {
+      "M": "6\"",
+      "WS": "2+",
+      "BS": "3+",
+      "S": "3",
+      "T": "4",
+      "W": "2",
+      "I": "2+",
+      "A": "3",
+      "Ld": "8+",
+      "Cl": "4+",
+      "Wil": "7+",
+      "Int": "7+"
+    },
+    "weapons": [
+      {
+        "name": "Needle pistol",
+        "rngS": "4\"",
+        "rngL": "9\"",
+        "accS": "+2",
+        "accL": "-",
+        "str": "-",
+        "ap": "-1",
+        "d": "-",
+        "am": "6+",
+        "traits": "Scarce, Sidearm, Silent, Toxin"
+      },
+      {
+        "name": "Stiletto sword",
+        "rngS": "-",
+        "rngL": "E (3\"*)",
+        "accS": "-",
+        "accL": "-",
+        "str": "-",
+        "ap": "-1",
+        "d": "-",
+        "am": "-",
+        "traits": "Melee, Parry, Toxin (+3\" Versatile via Combat Virtuoso)"
+      }
+    ],
+    "wargear": [
+      "Armoured undersuit",
+      "Chem-synth",
+      "Displacer field",
+      "Mesh armour"
+    ],
+    "skills": [
+      "Combat Virtuoso"
+    ],
+    "rules": [
+      "Gang Hierarchy (Champion)",
+      "Tools of the Trade",
+      "Poison Blood"
+    ],
+    "injury": "Out Cold",
+    "verticalJob": "Primary Assassin & Capturer: Stage out of sight, slingshot into 3\" Versatile range across gaps/railings, and strike without taking reaction attacks.",
+    "watchout": "Carries Out Cold \u2014 always trigger Chem-synth before fighting when standing unpinned, and bypass Vandoth's 2+ carapace armour with Toxin.",
+    "quote": "I already died once in the dark. You won't enjoy how quickly I share the experience\u2014nor what is waiting in Silence."
+  },
+  {
+    "id": "copperhead",
+    "num": "03",
+    "name": "Copperhead",
+    "role": "Gang Matriarch \u2022 Champion",
+    "rating": 335,
+    "stats": {
+      "M": "5\"",
+      "WS": "3+",
+      "BS": "3+",
+      "S": "3",
+      "T": "3",
+      "W": "2",
+      "I": "2+",
+      "A": "2",
+      "Ld": "6+",
+      "Cl": "6+",
+      "Wil": "6+",
+      "Int": "6+"
+    },
+    "weapons": [
+      {
+        "name": "Heavy stubber",
+        "rngS": "20\"",
+        "rngL": "40\"",
+        "accS": "-",
+        "accL": "-1",
+        "str": "4",
+        "ap": "-1",
+        "d": "1",
+        "am": "4+",
+        "traits": "Rapid Fire (2), Unwieldy (Negated by Suspensors)"
+      },
+      {
+        "name": "Lasgun",
+        "rngS": "18\"",
+        "rngL": "24\"",
+        "accS": "+1",
+        "accL": "-",
+        "str": "3",
+        "ap": "-",
+        "d": "1",
+        "am": "2+",
+        "traits": "Plentiful"
+      }
+    ],
+    "wargear": [
+      "Armoured undersuit",
+      "Mesh armour",
+      "Suspensors"
+    ],
+    "skills": [
+      "Spring Up"
+    ],
+    "rules": [
+      "Gang Hierarchy (Champion)",
+      "Tools of the Trade",
+      "Group Activation (1)"
+    ],
+    "injury": null,
+    "verticalJob": "Elevated Fire Base: Claim a Tier 2 or Tier 3 perch with cover early. Suspensors + Spring Up let her stand, move, and fire Rapid Fire (2) Heavy Stubber bursts freely.",
+    "watchout": "Keep away from unguarded catwalk edges against Dutch's Knockback Autocannon or Enforcer Concussion templates.",
+    "quote": "Six hundred rounds a minute says this corridor belongs to Her Majesty. Any Goliath stupid enough to argue can eat brass."
+  },
+  {
+    "id": "misswhips",
+    "num": "07",
+    "name": "Miss Whips",
+    "role": "Gang Sister \u2022 Ganger",
+    "rating": 75,
+    "stats": {
+      "M": "5\"",
+      "WS": "4+",
+      "BS": "4+",
+      "S": "3",
+      "T": "3",
+      "W": "1",
+      "I": "3+",
+      "A": "1",
+      "Ld": "7+",
+      "Cl": "7+",
+      "Wil": "7+",
+      "Int": "7+"
+    },
+    "weapons": [
+      {
+        "name": "Shock whip",
+        "rngS": "E",
+        "rngL": "3\"",
+        "accS": "-1",
+        "accL": "-",
+        "str": "S+1",
+        "ap": "-",
+        "d": "1",
+        "am": "-",
+        "traits": "Melee, Shock, Versatile"
+      }
+    ],
+    "wargear": [],
+    "skills": [],
+    "rules": [
+      "Gang Fighter (Ganger)",
+      "Promotion (Escher Specialist)"
+    ],
+    "injury": "Critical Injury",
+    "verticalJob": "Gantry Bodyguard: Zone narrow catwalk bridges and ladder landings \u2014 her 3\" Versatile Shock whip hits Frenzon rushers like Kali-dont before they reach base contact.",
+    "watchout": "Carries Critical Injury (1 Wound, T3) \u2014 keep her tucked out of long open shooting lanes until enemies climb into her 3\" zone.",
+    "quote": "Three paces, sweetheart. Step any closer to the Queen and I'll peel that cheap flak armour off you in strips."
+  },
+  {
+    "id": "nightshade",
+    "num": "04",
+    "name": "Nightshade",
+    "role": "Gang Sister \u2022 Specialist",
+    "rating": 55,
+    "stats": {
+      "M": "5\"",
+      "WS": "4+",
+      "BS": "4+",
+      "S": "3",
+      "T": "3",
+      "W": "1",
+      "I": "3+",
+      "A": "1",
+      "Ld": "7+",
+      "Cl": "7+",
+      "Wil": "7+",
+      "Int": "7+"
+    },
+    "weapons": [
+      {
+        "name": "Lasgun",
+        "rngS": "18\"",
+        "rngL": "24\"",
+        "accS": "+1",
+        "accL": "-",
+        "str": "3",
+        "ap": "-",
+        "d": "1",
+        "am": "2+",
+        "traits": "Plentiful"
+      }
+    ],
+    "wargear": [],
+    "skills": [],
+    "rules": [
+      "Gang Fighter (Specialist)",
+      "Tools of the Trade"
+    ],
+    "injury": null,
+    "verticalJob": "Pinning Core & Specialist: Advance in mid-level cover to strip enemy Overwatch via Lasgun pinning before Black Widow crosses open lanes.",
+    "watchout": "Prime candidate for future Special Weapons \u2014 keep spaced >3\" from allies to avoid Blast templates and Photon Flash Flares.",
+    "quote": "Everyone stares at the shadows in the Deep Dome. They never notice the violet glow until the coils finish charging."
+  },
+  {
+    "id": "mamba",
+    "num": "05",
+    "name": "Mamba",
+    "role": "Gang Sister \u2022 Ganger",
+    "rating": 55,
+    "stats": {
+      "M": "5\"",
+      "WS": "4+",
+      "BS": "4+",
+      "S": "3",
+      "T": "3",
+      "W": "1",
+      "I": "3+",
+      "A": "1",
+      "Ld": "7+",
+      "Cl": "7+",
+      "Wil": "7+",
+      "Int": "7+"
+    },
+    "weapons": [
+      {
+        "name": "Lasgun",
+        "rngS": "18\"",
+        "rngL": "24\"",
+        "accS": "+1",
+        "accL": "-",
+        "str": "3",
+        "ap": "-",
+        "d": "1",
+        "am": "2+",
+        "traits": "Plentiful"
+      }
+    ],
+    "wargear": [],
+    "skills": [],
+    "rules": [
+      "Gang Fighter (Ganger)",
+      "Promotion (Escher Specialist)"
+    ],
+    "injury": null,
+    "verticalJob": "Mid-Tier Fire Support: Pair with Nightshade or Scorpio to focus-fire and pin heavy gunners (Dutch or Enforcer Bolters) before melee engagement.",
+    "watchout": "Remember: charging a Prone & Pinned enemy stands them up into engagement \u2014 use Lasgun pinning to block Overwatch, not as a melee opener.",
+    "quote": "Everything down here sweats poison if you know where to squeeze. Hold still\u2014this won't hurt for very long."
+  },
+  {
+    "id": "scorpio",
+    "num": "06",
+    "name": "Scorpio",
+    "role": "Gang Sister \u2022 Ganger",
+    "rating": 55,
+    "stats": {
+      "M": "5\"",
+      "WS": "4+",
+      "BS": "4+",
+      "S": "3",
+      "T": "3",
+      "W": "1",
+      "I": "3+",
+      "A": "1",
+      "Ld": "7+",
+      "Cl": "7+",
+      "Wil": "7+",
+      "Int": "7+"
+    },
+    "weapons": [
+      {
+        "name": "Lasgun",
+        "rngS": "18\"",
+        "rngL": "24\"",
+        "accS": "+1",
+        "accL": "-",
+        "str": "3",
+        "ap": "-",
+        "d": "1",
+        "am": "2+",
+        "traits": "Plentiful"
+      }
+    ],
+    "wargear": [],
+    "skills": [],
+    "rules": [
+      "Gang Fighter (Ganger)",
+      "Promotion (Escher Specialist)"
+    ],
+    "injury": null,
+    "verticalJob": "Flank Overwatch: Hold secondary elevation angles to stop enemy climbers or Frenzon scum from flanking Copperhead's high-ground perch.",
+    "watchout": "Maintain >3\" spacing from nearby sisters against Concussion / Blast templates.",
+    "quote": "Let the Guilders count their tallies in the Fort. Out here in the Deeps, territory belongs to whoever still has breath."
+  },
+  {
+    "id": "vixen",
+    "num": "08",
+    "name": "Vixen",
+    "role": "Little Sister \u2022 Juve",
+    "rating": 45,
+    "stats": {
+      "M": "5\"",
+      "WS": "4+",
+      "BS": "5+",
+      "S": "3",
+      "T": "3",
+      "W": "1",
+      "I": "3+",
+      "A": "1",
+      "Ld": "8+",
+      "Cl": "8+",
+      "Wil": "8+",
+      "Int": "8+"
+    },
+    "weapons": [
+      {
+        "name": "Stiletto knife",
+        "rngS": "-",
+        "rngL": "E",
+        "accS": "-",
+        "accL": "-",
+        "str": "-",
+        "ap": "-",
+        "d": "-",
+        "am": "-",
+        "traits": "Melee, Toxin"
+      },
+      {
+        "name": "Stub gun",
+        "rngS": "6\"",
+        "rngL": "12\"",
+        "accS": "+2",
+        "accL": "-",
+        "str": "3",
+        "ap": "-",
+        "d": "1",
+        "am": "4+",
+        "traits": "Plentiful, Sidearm"
+      }
+    ],
+    "wargear": [],
+    "skills": [],
+    "rules": [
+      "Gang Fighter (Juve)",
+      "Promotion (Escher Specialist)",
+      "Fast Learner"
+    ],
+    "injury": null,
+    "verticalJob": "Objective Runner & Toxin Finisher: Sprint up secondary ladders to grab upper objectives, finish pinned 1W targets for Fast Learner XP, and bypass Enforcer 4+ armour with Toxin.",
+    "watchout": "Split climb routes across separate ladders so a single Blast template or Photon Flash Flare never catches multiple juves.",
+    "quote": "Go ahead, waste your Overwatch on me\u2014I'm already three alleys ahead and Widow's right behind your shoulder."
+  },
+  {
+    "id": "fang",
+    "num": "09",
+    "name": "Fang",
+    "role": "Little Sister \u2022 Juve",
+    "rating": 45,
+    "stats": {
+      "M": "5\"",
+      "WS": "4+",
+      "BS": "5+",
+      "S": "3",
+      "T": "3",
+      "W": "1",
+      "I": "3+",
+      "A": "1",
+      "Ld": "8+",
+      "Cl": "8+",
+      "Wil": "8+",
+      "Int": "8+"
+    },
+    "weapons": [
+      {
+        "name": "Stiletto knife",
+        "rngS": "-",
+        "rngL": "E",
+        "accS": "-",
+        "accL": "-",
+        "str": "-",
+        "ap": "-",
+        "d": "-",
+        "am": "-",
+        "traits": "Melee, Toxin"
+      },
+      {
+        "name": "Stub gun",
+        "rngS": "6\"",
+        "rngL": "12\"",
+        "accS": "+2",
+        "accL": "-",
+        "str": "3",
+        "ap": "-",
+        "d": "1",
+        "am": "4+",
+        "traits": "Plentiful, Sidearm"
+      }
+    ],
+    "wargear": [],
+    "skills": [],
+    "rules": [
+      "Gang Fighter (Juve)",
+      "Promotion (Escher Specialist)",
+      "Fast Learner"
+    ],
+    "injury": null,
+    "verticalJob": "Scout & Pinisher: Use crawlspaces beneath Copperhead's heavy stubber arcs to close on pinned 1W scum and harvest Fast Learner XP.",
+    "watchout": "Avoid Dutch's Autocannon sightlines on Turn 1; move after Lasgun sisters strip enemy Overwatch.",
+    "quote": "Keep your head down when the heavy stubber starts singing. Once they hit the dirt, that's when my blade comes out."
+  },
+  {
+    "id": "talon",
+    "num": "10",
+    "name": "Talon",
+    "role": "Little Sister \u2022 Juve",
+    "rating": 45,
+    "stats": {
+      "M": "5\"",
+      "WS": "4+",
+      "BS": "5+",
+      "S": "3",
+      "T": "3",
+      "W": "1",
+      "I": "3+",
+      "A": "1",
+      "Ld": "8+",
+      "Cl": "8+",
+      "Wil": "8+",
+      "Int": "8+"
+    },
+    "weapons": [
+      {
+        "name": "Stiletto knife",
+        "rngS": "-",
+        "rngL": "E",
+        "accS": "-",
+        "accL": "-",
+        "str": "-",
+        "ap": "-",
+        "d": "-",
+        "am": "-",
+        "traits": "Melee, Toxin"
+      },
+      {
+        "name": "Stub gun",
+        "rngS": "6\"",
+        "rngL": "12\"",
+        "accS": "+2",
+        "accL": "-",
+        "str": "3",
+        "ap": "-",
+        "d": "1",
+        "am": "4+",
+        "traits": "Plentiful, Sidearm"
+      }
+    ],
+    "wargear": [],
+    "skills": [],
+    "rules": [
+      "Gang Fighter (Juve)",
+      "Promotion (Escher Specialist)",
+      "Fast Learner"
+    ],
+    "injury": null,
+    "verticalJob": "Gantry Objective Lock: Prime candidate for Her Majesty's Overseer slingshot onto high-tier loot crates or scenario objectives.",
+    "watchout": "Keep >3\" spacing from Vixen and Fang during vertical climbs.",
+    "quote": "Blink and the loot crate's gone; blink twice and you're bleeding out on the gantry. Try to keep up!"
+  }
+];
+let selectedId = FIGHTERS[0].id;
+let activeTab = "tactics";
+const resolvedImages = {};
+
+function resolvePortrait(baseKey, onFound) {
+  if (resolvedImages[baseKey]) {
+    onFound(resolvedImages[baseKey]);
+    return;
+  }
+  const folders = ["images", "Images"];
+  const titleKey = baseKey.charAt(0).toUpperCase() + baseKey.slice(1);
+  const specialTitle = {
+    hermajesty: "HerMajesty",
+    blackwidow: "BlackWidow",
+    misswhips: "MissWhips"
+  }[baseKey] || titleKey;
+  const names = Array.from(new Set([baseKey, titleKey, specialTitle, baseKey.toUpperCase()]));
+  const exts = ["jpg", "jpeg", "png", "webp", "JPG", "JPEG", "PNG", "WEBP"];
+
+  const candidates = [];
+  for (const folder of folders) {
+    for (const name of names) {
+      for (const ext of exts) {
+        candidates.push(`${folder}/${name}.${ext}`);
+      }
+    }
+  }
+
+  let idx = 0;
+  function tryNext() {
+    if (idx >= candidates.length) return;
+    const url = candidates[idx++];
+    const img = new Image();
+    img.onload = () => {
+      resolvedImages[baseKey] = url;
+      onFound(url);
+    };
+    img.onerror = tryNext;
+    img.src = url;
+  }
+  tryNext();
+}
+
+const rail = document.getElementById("roster-rail");
+const pane = document.getElementById("detail-pane");
+
+function renderRail() {
+  rail.innerHTML = "";
+  FIGHTERS.forEach(f => {
+    const div = document.createElement("div");
+    div.className = "fighter-thumb" + (f.id === selectedId ? " active" : "");
+    div.innerHTML = `
+      <div class="thumb-vignette"></div>
+      <div class="thumb-info">
+        <div class="thumb-top"><span>#${f.num}</span><span>${f.rating} Cr</span></div>
+        <div class="thumb-name">${f.name}</div>
+        <div class="thumb-role">${f.role}</div>
+      </div>
+    `;
+    div.onclick = () => {
+      selectedId = f.id;
+      renderRail();
+      renderDetail();
+    };
+    rail.appendChild(div);
+
+    resolvePortrait(f.id, (url) => {
+      if (!div.querySelector("img")) {
+        const img = document.createElement("img");
+        img.src = url;
+        img.alt = f.name;
+        div.insertBefore(img, div.firstChild);
+      }
+    });
+  });
+}
+
+function renderDetail() {
+  const f = FIGHTERS.find(x => x.id === selectedId) || FIGHTERS[0];
+  const statHtml = Object.entries(f.stats).map(([k, v]) => `
+    <div class="st-box"><span class="lbl">${k}</span><span class="val">${v}</span></div>
+  `).join("");
+
+  const injuryHtml = f.injury
+    ? `<span class="injury-pill">⚠ Lasting Injury: ${f.injury}</span>`
+    : "";
+
+  const wpnRows = f.weapons.map(w => `
+    <tr>
+      <td><div class="wpn-name">${w.name}</div><div class="traits-text">${w.traits}</div></td>
+      <td>${w.rngS} / ${w.rngL}</td>
+      <td>${w.accS} / ${w.accL}</td>
+      <td>${w.str}</td>
+      <td>${w.ap}</td>
+      <td>${w.d}</td>
+      <td>${w.am}</td>
+    </tr>
+  `).join("");
+
+  const noteKey = `botc_note_${f.id}`;
+  const savedNote = localStorage.getItem(noteKey) || "";
+
+  let tabContent = "";
+  if (activeTab === "tactics") {
+    tabContent = `
+      <div class="card-box">
+        <h3>Vertical Underhive Assignment & Watchout</h3>
+        <div class="tactic-callout"><strong>🎯 Vertical Job:</strong> ${f.verticalJob}</div>
+        <div class="watchout-callout"><strong>⚠ Watchout:</strong> ${f.watchout}</div>
+      </div>
+      <div class="card-box">
+        <h3>Weapons Quick Reference</h3>
+        <table class="wpn-table">
+          <thead><tr><th>Weapon / Traits</th><th>Rng (S/L)</th><th>Acc</th><th>S</th><th>AP</th><th>D</th><th>Am</th></tr></thead>
+          <tbody>${wpnRows}</tbody>
+        </table>
+      </div>
+    `;
+  } else if (activeTab === "gear") {
+    const gearChips = f.wargear.length ? f.wargear.map(g => `<span class="chip">${g}</span>`).join("") : `<span class="chip">None</span>`;
+    const skillChips = f.skills.length ? f.skills.map(s => `<span class="chip">${s}</span>`).join("") : `<span class="chip">None yet</span>`;
+    const ruleChips = f.rules.map(r => `<span class="chip">${r}</span>`).join("");
+    tabContent = `
+      <div class="card-box">
+        <h3>Skills</h3>
+        <div class="chip-row">${skillChips}</div>
+      </div>
+      <div class="card-box">
+        <h3>Wargear</h3>
+        <div class="chip-row">${gearChips}</div>
+      </div>
+      <div class="card-box">
+        <h3>Special Rules</h3>
+        <div class="chip-row">${ruleChips}</div>
+      </div>
+    `;
+  } else {
+    tabContent = `
+      <div class="card-box">
+        <h3>Fighter Motto</h3>
+        <p style="font-style:italic;color:#f5e5be;font-size:0.86rem;">“${f.quote}”</p>
+      </div>
+      <div class="card-box">
+        <h3>Campaign & XP Notes (Auto-Saved on Device)</h3>
+        <textarea class="notes-area" id="fighter-note-box" placeholder="Track XP, advancements, or match notes for ${f.name}...">${savedNote}</textarea>
+      </div>
+    `;
+  }
+
+  pane.innerHTML = `
+    <section class="fighter-hero">
+      <div class="hero-portrait" id="hero-portrait-box">NO ART<br>images/${f.id}</div>
+      <div class="hero-meta">
+        <div class="hero-kicker">#${f.num} • ${f.rating} Credits</div>
+        <h2>${f.name}</h2>
+        <div class="hero-sub">${f.role}</div>
+        ${injuryHtml}
+      </div>
+    </section>
+
+    <section class="stat-grid">${statHtml}</section>
+
+    <nav class="sub-tabs">
+      <button class="sub-tab ${activeTab === 'tactics' ? 'active' : ''}" data-tab="tactics">🎯 Tactics & Weapons</button>
+      <button class="sub-tab ${activeTab === 'gear' ? 'active' : ''}" data-tab="gear">🛡 Skills, Gear & Rules</button>
+      <button class="sub-tab ${activeTab === 'notes' ? 'active' : ''}" data-tab="notes">📝 Quote & XP Notes</button>
+    </nav>
+
+    ${tabContent}
+  `;
+
+  pane.querySelectorAll(".sub-tab").forEach(btn => {
+    btn.onclick = () => {
+      activeTab = btn.dataset.tab;
+      renderDetail();
+    };
+  });
+
+  const noteBox = document.getElementById("fighter-note-box");
+  if (noteBox) {
+    noteBox.oninput = () => localStorage.setItem(noteKey, noteBox.value);
+  }
+
+  resolvePortrait(f.id, (url) => {
+    const pBox = document.getElementById("hero-portrait-box");
+    if (pBox) pBox.innerHTML = `<img src="${url}" alt="${f.name}">`;
+    const hero = pane.querySelector(".fighter-hero");
+    if (hero && !hero.querySelector(".hero-bg-art")) {
+      const bg = document.createElement("img");
+      bg.className = "hero-bg-art";
+      bg.src = url;
+      bg.alt = "";
+      hero.insertBefore(bg, hero.firstChild);
+    }
+  });
+}
+
+// Playbook Modal Logic
+const modal = document.getElementById("playbook-modal");
+document.getElementById("open-playbook").onclick = () => modal.classList.add("open");
+document.getElementById("close-playbook").onclick = () => modal.classList.remove("open");
+modal.onclick = (e) => { if (e.target === modal) modal.classList.remove("open"); };
+
+document.querySelectorAll(".pb-tab").forEach(tab => {
+  tab.onclick = () => {
+    document.querySelectorAll(".pb-tab").forEach(t => t.classList.remove("active"));
+    document.querySelectorAll(".pb-panel").forEach(p => p.classList.remove("active"));
+    tab.classList.add("active");
+    document.getElementById("pb-" + tab.dataset.pb).classList.add("active");
+  };
+});
+
+renderRail();
+renderDetail();
+</script>
+</body>
+</html>
