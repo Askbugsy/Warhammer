@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Blades of the Crown — Live Tabletop Fighter Deck</title>
+<style>
+  :root {
+    --bg: #0b090e;
+    --panel: #14101a;
+    --panel2: #1c1624;
+    --plum: #3b1742;
+    --plum-bright: #6b2478;
+    --gold: #d4af37;
+    --gold-dim: #8f7322;
+    --crimson: #c93b4b;
+    --emerald: #34a875;
+    --cyan: #3da5d9;
+    --amber: #e08e36;
+    --text: #efe9f4;
+    --muted: #a699b3;
+    --border: rgba(212, 175, 55, 0.25);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: radial-gradient(circle at top right, #1f1126 0%, var(--bg) 55%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.45;
+    padding-bottom: 48px;
+  }
+  a { text-decoration: none; color: inherit; }
+
+  /* Sticky Top Command Bar */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(11, 9, 14, 0.94);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .crest {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 1.5px solid var(--gold);
+    background: var(--plum);
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: var(--gold); font-size: 13px;
+  }
+  .crest img { width: 100%; height: 100%; object-fit: cover; }
+  .brand-title { font-size: 15px; font-weight: 800; letter-spacing: 0.6px; color: var(--gold); text-transform: uppercase; }
+  .brand-sub { font-size: 11px; color: var(--muted); }
+  .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    padding: 7px 12px; border-radius: 7px; font-size: 12px; font-weight: 700;
+    border: 1px solid var(--border); background: var(--panel2); color: var(--text);
+    cursor: pointer; transition: 0.15s;
+  }
+  .btn:hover { border-color: var(--gold); color: var(--gold); }
+  .btn.active-page {
+    background: linear-gradient(135deg, var(--plum), #261430);
+    border-color: var(--gold); color: var(--gold);
+  }
+
+  /* Split Deck Layout */
+  .deck-layout {
+    max-width: 1260px;
+    margin: 16px auto 0;
+    padding: 0 14px;
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  @media (max-width: 860px) {
+    .deck-layout { grid-template-columns: 1fr; }
+  }
+
+  /* Left Sidebar Roster */
+  .sidebar {
+    position: sticky; top: 66px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    max-height: calc(100vh - 82px);
+    overflow-y: auto;
+  }
+  @media (max-width: 860px) {
+    .sidebar { position: static; max-height: none; }
+  }
+  .sidebar-head {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-bottom: 8px; margin-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sidebar-title { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: var(--gold); }
+  .reset-btn {
+    padding: 4px 9px; border-radius: 6px; font-size: 11px; font-weight: 700;
+    background: rgba(212, 175, 55, 0.14); border: 1px solid var(--gold-dim);
+    color: var(--gold); cursor: pointer;
+  }
+  .reset-btn:hover { background: rgba(212, 175, 55, 0.26); }
+
+  .filter-bar {
+    display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px;
+  }
+  .filter-pill {
+    font-size: 10.5px; font-weight: 700; padding: 4px 8px; border-radius: 999px;
+    background: var(--panel2); border: 1px solid var(--border); color: var(--muted);
+    cursor: pointer;
+  }
+  .filter-pill.active {
+    background: var(--plum); border-color: var(--gold); color: var(--gold);
+  }
+
+  .roster-list { display: flex; flex-direction: column; gap: 7px; }
+  .roster-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 9px; border-radius: 9px;
+    background: var(--panel2); border: 1px solid transparent;
+    cursor: pointer; transition: 0.15s; text-align: left;
+  }
+  .roster-item:hover { border-color: var(--gold-dim); }
+  .roster-item.active {
+    background: linear-gradient(135deg, rgba(59, 23, 66, 0.85), rgba(28, 22, 36, 0.95));
+    border-color: var(--gold);
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.15);
+  }
+  .roster-item.dimmed { opacity: 0.55; }
+
+  /* Square Thumbnails */
+  .sq-thumb {
+    width: 44px; height: 44px; border-radius: 8px; flex-shrink: 0;
+    border: 1.5px solid var(--gold-dim); background: var(--plum);
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 13px; color: var(--gold); position: relative;
+  }
+  .roster-item.active .sq-thumb { border-color: var(--gold); }
+  .sq-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+
+  .ri-info { flex: 1; min-width: 0; }
+  .ri-name { font-size: 13px; font-weight: 800; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ri-role { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .status-badge {
+    font-size: 10px; font-weight: 800; padding: 3px 7px; border-radius: 5px;
+    text-transform: uppercase; letter-spacing: 0.3px; flex-shrink: 0;
+  }
+  .st-ready { background: rgba(52, 168, 117, 0.18); color: #7ce8b7; border: 1px solid rgba(52, 168, 117, 0.45); }
+  .st-done { background: rgba(166, 153, 179, 0.15); color: #b9aec4; border: 1px solid rgba(166, 153, 179, 0.35); }
+  .st-pinned { background: rgba(224, 142, 54, 0.2); color: #ffc078; border: 1px solid rgba(224, 142, 54, 0.45); }
+  .st-injured { background: rgba(201, 59, 75, 0.22); color: #ff8c99; border: 1px solid rgba(201, 59, 75, 0.5); }
+
+  /* Centre Stage Fighter Card */
+  .stage-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    padding: 18px 20px;
+  }
+  .fighter-hero {
+    display: flex; flex-wrap: wrap; gap: 16px; align-items: center;
+    padding-bottom: 14px; margin-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-sq {
+    width: 96px; height: 96px; border-radius: 12px; flex-shrink: 0;
+    border: 2px solid var(--gold); background: var(--plum);
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 24px; color: var(--gold); position: relative;
+    cursor: zoom-in; transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .hero-sq:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 16px rgba(212, 175, 55, 0.35);
+  }
+  .hero-sq img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+  .hero-sq::after {
+    content: "🔍";
+    position: absolute; bottom: 4px; right: 5px;
+    font-size: 11px; line-height: 1;
+    background: rgba(11, 9, 14, 0.78);
+    border: 1px solid var(--gold-dim);
+    border-radius: 4px; padding: 2px 4px;
+    pointer-events: none;
+  }
+
+  .hero-meta { flex: 1; min-width: 220px; }
+  .hero-title-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .hero-name { font-size: 22px; font-weight: 800; color: var(--gold); }
+  .cost-pill {
+    font-size: 11.5px; font-weight: 800; padding: 3px 9px; border-radius: 999px;
+    background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold-dim); color: var(--gold);
+  }
+  .hero-sub { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+
+  .status-controls { display: flex; flex-wrap: wrap; gap: 6px; }
+  .st-btn {
+    padding: 5px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 700;
+    background: var(--panel2); border: 1px solid var(--border); color: var(--muted);
+    cursor: pointer; transition: 0.15s;
+  }
+  .st-btn:hover { color: #fff; border-color: var(--gold-dim); }
+  .st-btn.active-ready { background: rgba(52, 168, 117, 0.22); border-color: var(--emerald); color: #7ce8b7; }
+  .st-btn.active-done { background: rgba(166, 153, 179, 0.22); border-color: #a699b3; color: #fff; }
+  .st-btn.active-pinned { background: rgba(224, 142, 54, 0.25); border-color: var(--amber); color: #ffc078; }
+  .st-btn.active-injured { background: rgba(201, 59, 75, 0.26); border-color: var(--crimson); color: #ff8c99; }
+
+  /* Stat Grid */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 5px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 640px) {
+    .stat-grid { grid-template-columns: repeat(6, 1fr); }
+  }
+  .stat-box {
+    background: var(--panel2); border: 1px solid var(--border); border-radius: 7px;
+    padding: 6px 4px; text-align: center;
+  }
+  .stat-lbl { font-size: 10px; font-weight: 800; color: var(--muted); text-transform: uppercase; }
+  .stat-val { font-size: 14px; font-weight: 800; color: #fff; margin-top: 2px; }
+  .stat-val.hi { color: var(--gold); }
+
+  /* Weapons Table */
+  .sec-title {
+    font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--gold); margin: 14px 0 8px;
+  }
+  .table-wrap { overflow-x: auto; margin-bottom: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th {
+    text-align: left; padding: 7px 8px; font-size: 11px; text-transform: uppercase;
+    color: var(--gold); background: var(--panel2); border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 8px; border-bottom: 1px solid rgba(212, 175, 55, 0.12);
+    color: #eae3f2; vertical-align: top;
+  }
+  .wpn-name { font-weight: 800; color: #fff; }
+  .trait-pill {
+    display: inline-block; font-size: 10.5px; font-weight: 700;
+    padding: 2px 6px; border-radius: 4px; margin: 1px 2px 1px 0;
+    background: rgba(59, 23, 66, 0.65); border: 1px solid var(--border); color: #f3d678;
+  }
+  .trait-pill.tox {
+    background: rgba(52, 168, 117, 0.2); border-color: var(--emerald); color: #82e8b8;
+  }
+
+  /* Wargear & Tactics Boxes */
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+  .info-box {
+    background: var(--panel2); border: 1px solid var(--border); border-radius: 9px;
+    padding: 12px 14px; font-size: 13px;
+  }
+  .info-box h4 { font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+  .warn-box {
+    margin-top: 10px; padding: 9px 12px; border-radius: 7px;
+    background: rgba(201, 59, 75, 0.14); border-left: 3px solid var(--crimson);
+    font-size: 12.5px; color: #f7c6cc;
+  }
+
+  /* Full Portrait Lightbox Modal */
+  .lightbox {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(6, 4, 9, 0.88);
+    backdrop-filter: blur(8px);
+    display: none; align-items: center; justify-content: center;
+    padding: 18px;
+  }
+  .lightbox.open { display: flex; animation: fadeIn 0.16s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .lb-card {
+    background: var(--panel);
+    border: 1.5px solid var(--gold);
+    border-radius: 14px;
+    max-width: 520px; width: 100%;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75);
+  }
+  .lb-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 11px 15px;
+    background: linear-gradient(135deg, var(--plum), #1c1624);
+    border-bottom: 1px solid var(--border);
+  }
+  .lb-title { font-size: 15px; font-weight: 800; color: var(--gold); }
+  .lb-sub { font-size: 11.5px; color: var(--muted); }
+  .lb-close {
+    background: rgba(11, 9, 14, 0.75); border: 1px solid var(--gold-dim);
+    color: var(--gold); border-radius: 7px; padding: 5px 10px;
+    font-size: 12px; font-weight: 800; cursor: pointer;
+  }
+  .lb-close:hover { background: var(--gold); color: #120d17; }
+  .lb-body {
+    background: #08060a;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 260px; max-height: 75vh; overflow: hidden;
+  }
+  .lb-body img {
+    max-width: 100%; max-height: 75vh; width: auto; height: auto; display: block;
+  }
+  .lb-fallback {
+    padding: 36px 20px; text-align: center; color: var(--muted); font-size: 13px;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="crest" id="crestBox">BC</div>
+    <div>
+      <div class="brand-title">Blades of the Crown</div>
+      <div class="brand-sub">House Escher • 10 Fighters • Rating 1,250 Cr</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a class="btn active-page" href="index.html">⚔️ Tactical Deck</a>
+    <a class="btn" href="bible.html">📖 Character Bible</a>
+    <a class="btn" href="campaign.html">🗺️ Campaign Playbook</a>
+  </div>
+</div>
+
+<div class="deck-layout">
+  <!-- LEFT SIDEBAR ROSTER -->
+  <aside class="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-title">Gang Roster (10)</div>
+      <button class="reset-btn" onclick="resetTurn()">↺ New Turn</button>
+    </div>
+
+    <div class="filter-bar">
+      <button class="filter-pill active" onclick="setFilter('all', this)">All (10)</button>
+      <button class="filter-pill" onclick="setFilter('hierarchy', this)">Queen &amp; Champs</button>
+      <button class="filter-pill" onclick="setFilter('sister', this)">Sisters</button>
+      <button class="filter-pill" onclick="setFilter('juve', this)">Little Sisters</button>
+      <button class="filter-pill" onclick="setFilter('toxin', this)">Toxin</button>
+    </div>
+
+    <div class="roster-list" id="rosterList"></div>
+  </aside>
+
+  <!-- CENTRE STAGE FIGHTER SHEET -->
+  <main class="stage-card" id="stageCard"></main>
+</div>
+
+<!-- FULL IMAGE LIGHTBOX MODAL -->
+<div class="lightbox" id="portraitModal" onclick="closeLightbox(event)">
+  <div class="lb-card" onclick="event.stopPropagation()">
+    <div class="lb-header">
+      <div>
+        <div class="lb-title" id="lbTitle">Fighter Portrait</div>
+        <div class="lb-sub" id="lbSub">Full Character Artwork</div>
+      </div>
+      <button class="lb-close" onclick="closeLightbox()">✕ Close</button>
+    </div>
+    <div class="lb-body" id="lbBody"></div>
+  </div>
+</div>
+
+<script>
+const FIGHTERS = [
+  {
+    id: 'hermajesty',
+    name: 'Her Majesty',
+    role: 'Gang Queen • Leader',
+    group: 'hierarchy',
+    toxin: true,
+    cost: 245,
+    initials: 'HM',
+    stats: { M:'5"', WS:'3+', BS:'3+', S:'3', T:'3', W:'2', I:'2+', A:'3', Ld:'5+', Cl:'5+', Wil:'6+', Int:'6+' },
+    weapons: [
+      { name: 'Boltgun', rng: '12" / 24"', acc: '+1 / -', str: '4', ap: '-1', d: '2', am: '6+', traits: ['Rapid Fire (1)'] },
+      { name: 'Needle pistol', rng: '4" / 9"', acc: '+2 / -', str: '4', ap: '-', d: '-', am: '6+', traits: ['Scarce', 'Sidearm', 'Silent', 'Toxin'] }
+    ],
+    wargear: 'Armoured undersuit, Mesh armour (4+ save)',
+    skills: 'Overseer, Gang Hierarchy (Leader), Group Activation (2), Tools of the Trade',
+    job: 'Tempo Engine. Stay behind solid cover within 12" of your strike team to Group Activate with Black Widow and launch her via Overseer.',
+    watchout: 'Carries Old Battle Wound — keep out of long-range heavy fire early.'
+  },
+  {
+    id: 'blackwidow',
+    name: 'Black Widow',
+    role: 'Death-Maiden • Champion',
+    group: 'hierarchy',
+    toxin: true,
+    cost: 295,
+    initials: 'BW',
+    stats: { M:'6"', WS:'2+', BS:'4+', S:'3', T:'3', W:'2', I:'2+', A:'3', Ld:'7+', Cl:'5+', Wil:'6+', Int:'7+' },
+    weapons: [
+      { name: 'Stiletto sword', rng: '3" (Versatile)', acc: '-', str: 'S', ap: '-', d: '-', am: '-', traits: ['Melee', 'Parry', 'Toxin', 'Versatile 3"'] },
+      { name: 'Needle pistol', rng: '4" / 9"', acc: '+2 / -', str: '4', ap: '-', d: '-', am: '6+', traits: ['Scarce', 'Sidearm', 'Silent', 'Toxin'] }
+    ],
+    wargear: 'Chem-synth, Displacer field, Armoured undersuit, Mesh armour (4+ save)',
+    skills: 'Combat Virtuoso (3" Versatile), Gang Hierarchy (Champion), Group Activation (1), Poison Blood',
+    job: 'Primary Assassin & Capturer. Slingshot into 3" range across gaps/railings with Chem-synth active to bypass Toughness and Armour with zero reaction swings.',
+    watchout: 'Carries Out Cold — activate Chem-synth before striking when unpinned.'
+  },
+  {
+    id: 'copperhead',
+    name: 'Copperhead',
+    role: 'Gang Matriarch • Champion',
+    group: 'hierarchy',
+    toxin: false,
+    cost: 335,
+    initials: 'CH',
+    stats: { M:'5"', WS:'3+', BS:'3+', S:'3', T:'3', W:'2', I:'2+', A:'2', Ld:'6+', Cl:'5+', Wil:'6+', Int:'7+' },
+    weapons: [
+      { name: 'Heavy stubber (Suspensors)', rng: '20" / 40"', acc: '- / -1', str: '4', ap: '-1', d: '1', am: '4+', traits: ['Rapid Fire (2)', 'Unwieldy (Negated)'] },
+      { name: 'Lasgun', rng: '18" / 24"', acc: '+1 / -', str: '3', ap: '-', d: '1', am: '2+', traits: ['Plentiful'] }
+    ],
+    wargear: 'Suspensors, Armoured undersuit, Mesh armour (4+ save)',
+    skills: 'Spring Up, Gang Hierarchy (Champion), Group Activation (1), Tools of the Trade',
+    job: 'Elevated Fire Base. Perch on Tier 2/3 cover Turn 1 to suppress enemy heavy weapons and shred 1-Wound troops.',
+    watchout: 'Keep 2"+ back from unrailed edges against Knockback weapons.'
+  },
+  {
+    id: 'misswhips',
+    name: 'Miss Whips',
+    role: 'Gang Sister • Ganger',
+    group: 'sister',
+    toxin: false,
+    cost: 75,
+    initials: 'MW',
+    stats: { M:'5"', WS:'4+', BS:'4+', S:'3', T:'3', W:'1', I:'3+', A:'1', Ld:'7+', Cl:'6+', Wil:'7+', Int:'7+' },
+    weapons: [
+      { name: 'Shock whip', rng: '3" (Versatile)', acc: '-', str: 'S', ap: '-', d: '1', am: '-', traits: ['Melee', 'Shock', 'Versatile 3"'] }
+    ],
+    wargear: 'None (Unarmoured)',
+    skills: 'Gang Fighter (Ganger), Promotion (Escher Specialist)',
+    job: 'Gantry Bodyguard. Guard catwalk landings and screen Her Majesty, hitting rushers at 3" without allowing reaction attacks.',
+    watchout: 'Carries Critical Injury (1W, unarmoured) — keep out of open sightlines.'
+  },
+  {
+    id: 'nightshade',
+    name: 'Nightshade',
+    role: 'Gang Sister • Specialist',
+    group: 'sister',
+    toxin: false,
+    cost: 55,
+    initials: 'NS',
+    stats: { M:'5"', WS:'4+', BS:'4+', S:'3', T:'3', W:'1', I:'3+', A:'1', Ld:'7+', Cl:'6+', Wil:'7+', Int:'7+' },
+    weapons: [
+      { name: 'Lasgun', rng: '18" / 24"', acc: '+1 / -', str: '3', ap: '-', d: '1', am: '2+', traits: ['Plentiful'] }
+    ],
+    wargear: 'None (Unarmoured)',
+    skills: 'Gang Fighter (Specialist), Tools of the Trade',
+    job: 'Pinning Core & Specialist. Hold mid-level cover and fire +1 Short Acc Lasgun shots to strip enemy Overwatch before Black Widow strikes.',
+    watchout: '1 Wound, no armour — stick to partial/full cover.'
+  },
+  {
+    id: 'mamba',
+    name: 'Mamba',
+    role: 'Gang Sister • Ganger',
+    group: 'sister',
+    toxin: false,
+    cost: 55,
+    initials: 'MB',
+    stats: { M:'5"', WS:'4+', BS:'4+', S:'3', T:'3', W:'1', I:'3+', A:'1', Ld:'7+', Cl:'6+', Wil:'7+', Int:'7+' },
+    weapons: [
+      { name: 'Lasgun', rng: '18" / 24"', acc: '+1 / -', str: '3', ap: '-', d: '1', am: '2+', traits: ['Plentiful'] }
+    ],
+    wargear: 'None (Unarmoured)',
+    skills: 'Gang Fighter (Ganger), Promotion (Escher Specialist)',
+    job: 'Pinning Core & Flank Overwatch. Pair with Nightshade or Scorpio to keep enemy Champions pinned.',
+    watchout: '1 Wound, no armour — stay spaced >3" from teammates against Blast templates.'
+  },
+  {
+    id: 'scorpio',
+    name: 'Scorpio',
+    role: 'Gang Sister • Ganger',
+    group: 'sister',
+    toxin: false,
+    cost: 55,
+    initials: 'SC',
+    stats: { M:'5"', WS:'4+', BS:'4+', S:'3', T:'3', W:'1', I:'3+', A:'1', Ld:'7+', Cl:'6+', Wil:'7+', Int:'7+' },
+    weapons: [
+      { name: 'Lasgun', rng: '18" / 24"', acc: '+1 / -', str: '3', ap: '-', d: '1', am: '2+', traits: ['Plentiful'] }
+    ],
+    wargear: 'None (Unarmoured)',
+    skills: 'Gang Fighter (Ganger), Promotion (Escher Specialist)',
+    job: 'Pinning Core & Crossfire Anchor. Cover secondary ladders and pin exposed targets.',
+    watchout: '1 Wound, no armour — avoid open ground.'
+  },
+  {
+    id: 'vixen',
+    name: 'Vixen',
+    role: 'Little Sister • Juve',
+    group: 'juve',
+    toxin: true,
+    cost: 45,
+    initials: 'VX',
+    stats: { M:'6"', WS:'5+', BS:'5+', S:'3', T:'3', W:'1', I:'2+', A:'1', Ld:'9+', Cl:'8+', Wil:'8+', Int:'8+' },
+    weapons: [
+      { name: 'Stiletto knife', rng: 'E', acc: '-', str: 'S', ap: '-', d: '-', am: '-', traits: ['Melee', 'Toxin'] },
+      { name: 'Stub gun', rng: '6" / 12"', acc: '+2 / -', str: '3', ap: '-', d: '1', am: '4+', traits: ['Plentiful', 'Sidearm'] }
+    ],
+    wargear: 'None (Unarmoured)',
+    skills: 'Fast Learner, Gang Fighter (Juve), Promotion (Escher Specialist)',
+    job: 'Objective Runner & Armour-Piercing Finisher. Sprint 6" up ladders on 2+ Initiative, grab objectives, and finish pinned enemies for Fast Learner XP.',
+    watchout: 'Fragile (1W, unarmoured) — never charge unpinned melee specialists.'
+  },
+  {
+    id: 'fang',
+    name: 'Fang',
+    role: 'Little Sister • Juve',
+    group: 'juve',
+    toxin: true,
+    cost: 45,
+    initials: 'FG',
+    stats: { M:'6"', WS:'5+', BS:'5+', S:'3', T:'3', W:'1', I:'2+', A:'1', Ld:'9+', Cl:'8+', Wil:'8+', Int:'8+' },
+    weapons: [
+      { name: 'Stiletto knife', rng: 'E', acc: '-', str: 'S', ap: '-', d: '-', am: '-', traits: ['Melee', 'Toxin'] },
+      { name: 'Stub gun', rng: '6" / 12"', acc: '+2 / -', str: '3', ap: '-', d: '1', am: '4+', traits: ['Plentiful', 'Sidearm'] }
+    ],
+    wargear: 'None (Unarmoured)',
+    skills: 'Fast Learner, Gang Fighter (Juve), Promotion (Escher Specialist)',
+    job: 'Flank Finisher. Use 6" Move + Toxin Stiletto knife to bypass 4+ armour saves on pinned Enforcers, Goliaths, or Squats.',
+    watchout: 'Fragile (1W, unarmoured) — use cover until targets are pinned.'
+  },
+  {
+    id: 'talon',
+    name: 'Talon',
+    role: 'Little Sister • Juve',
+    group: 'juve',
+    toxin: true,
+    cost: 45,
+    initials: 'TL',
+    stats: { M:'6"', WS:'5+', BS:'5+', S:'3', T:'3', W:'1', I:'2+', A:'1', Ld:'9+', Cl:'8+', Wil:'8+', Int:'8+' },
+    weapons: [
+      { name: 'Stiletto knife', rng: 'E', acc: '-', str: 'S', ap: '-', d: '-', am: '-', traits: ['Melee', 'Toxin'] },
+      { name: 'Stub gun', rng: '6" / 12"', acc: '+2 / -', str: '3', ap: '-', d: '1', am: '4+', traits: ['Plentiful', 'Sidearm'] }
+    ],
+    wargear: 'None (Unarmoured)',
+    skills: 'Fast Learner, Gang Fighter (Juve), Promotion (Escher Specialist)',
+    job: 'Loot & Scenario Sprinter. Claim elevated crates/terminals early and farm Fast Learner XP on weak gangers.',
+    watchout: 'Fragile (1W, unarmoured) — keep spaced >3" from sisters.'
+  }
+];
+
+let selectedId = 'hermajesty';
+let currentFilter = 'all';
+const statusMap = JSON.parse(localStorage.getItem('botc_statuses') || '{}');
+const resolvedSquareUrl = {};
+const resolvedFullUrl = {};
+
+function getStatus(id) {
+  return statusMap[id] || 'ready';
+}
+
+function setStatus(id, st) {
+  statusMap[id] = st;
+  localStorage.setItem('botc_statuses', JSON.stringify(statusMap));
+  renderSidebar();
+  renderStage();
+}
+
+function resetTurn() {
+  FIGHTERS.forEach(f => {
+    if (getStatus(f.id) !== 'injured') {
+      statusMap[f.id] = 'ready';
+    }
+  });
+  localStorage.setItem('botc_statuses', JSON.stringify(statusMap));
+  renderSidebar();
+  renderStage();
+}
+
+function setFilter(flt, btn) {
+  currentFilter = flt;
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  renderSidebar();
+}
+
+function buildCandidates(names) {
+  const folders = ['images', 'Images'];
+  const exts = ['jpg', 'jpeg', 'png', 'webp', 'JPG', 'JPEG', 'PNG'];
+  const list = [];
+  folders.forEach(folder => {
+    names.forEach(base => {
+      const title = base.charAt(0).toUpperCase() + base.slice(1);
+      const upper = base.toUpperCase();
+      [base, title, upper].forEach(variant => {
+        exts.forEach(ext => list.push(`${folder}/${variant}.${ext}`));
+      });
+    });
+  });
+  return list;
+}
+
+function loadSmartImage(el, candidateNames, cacheKey, cacheStore, fallbackHtml) {
+  if (cacheStore[cacheKey]) {
+    el.innerHTML = `<img src="${cacheStore[cacheKey]}" alt="${cacheKey}">`;
+    return;
+  }
+  const candidates = buildCandidates(candidateNames);
+  let idx = 0;
+  const img = document.createElement('img');
+  img.alt = cacheKey;
+  img.onload = () => {
+    cacheStore[cacheKey] = candidates[idx];
+    el.innerHTML = '';
+    el.appendChild(img);
+  };
+  img.onerror = () => {
+    idx++;
+    if (idx < candidates.length) {
+      img.src = candidates[idx];
+    } else if (fallbackHtml) {
+      el.innerHTML = fallbackHtml;
+    }
+  };
+  img.src = candidates[0];
+}
+
+function openFullPortrait(id) {
+  const f = FIGHTERS.find(x => x.id === id);
+  if (!f) return;
+  const modal = document.getElementById('portraitModal');
+  const body = document.getElementById('lbBody');
+  document.getElementById('lbTitle').textContent = f.name;
+  document.getElementById('lbSub').textContent = `${f.role} • ${f.cost} Credits`;
+  body.innerHTML = `<div class="lb-fallback">Loading full portrait for ${f.name}...</div>`;
+  modal.classList.add('open');
+
+  // Search full image first (<id>), falling back to square (<id>square) if only square exists
+  loadSmartImage(
+    body,
+    [f.id, `${f.id}square`],
+    f.id,
+    resolvedFullUrl,
+    `<div class="lb-fallback">Full portrait not found in <code>images/</code> for <strong>${f.name}</strong>.</div>`
+  );
+}
+
+function closeLightbox(e) {
+  if (!e || e.target.id === 'portraitModal') {
+    document.getElementById('portraitModal').classList.remove('open');
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeLightbox();
+});
+
+function renderSidebar() {
+  const listEl = document.getElementById('rosterList');
+  const filtered = FIGHTERS.filter(f => {
+    if (currentFilter === 'all') return true;
+    if (currentFilter === 'toxin') return f.toxin;
+    return f.group === currentFilter;
+  });
+
+  listEl.innerHTML = filtered.map(f => {
+    const st = getStatus(f.id);
+    const activeCls = f.id === selectedId ? 'active' : '';
+    const dimCls = (st === 'done' || st === 'injured') ? 'dimmed' : '';
+    const badgeMap = {
+      ready: ['st-ready', 'Ready'],
+      done: ['st-done', 'Done'],
+      pinned: ['st-pinned', 'Pinned'],
+      injured: ['st-injured', 'Injured']
+    };
+    const [bCls, bTxt] = badgeMap[st];
+    return `
+      <button class="roster-item ${activeCls} ${dimCls}" onclick="selectFighter('${f.id}')">
+        <div class="sq-thumb" data-sq="${f.id}">${f.initials}</div>
+        <div class="ri-info">
+          <div class="ri-name">${f.name}</div>
+          <div class="ri-role">${f.role}</div>
+        </div>
+        <span class="status-badge ${bCls}">${bTxt}</span>
+      </button>
+    `;
+  }).join('');
+
+  listEl.querySelectorAll('[data-sq]').forEach(el => {
+    const id = el.getAttribute('data-sq');
+    const f = FIGHTERS.find(x => x.id === id);
+    loadSmartImage(el, [`${id}square`, id], id, resolvedSquareUrl, f ? f.initials : '');
+  });
+}
+
+function selectFighter(id) {
+  selectedId = id;
+  renderSidebar();
+  renderStage();
+}
+
+function renderStage() {
+  const f = FIGHTERS.find(x => x.id === selectedId) || FIGHTERS[0];
+  const st = getStatus(f.id);
+  const stage = document.getElementById('stageCard');
+
+  const statOrder = ['M','WS','BS','S','T','W','I','A','Ld','Cl','Wil','Int'];
+  const hiKeys = ['M','WS','BS','W','I','A'];
+
+  const statsHtml = statOrder.map(k => `
+    <div class="stat-box">
+      <div class="stat-lbl">${k}</div>
+      <div class="stat-val ${hiKeys.includes(k) ? 'hi' : ''}">${f.stats[k]}</div>
+    </div>
+  `).join('');
+
+  const weaponsHtml = f.weapons.map(w => {
+    const traitsHtml = w.traits.map(t => {
+      const isTox = t.toLowerCase().includes('toxin');
+      return `<span class="trait-pill ${isTox ? 'tox' : ''}">${t}</span>`;
+    }).join('');
+    return `
+      <tr>
+        <td class="wpn-name">${w.name}</td>
+        <td>${w.rng}</td>
+        <td>${w.acc}</td>
+        <td>${w.str}</td>
+        <td>${w.ap}</td>
+        <td>${w.d}</td>
+        <td>${w.am}</td>
+        <td>${traitsHtml}</td>
+      </tr>
+    `;
+  }).join('');
+
+  stage.innerHTML = `
+    <div class="fighter-hero">
+      <div class="hero-sq" id="heroSquare" title="Click to view full portrait" onclick="openFullPortrait('${f.id}')">${f.initials}</div>
+      <div class="hero-meta">
+        <div class="hero-title-row">
+          <div class="hero-name">${f.name}</div>
+          <span class="cost-pill">${f.cost} Credits</span>
+        </div>
+        <div class="hero-sub">${f.role} • Click square portrait to expand full artwork</div>
+        <div class="status-controls">
+          <button class="st-btn ${st === 'ready' ? 'active-ready' : ''}" onclick="setStatus('${f.id}', 'ready')">● Ready</button>
+          <button class="st-btn ${st === 'done' ? 'active-done' : ''}" onclick="setStatus('${f.id}', 'done')">✓ Activated</button>
+          <button class="st-btn ${st === 'pinned' ? 'active-pinned' : ''}" onclick="setStatus('${f.id}', 'pinned')">▼ Pinned</button>
+          <button class="st-btn ${st === 'injured' ? 'active-injured' : ''}" onclick="setStatus('${f.id}', 'injured')">✚ Seriously Injured</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">${statsHtml}</div>
+
+    <div class="sec-title">Weapons &amp; Traits</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Weapon</th>
+            <th>Rng (S/L)</th>
+            <th>Acc (S/L)</th>
+            <th>Str</th>
+            <th>AP</th>
+            <th>D</th>
+            <th>Am</th>
+            <th>Traits</th>
+          </tr>
+        </thead>
+        <tbody>${weaponsHtml}</tbody>
+      </table>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-box">
+        <h4>Wargear &amp; Rules</h4>
+        <p style="margin-bottom:6px;"><strong>Wargear:</strong> ${f.wargear}</p>
+        <p><strong>Skills &amp; Rules:</strong> ${f.skills}</p>
+      </div>
+      <div class="info-box">
+        <h4>Tabletop Role &amp; Watchouts</h4>
+        <p>${f.job}</p>
+        <div class="warn-box"><strong>Watchout:</strong> ${f.watchout}</div>
+      </div>
+    </div>
+  `;
+
+  loadSmartImage(
+    document.getElementById('heroSquare'),
+    [`${f.id}square`, f.id],
+    f.id,
+    resolvedSquareUrl,
+    f.initials
+  );
+}
+
+// Load crest
+loadSmartImage(document.getElementById('crestBox'), ['gangcrest'], 'gangcrest', resolvedFullUrl, 'BC');
+
+// Initial render
+renderSidebar();
+renderStage();
+</script>
+</body>
+</html>
