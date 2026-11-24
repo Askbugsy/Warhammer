@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Blades of the Crown — Campaign & Matchup Playbook</title>
+<style>
+  :root {
+    --bg: #0b090e;
+    --panel: #14101a;
+    --panel2: #1c1624;
+    --plum: #3b1742;
+    --plum-bright: #6b2478;
+    --gold: #d4af37;
+    --gold-dim: #8f7322;
+    --crimson: #c93b4b;
+    --emerald: #34a875;
+    --cyan: #3da5d9;
+    --amber: #e08e36;
+    --text: #efe9f4;
+    --muted: #a699b3;
+    --border: rgba(212, 175, 55, 0.25);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: radial-gradient(circle at top right, #1f1126 0%, var(--bg) 55%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.45;
+    padding-bottom: 48px;
+  }
+  a { text-decoration: none; color: inherit; }
+
+  /* Sticky Top Command Bar */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(11, 9, 14, 0.94);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .crest {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 1.5px solid var(--gold);
+    background: var(--plum);
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: var(--gold); font-size: 13px;
+  }
+  .crest img { width: 100%; height: 100%; object-fit: cover; }
+  .brand-title { font-size: 15px; font-weight: 800; letter-spacing: 0.6px; color: var(--gold); text-transform: uppercase; }
+  .brand-sub { font-size: 11px; color: var(--muted); }
+  .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    padding: 7px 12px; border-radius: 7px; font-size: 12px; font-weight: 700;
+    border: 1px solid var(--border); background: var(--panel2); color: var(--text);
+    cursor: pointer; transition: 0.15s;
+  }
+  .btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* Hero Banner & Campaign Directory */
+  .hero {
+    max-width: 1140px; margin: 18px auto 12px; padding: 18px 20px;
+    background: linear-gradient(135deg, rgba(59, 23, 66, 0.72), rgba(20, 16, 26, 0.95));
+    border: 1px solid var(--border); border-radius: 12px;
+    position: relative; overflow: hidden;
+  }
+  .hero h1 { font-size: 22px; color: var(--gold); letter-spacing: 0.5px; margin-bottom: 4px; }
+  .hero p { font-size: 13px; color: var(--muted); max-width: 820px; }
+
+  .directory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .dir-card {
+    background: rgba(11, 9, 14, 0.8);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 11px;
+    cursor: pointer;
+    transition: 0.15s;
+    text-align: left;
+  }
+  .dir-card:hover {
+    border-color: var(--gold);
+    background: rgba(59, 23, 66, 0.45);
+  }
+  .dir-card.you {
+    border-color: var(--gold);
+    background: rgba(212, 175, 55, 0.12);
+    cursor: default;
+  }
+  .dir-owner {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--gold);
+  }
+  .dir-gang {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .dir-faction {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* Main Container & Tabs */
+  .wrap { max-width: 1140px; margin: 0 auto; padding: 0 14px; }
+  .tab-bar {
+    display: flex; gap: 8px; overflow-x: auto; padding: 8px 0 14px;
+    scrollbar-width: thin;
+  }
+  .tab-btn {
+    white-space: nowrap; padding: 9px 14px; border-radius: 8px;
+    background: var(--panel); border: 1px solid var(--border);
+    color: var(--muted); font-size: 12.5px; font-weight: 700; cursor: pointer;
+    transition: 0.15s;
+  }
+  .tab-btn:hover { color: var(--text); border-color: var(--gold-dim); }
+  .tab-btn.active {
+    background: linear-gradient(135deg, var(--plum), #261430);
+    border-color: var(--gold); color: var(--gold);
+    box-shadow: 0 0 14px rgba(212, 175, 55, 0.18);
+  }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; animation: fadeIn 0.18s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Cards & Grids */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; margin-bottom: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 16px; }
+  .card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 11px;
+    padding: 15px 16px;
+  }
+  .card h2 { font-size: 15.5px; color: var(--gold); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .card h3 { font-size: 13.5px; color: #f3d678; margin: 10px 0 5px; }
+  .card p, .card li { font-size: 13px; color: #dfd7e8; margin-bottom: 6px; }
+  .card ul, .card ol { padding-left: 18px; }
+  .callout {
+    background: rgba(59, 23, 66, 0.35); border-left: 3px solid var(--gold);
+    padding: 10px 12px; border-radius: 6px; margin: 10px 0; font-size: 12.5px;
+  }
+  .warn {
+    background: rgba(201, 59, 75, 0.14); border-left: 3px solid var(--crimson);
+    padding: 9px 12px; border-radius: 6px; margin-top: 8px; font-size: 12.5px; color: #f7c6cc;
+  }
+
+  /* Hit List Cards */
+  .gang-header {
+    background: linear-gradient(135deg, #25132e, #14101a);
+    border: 1px solid var(--gold); border-radius: 11px;
+    padding: 15px 18px; margin-bottom: 14px;
+  }
+  .gang-header-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .gang-name { font-size: 18px; font-weight: 800; color: var(--gold); }
+  .gang-meta { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .exploit-box {
+    background: rgba(52, 168, 117, 0.12); border: 1px solid rgba(52, 168, 117, 0.35);
+    border-radius: 8px; padding: 10px 12px; font-size: 13px; color: #d5f5e5;
+  }
+  .target-card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 16px; margin-bottom: 11px;
+  }
+  .target-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .rank-badge {
+    display: inline-block; padding: 3px 9px; border-radius: 6px;
+    font-size: 11.5px; font-weight: 800; letter-spacing: 0.4px;
+  }
+  .r1 { background: rgba(201, 59, 75, 0.25); color: #ff8c99; border: 1px solid var(--crimson); }
+  .r2 { background: rgba(224, 142, 54, 0.22); color: #ffc078; border: 1px solid var(--amber); }
+  .r3 { background: rgba(212, 175, 55, 0.2); color: var(--gold); border: 1px solid var(--gold-dim); }
+  .r4 { background: rgba(61, 165, 217, 0.18); color: #8ad4f7; border: 1px solid var(--cyan); }
+  .r5 { background: rgba(52, 168, 117, 0.18); color: #87e6ba; border: 1px solid var(--emerald); }
+  .target-title { font-size: 15px; font-weight: 800; color: #fff; }
+  .target-gear { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .meta-strip { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+  .tag {
+    font-size: 11.5px; font-weight: 700; padding: 3px 9px; border-radius: 5px;
+    background: var(--panel2); border: 1px solid var(--border);
+  }
+  .tag-posture { color: #ffd479; }
+  .tag-hunter { color: #82e8b8; }
+
+  /* Fighter Avatar Row */
+  .fighter-card { display: flex; gap: 12px; align-items: flex-start; }
+  .avatar {
+    width: 54px; height: 54px; border-radius: 9px; flex-shrink: 0;
+    border: 1.5px solid var(--gold); background: var(--plum);
+    overflow: hidden; position: relative;
+  }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .avatar::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(11,9,14,0.65), transparent 55%);
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="crest" data-img="gangcrest">BC</div>
+    <div>
+      <div class="brand-title">Blades of the Crown</div>
+      <div class="brand-sub">Campaign Matchup &amp; Terrain Playbook • House Escher (1,250 Cr)</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a class="btn" href="index.html">⚔️ Tactical Deck</a>
+    <a class="btn" href="bible.html">📖 Character Bible</a>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="hero">
+    <h1>Campaign Roster Directory &amp; Matchup Playbook</h1>
+    <p>Master tactical reference for House Escher (10 Fighters • 1,250 Cr). Tap any player card below to jump straight to their ranked Priority Hit-List and counter-play guide.</p>
+
+    <div class="directory-grid">
+      <div class="dir-card you">
+        <div class="dir-owner">👑 You (Your Gang)</div>
+        <div class="dir-gang">Blades of the Crown</div>
+        <div class="dir-faction">House Escher • 1,250 Cr</div>
+      </div>
+      <div class="dir-card" onclick="jumpToTab('aaron')">
+        <div class="dir-owner">🎯 Aaron</div>
+        <div class="dir-gang">Aaron’s Outcasts</div>
+        <div class="dir-faction">Underhive Outcasts</div>
+      </div>
+      <div class="dir-card" onclick="jumpToTab('enforcers')">
+        <div class="dir-owner">🛡️ Ryan</div>
+        <div class="dir-gang">Ryan’s Enforcers</div>
+        <div class="dir-faction">Palanite / Subjugators</div>
+      </div>
+      <div class="dir-card" onclick="jumpToTab('moebian')">
+        <div class="dir-owner">☣️ Rav</div>
+        <div class="dir-gang">Moebian 6th</div>
+        <div class="dir-faction">Helot Chaos Cults (Nurgle) • 1,410 Cr</div>
+      </div>
+      <div class="dir-card" onclick="jumpToTab('goliath')">
+        <div class="dir-owner">💪 Mark</div>
+        <div class="dir-gang">The Spite Girls</div>
+        <div class="dir-faction">House Goliath • 1,105 Cr</div>
+      </div>
+      <div class="dir-card" onclick="jumpToTab('squats')">
+        <div class="dir-owner">⛏️ Nate</div>
+        <div class="dir-gang">The Bulgarian Split</div>
+        <div class="dir-faction">Ironhead Squats • 995 Cr</div>
+      </div>
+      <div class="dir-card" onclick="jumpToTab('spyrers')">
+        <div class="dir-owner">🦅 Robin</div>
+        <div class="dir-gang">Spyre Hunting Party</div>
+        <div class="dir-faction">Spyre Hunters • 815 Cr</div>
+      </div>
+      <div class="dir-card" onclick="jumpToTab('orlock')">
+        <div class="dir-owner">🐺 Jack</div>
+        <div class="dir-gang">Chasos Hunters 2.0</div>
+        <div class="dir-faction">House Orlock • 920 Cr</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-bar" role="tablist">
+    <button class="tab-btn active" data-tab="doctrine" onclick="openTab('doctrine', this)">⚡ 1. Battle Plan &amp; Terrain</button>
+    <button class="tab-btn" data-tab="fighters" onclick="openTab('fighters', this)">🗡️ 2. Escher Roles</button>
+    <button class="tab-btn" data-tab="aaron" onclick="openTab('aaron', this)">🎯 3. Aaron’s Outcasts</button>
+    <button class="tab-btn" data-tab="enforcers" onclick="openTab('enforcers', this)">🛡️ 4. Ryan’s Enforcers</button>
+    <button class="tab-btn" data-tab="moebian" onclick="openTab('moebian', this)">☣️ 5. Rav’s Moebian 6th</button>
+    <button class="tab-btn" data-tab="goliath" onclick="openTab('goliath', this)">💪 6. Mark’s Spite Girls</button>
+    <button class="tab-btn" data-tab="squats" onclick="openTab('squats', this)">⛏️ 7. Nate’s Ironheads</button>
+    <button class="tab-btn" data-tab="spyrers" onclick="openTab('spyrers', this)">🦅 8. Robin’s Spyrers</button>
+    <button class="tab-btn" data-tab="orlock" onclick="openTab('orlock', this)">🐺 9. Jack’s Chaos Hunters</button>
+  </div>
+
+  <!-- TAB 1: BATTLE PLAN & TERRAIN -->
+  <div id="doctrine" class="tab-panel active">
+    <div class="grid-2">
+      <div class="card">
+        <h2>🎯 Core Battle Plan &amp; Crossfire Protocol</h2>
+        <ul>
+          <li><strong>Anchor High Ground Early:</strong> Claim Tier 2/3 cover with <strong>Copperhead</strong> (Heavy Stubber + Suspensors + Spring Up) to suppress heavy guns and shred 1-Wound troops.</li>
+          <li><strong>3-Way Crossfire Discipline:</strong> Never rush the central killing floor Turn 1. Let heavy-armoured rivals burn ammo and wounds on each other while you hold elevated flanks.</li>
+          <li><strong>Template &amp; Flare Spacing:</strong> Keep fighters spaced <strong>&gt;3" apart</strong> (and &gt;5" vs Mark’s Goliath Incendiary Charges) so one Blast or Photon Flash Flare never pins multiple sisters.</li>
+          <li><strong>Pin to Strip Overwatch:</strong> Charging a Pinned enemy stands them up into engagement. Always shoot dangerous gunners with <strong>+1 Short Acc Lasguns</strong> first to cancel Overwatch while <strong>Black Widow</strong> advances.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>🚀 The 3-Step Overseer Slingshot</h2>
+        <div class="callout">
+          <strong>1. Group Activate:</strong> Activate <strong>Her Majesty</strong> using <em>Group Activation (2)</em> alongside <strong>Black Widow</strong> (and one bodyguard/runner within 3").<br><br>
+          <strong>2. Double-Action Launch:</strong> Spend Her Majesty’s <strong>Overseer (Double)</strong> action to grant Black Widow two immediate Move actions up a blind ladder or across a gantry gap.<br><br>
+          <strong>3. Zero-Reaction Strike:</strong> Take Black Widow’s normal activation immediately, trigger <strong>Chem-synth</strong>, and strike from <strong>3" Versatile range</strong> (<em>Combat Virtuoso</em>) with zero enemy reaction attacks.
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <h2>⏱️ Phase-by-Phase Execution</h2>
+      <div class="grid-3" style="margin-top:8px; margin-bottom:0;">
+        <div>
+          <h3>Phase 1 — Deployment &amp; Turn 1</h3>
+          <p>Perch <strong>Copperhead</strong> on Tier 2/3 cover away from unrailed edges. Hide <strong>Her Majesty</strong> and <strong>Black Widow</strong> behind solid bulkheads within 12" of each other. Split Lasgunners and Little Sisters across two climb routes.</p>
+        </div>
+        <div>
+          <h3>Phase 2 — Turns 2–3 (Pin &amp; Slingshot)</h3>
+          <p>Pin enemy heavy weapons with Lasguns and Heavy Stubber bursts. Zone narrow catwalks with <strong>Miss Whips’ 3" Shock Whip</strong>, then execute the Overseer Slingshot onto isolated Champions or Leaders.</p>
+        </div>
+        <div>
+          <h3>Phase 3 — Endgame &amp; Capture</h3>
+          <p>Use <strong>Black Widow’s 3" Toxin</strong> + Chem-synth to send multi-wound elites straight to <em>Seriously Injured</em> for scenario captures, while <em>Fast Learner</em> Little Sisters lock down upper objectives.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🏗️ Terrain Adaptation Matrix</h2>
+      <div class="grid-3" style="margin-top:8px; margin-bottom:0;">
+        <div>
+          <h3>Vertical Sector Mechanicus</h3>
+          <p>Exploit Escher’s <strong>2+/3+ Initiative</strong> on climbs and gap jumps (especially vs Mark’s 4" Move Goliaths and Nate’s 5+ Init Squats). Keep fighters 2"+ back from unrailed ledges against Knockback guns.</p>
+        </div>
+        <div>
+          <h3>Zone Mortalis Tunnels</h3>
+          <p>Choke points make <strong>Miss Whips’ 3" Versatile Shock Whip</strong> and <strong>Black Widow’s 3" Stiletto Sword</strong> untouchable around corners. Use door terminals to split enemy Group Activations.</p>
+        </div>
+        <div>
+          <h3>Open Ash Wastes / Scatter Ruins</h3>
+          <p>Hug heavy scatter cover Turn 1 so Rav’s Lascannon, Aaron’s Autocannon, and Ryan’s Bolters cannot pick off unarmoured Gangers. Rely on 24" Lasgun pinning until Black Widow closes within 12".</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: ESCHER ROLES -->
+  <div id="fighters" class="tab-panel">
+    <div class="grid-2">
+      <div class="card fighter-card">
+        <div class="avatar" data-img="hermajesty"></div>
+        <div>
+          <h2>Her Majesty — Gang Queen (245 Cr)</h2>
+          <p><strong>Loadout:</strong> Boltgun, Needle pistol (Silent, Toxin), Mesh + Undersuit | <em>Overseer, Group Activation (2)</em></p>
+          <p><strong>Job:</strong> Tempo Engine. Stay behind solid cover within 12" of your strike team to slingshot Black Widow or objective runners.</p>
+          <div class="warn"><strong>Watchout:</strong> Carries <em>Old Battle Wound</em>—keep out of long-range heavy fire early.</div>
+        </div>
+      </div>
+
+      <div class="card fighter-card">
+        <div class="avatar" data-img="blackwidow"></div>
+        <div>
+          <h2>Black Widow — Death-Maiden (295 Cr)</h2>
+          <p><strong>Loadout:</strong> Stiletto sword (3" Versatile via <em>Combat Virtuoso</em>, Toxin), Needle pistol, Chem-synth, Displacer field, Mesh + Undersuit</p>
+          <p><strong>Job:</strong> Primary Assassin &amp; Capturer. Slingshot into 3" range across gaps/railings to bypass Toughness and Armour with zero reaction swings.</p>
+          <div class="warn"><strong>Watchout:</strong> Carries <em>Out Cold</em>—activate Chem-synth before striking when unpinned.</div>
+        </div>
+      </div>
+
+      <div class="card fighter-card">
+        <div class="avatar" data-img="copperhead"></div>
+        <div>
+          <h2>Copperhead — Gang Matriarch (335 Cr)</h2>
+          <p><strong>Loadout:</strong> Heavy stubber (Rapid Fire 2) + Suspensors, Lasgun, Mesh + Undersuit | <em>Spring Up, Group Activation (1)</em></p>
+          <p><strong>Job:</strong> Elevated Fire Base. Claim Tier 2/3 cover early to pin enemy heavies and shred 1-Wound troops.</p>
+          <div class="warn"><strong>Watchout:</strong> Stay away from unguarded edges against Knockback weapons.</div>
+        </div>
+      </div>
+
+      <div class="card fighter-card">
+        <div class="avatar" data-img="misswhips"></div>
+        <div>
+          <h2>Miss Whips — Gang Sister (75 Cr)</h2>
+          <p><strong>Loadout:</strong> Shock whip (3" Versatile, Shock, Melee)</p>
+          <p><strong>Job:</strong> Gantry Bodyguard. Guard catwalk landings and screen Her Majesty, hitting rushers at 3" without allowing reaction attacks.</p>
+          <div class="warn"><strong>Watchout:</strong> Carries <em>Critical Injury</em> (1W, unarmoured)—keep out of open sightlines.</div>
+        </div>
+      </div>
+
+      <div class="card fighter-card">
+        <div class="avatar" data-img="nightshade"></div>
+        <div>
+          <h2>Nightshade, Mamba &amp; Scorpio — Gang Sisters (55 Cr ea)</h2>
+          <p><strong>Loadout:</strong> Lasgun (18"/24", +1 Short Acc, Plentiful) | Nightshade: <em>Specialist</em></p>
+          <p><strong>Job:</strong> Pinning Core &amp; Flank Overwatch. Pair up in mid-level cover to strip enemy Overwatch via pinning before Black Widow closes in.</p>
+        </div>
+      </div>
+
+      <div class="card fighter-card">
+        <div class="avatar" data-img="vixen"></div>
+        <div>
+          <h2>Vixen, Fang &amp; Talon — Little Sisters (45 Cr ea)</h2>
+          <p><strong>Loadout:</strong> Stiletto knife (Toxin), Stub gun (+2 Short Acc, Plentiful, Sidearm) | <em>Fast Learner</em></p>
+          <p><strong>Job:</strong> Objective Runners &amp; Armour-Piercing Finishers. Sprint up secondary ladders, grab objectives, and finish pinned targets for Fast Learner XP.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: AARON'S OUTCASTS -->
+  <div id="aaron" class="tab-panel">
+    <div class="gang-header">
+      <div class="gang-header-top">
+        <div class="gang-name">Target List A: Aaron’s Outcasts (Underhive Outcasts)</div>
+        <div class="gang-meta">Owner: Aaron • Heavy Autocannon + Bounty Hunter Anchor</div>
+      </div>
+      <div class="exploit-box">
+        <strong>Core Gang Exploit:</strong> Aaron’s Outcasts rely on two fragile Champions (<strong>Dutch</strong> &amp; <strong>Quaid</strong>) and soft T3, 1-Wound Hive Scum to screen <strong>Vandoth the Fallen</strong>. Ignore Vandoth early while you pin Dutch, farm the 1-Wound Scum to force early Bottle checks, and save <strong>Black Widow’s 3" Toxin</strong> to bypass Vandoth’s 2+ Heavy Carapace late.
+      </div>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r1">#1 PRIORITY</span> <span class="target-title">Dutch — Champion</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Duck &amp; Cover → Flank</span><span class="tag tag-hunter">Hunters: Copperhead + Black Widow</span></div>
+      </div>
+      <div class="target-gear">Autocannon (Knockback, Unwieldy), Grapnel Launcher, Cameleoline Cloak</div>
+      <p>Top threat and full Champion XP payout. Eliminating him removes Aaron’s only long-range heavy gun and stops Knockback ledge drops. Never cross open catwalks in his sightline Turn 1; pin him with Copperhead or Lasguns to strip Overwatch, then slingshot Black Widow up a blind route for a 3" Versatile strike.</p>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r2">#2 PRIORITY</span> <span class="target-title">Quaid — Champion</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Out-Range / Ambush</span><span class="tag tag-hunter">Hunters: Copperhead (20"+) / Her Majesty / Black Widow</span></div>
+      </div>
+      <div class="target-gear">Plasma Pistol, Autopistol, Gunfighter, Mesh Armour + Undersuit</div>
+      <p>Glass cannon (T3, 2W) inside 12" that pays full Champion XP. Out-range him at 12"–24" with Copperhead or Her Majesty’s Boltgun, or pin him with a Lasgun before Black Widow engages.</p>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r3">#3 PRIORITY</span> <span class="target-title">Kali-dont — Hive Scum</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Zone &amp; Counter</span><span class="tag tag-hunter">Hunters: Miss Whips (3" Shock) / Lasgun Sisters</span></div>
+      </div>
+      <div class="target-gear">Chainsword, Autopistol, Frenzon</div>
+      <p>Fast Frenzon melee threat (T3, 1W). Intercept him on narrow bridges with Miss Whips’ 3" Versatile/Shock reach before his Chainsword can swing, or pin him at range with Lasguns.</p>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r4">#4 PRIORITY</span> <span class="target-title">Kimble, Harry Tasker, Jack Slater &amp; Ben Richards (1x Specialist + 3x Scum)</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Attack Aggressively</span><span class="tag tag-hunter">Hunters: Vixen / Fang / Talon + Lasgun Sisters</span></div>
+      </div>
+      <div class="target-gear">Autogun &amp; Lasguns (T3, 1W)</div>
+      <p>Soft T3, 1-Wound gangers. Dropping 2–3 forces early Bottle checks and feeds <em>Fast Learner</em> XP straight to your Little Sisters.</p>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r5">#5 PRIORITY</span> <span class="target-title">Vandoth the Fallen — Bounty Hunter</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Avoid Early → 3" Toxin Late</span><span class="tag tag-hunter">Hunters: Black Widow (3" Versatile + Chem-synth)</span></div>
+      </div>
+      <div class="target-gear">T4, 3W, Heavy Carapace Armour, Stimm-slug Stash, Boltgun, Crushing Blow, Fearsome</div>
+      <p>Walking fortress (T4, 2+ initial armour). Ignore him while Aaron’s Outcasts and other rivals trade shots, then hit him late with Black Widow’s 3" Versatile Toxin + Chem-synth to bypass his T4 and 2+ save completely.</p>
+    </div>
+  </div>
+
+  <!-- TAB 4: RYAN'S ENFORCERS -->
+  <div id="enforcers" class="tab-panel">
+    <div class="gang-header">
+      <div class="gang-header-top">
+        <div class="gang-name">Target List B: Ryan’s Enforcers (Palanite / Subjugators)</div>
+        <div class="gang-meta">Owner: Ryan • 4+ Flak/Hardened Armour + Concussion Templates</div>
+      </div>
+      <div class="exploit-box">
+        <strong>Core Gang Exploit:</strong> Ryan’s Palanite Enforcers rely on 4+ armour saves, Bolters, Concussion Carbines, and Photon Flash Flares—all of which struggle against <strong>&gt;3" spacing</strong> and <strong>Toxin</strong>. Toxin bypasses their 4+ armour saves completely, and their slow vertical climbs let your Little Sisters claim high objectives first.
+      </div>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r1">#1 PRIORITY</span> <span class="target-title">Palanite Subjugators (Concussion / Grenade Launchers &amp; Vigilance Shields)</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Spread &gt;3" → 3" Toxin Flank</span><span class="tag tag-hunter">Hunters: Black Widow / Lasgun Sisters</span></div>
+      </div>
+      <div class="target-gear">Subjugator Layered Flak + Vigilance Pattern Assault Shield (3+ front save), Concussion Carbine / Grenade Launcher</div>
+      <p>Concussion templates pin on hit and reduce Initiative, while Vigilance shields block front shooting. Keep sisters spaced &gt;3" apart, pin them from elevation with Lasguns, and strike their flanks with Black Widow’s 3" Toxin.</p>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r2">#2 PRIORITY</span> <span class="target-title">Palanite Captain &amp; Sergeants (Bolters / Shock Batons)</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Out-Range or 3" Ambush</span><span class="tag tag-hunter">Hunters: Black Widow / Copperhead</span></div>
+      </div>
+      <div class="target-gear">Enforcer Boltguns (24", AP -1, D2), Photon Flash Flares, Threat Response</div>
+      <p>Watch out for <em>Threat Response</em> (lets them counter-charge if you charge within 6"). Never charge directly—use Black Widow’s 3" Versatile strike or Her Majesty’s Silent Needle Pistol from cover.</p>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r3">#3 PRIORITY</span> <span class="target-title">Palanite Patrolmen (Boltguns / Combat Shotguns / Flash Flares)</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Pin &amp; Pierce Armour</span><span class="tag tag-hunter">Hunters: Vixen, Fang, Talon + Lasguns</span></div>
+      </div>
+      <div class="target-gear">Flak Armour (4+ vs Blast, 5+ standard), Boltguns, Photon Flash Flares</div>
+      <p>1-Wound models whose 4+/5+ armour means nothing against Stiletto Knives and Needle Pistols. Pin them with +1 Short Acc Lasguns and finish them with Little Sisters for <em>Fast Learner</em> XP.</p>
+    </div>
+  </div>
+
+  <!-- TAB 5: RAV'S MOEBIAN 6TH -->
+  <div id="moebian" class="tab-panel">
+    <div class="gang-header">
+      <div class="gang-header-top">
+        <div class="gang-name">Target List C: Rav’s Moebian 6th (Helot Chaos Cults — Nurgle)</div>
+        <div class="gang-meta">Owner: Rav • Rating: 1,410 Cr • 12 Fighters • 0 Champions • 9+ Leadership</div>
+      </div>
+      <div class="exploit-box">
+        <strong>Core Gang Exploit:</strong> Despite Rav’s 1,410 Cr rating, every single fighter is <strong>Toughness 3, 1 Wound</strong> (except Captain Wolfer at 2W), they have <strong>zero Champions</strong>, and their gang sits on a brittle <strong>9+ Leadership / 7+ Cool</strong>. Dropping just 4 Troopers triggers immediate Bottle and Nerve cascades—and neither heavy gunner has <em>Spring Up</em> or <em>Nerves of Steel</em>.
+      </div>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r1">#1 PRIORITY</span> <span class="target-title">Omen &amp; Walec Barclay — LasCan Crew (Specialist • 285 Cr)</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Pin Every Turn → Delete</span><span class="tag tag-hunter">Hunters: Copperhead / Lasgun Sisters</span></div>
+      </div>
+      <div class="target-gear">Lascannon (24"/48", +1 Long Acc, Str 10, AP -3, D3, Knockback, Unwieldy), Mono-sight, Suspensors | T3, 1W, NO ARMOUR</div>
+      <p>Rav’s most lethal gun sits on an <strong>unarmoured 1-Wound Cultist</strong>. Never stand in open lanes Turn 1; hit him with +1 Short Acc Lasguns or Copperhead’s Heavy Stubber—a single pin completely shuts down his Unwieldy Lascannon.</p>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r2">#2 PRIORITY</span> <span class="target-title">Varek Mordane — Heavy Gunner (Ganger • 275 Cr)</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Suppress &amp; Pin</span><span class="tag tag-hunter">Hunters: Copperhead / Nightshade / Mamba</span></div>
+      </div>
+      <div class="target-gear">Master-crafted Heavy Stubber (20"/40", Rapid Fire 2, Unwieldy), Mesh Armour, Suspensors | T3, 1W</div>
+      <p>Another 275-credit gun platform on a <strong>1-Wound ganger</strong> with no <em>Spring Up</em>. Pinning him forces him to waste an action standing up before firing.</p>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r3">#3 PRIORITY</span> <span class="target-title">Captain Wolfer, Moebian 6th Hero — Cult Demagogue Leader (230 Cr)</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: 3" Versatile Ambush</span><span class="tag tag-hunter">Hunters: Black Widow (3" Strike) / Her Majesty</span></div>
+      </div>
+      <div class="target-gear">Bolt Pistol, Power Sword (Parry, Power, AP -2), Mesh + Undersuit | Skills: Nerves of Steel | T3, 2W</div>
+      <p><em>Nerves of Steel</em> lets him ignore Lasgun pinning, and his Power Sword has <em>Parry</em>. Counter him cleanly with <strong>Black Widow’s 3" Combat Virtuoso Stiletto Sword</strong> + Chem-synth—Toxin bypasses his 4+ save with zero reaction swings.</p>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r4">#4 PRIORITY</span> <span class="target-title">Jorren Drask (Grenadier • 100 Cr) &amp; Big Pell (Chaos Ogryn Brute • 105 Cr)</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Space &gt;3" &amp; Zone at 3"</span><span class="tag tag-hunter">Hunters: Miss Whips / Black Widow / Lasguns</span></div>
+      </div>
+      <div class="target-gear">Drask: Grenade Launcher (Frag 3" Blast Knockback / Krak AP -2) | Big Pell: Heavy Club (Concussion, D2), Ceramite Shield, Mesh (1W)</div>
+      <p>Space sisters &gt;3" apart against Drask’s Frag templates. Note that Big Pell only has <strong>1 Wound</strong>—zone his Concussion club with Miss Whips’ 3" Shock Whip or drop him with Toxin.</p>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r5">#5 PRIORITY</span> <span class="target-title">Troopers 1–7 (Kellan Voss, Drevan Kord, Lucan, Merek, Silas, Oren, Bastian • 50–85 Cr)</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Hunt for XP &amp; Bottle</span><span class="tag tag-hunter">Hunters: Vixen, Fang, Talon + Lasguns</span></div>
+      </div>
+      <div class="target-gear">Lasguns (Troopers 1–2 also carry Backstab Fighting Knives; Bastian Grell carries a Cred Sniffer)</div>
+      <p>Unarmoured T3, 1-Wound targets. Farm four of them with your Little Sisters to earn <em>Fast Learner</em> XP and force 9+ Leadership Bottle checks.</p>
+    </div>
+  </div>
+
+  <!-- TAB 6: MARK'S SPITE GIRLS -->
+  <div id="goliath" class="tab-panel">
+    <div class="gang-header">
+      <div class="gang-header-top">
+        <div class="gang-name">Target List D: Mark’s Spite Girls (House Goliath)</div>
+        <div class="gang-meta">Owner: Mark • Rating: 1,105 Cr • 6 Fighters • All Toughness 4 • 4+ Armour</div>
+      </div>
+      <div class="exploit-box">
+        <strong>Core Gang Exploit:</strong> Every Goliath in Mark’s gang is <strong>Toughness 4</strong> with 4+ armour (meaning S3 Lasguns only wound on 5+ and bounce off armour), <strong>BUT</strong> they only have <strong>6 fighters</strong>, <strong>4" Move</strong>, and weak <strong>8+ Leadership</strong>. Taking out just <strong>2 Goliaths</strong> forces Bottle checks—and your <strong>Toxin</strong> weapons ignore T4 and 4+ armour completely.
+      </div>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r1">#1 PRIORITY</span> <span class="target-title">BIG MCLARGECUNT — Stimmer Champion (260 Cr)</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Screen &amp; 3" Toxin Strike</span><span class="tag tag-hunter">Hunters: Black Widow (3" Versatile) + Miss Whips</span></div>
+      </div>
+      <div class="target-gear">Paired ‘Pulverizers’ (S+1, AP -1, Pulverise), Frenzon, Grapnel Launcher, Mesh + Undersuit | Skills: Nerves of Steel | WS 2+, T4, 2W</div>
+      <p>Top melee blender with a <strong>Grapnel Launcher</strong> to jump onto upper tiers and <em>Nerves of Steel</em> to shrug off Lasgun pins. Never let him charge; screen bridges with Miss Whips’ 3" Shock Whip and slingshot Black Widow with Chem-synth to strike at 3" Versatile range with zero reaction swings.</p>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r2">#2 PRIORITY</span> <span class="target-title">PRINCESS — Forge Tyrant Leader (335 Cr)</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Space &gt;5" &amp; Avoid Edges</span><span class="tag tag-hunter">Hunters: Black Widow / Her Majesty (Needle Pistol)</span></div>
+      </div>
+      <div class="target-gear">Boltgun (BS 2+), Incendiary Charges (5" Blast, Blaze!), Power Hammer, Mesh + Undersuit | Skills: Hurl | T4, 2W</div>
+      <p>Her <strong>5" Blast Incendiary Charges</strong> set sisters on fire (<em>Blaze</em>), and <em>Hurl</em> throws adjacent fighters off ledges. Keep sisters &gt;5" apart, stay back from unrailed edges, and exploit her 4" Move on vertical climbs.</p>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r3">#3 PRIORITY</span> <span class="target-title">SWEETUMS — Bruiser Ganger (155 Cr)</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Pin &amp; Snipe</span><span class="tag tag-hunter">Hunters: Lasgun Sisters + Little Sisters</span></div>
+      </div>
+      <div class="target-gear">Grenade Launcher (24" Frag 3" Blast Knockback / Krak AP -2 D2), Stub Gun (Dumdum), Furnace Plates | T4, 1W</div>
+      <p>Mark’s only 24" heavy weapon sits on a <strong>1-Wound Bruiser</strong> without <em>Nerves of Steel</em>. Pin her every turn with +1 Short Acc Lasguns and finish her with Toxin knives.</p>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r4">#4 PRIORITY</span> <span class="target-title">MOIST GARY — Bruiser Ganger (135 Cr)</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Pin Before Moving</span><span class="tag tag-hunter">Hunters: Lasgun Sisters / Copperhead</span></div>
+      </div>
+      <div class="target-gear">Boltgun (12"/24", Rapid Fire 1, D2), Furnace Plates | BS 3+, T4, 1W</div>
+      <p>Dangerous D2 Boltgun on a 1-Wound ganger. Keep him pinned with Lasguns so he cannot fire after standing up.</p>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r5">#5 PRIORITY</span> <span class="target-title">SHIRLEY’S BANE (125 Cr) &amp; FUZZY BUNS (95 Cr) — Bruiser Gangers</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Out-Range &amp; Farm Bottle</span><span class="tag tag-hunter">Hunters: Vixen, Fang, Talon + Copperhead</span></div>
+      </div>
+      <div class="target-gear">Stub Cannons (18" max range, Str 5, Knockback), Two-Handed Axe / Spud-Jacker | T4, 1W</div>
+      <p>Capped at 18" range and 4" Move, though every weapon carries <strong>Knockback</strong>. Stay away from catwalk ledges, out-range them at 19"+, and drop two Goliaths to force Bottle checks.</p>
+    </div>
+  </div>
+
+  <!-- TAB 7: NATE'S IRONHEADS -->
+  <div id="squats" class="tab-panel">
+    <div class="gang-header">
+      <div class="gang-header-top">
+        <div class="gang-name">Target List E: Nate’s Bulgarian Split (Ironhead Squat Prospectors)</div>
+        <div class="gang-meta">Owner: Nate • Rating: 995 Cr • 8 Fighters • 4" Move • T4 • 5+ Initiative</div>
+      </div>
+      <div class="exploit-box">
+        <strong>Core Gang Exploit:</strong> Every Squat in Nate’s gang moves at a crawl (<strong>4" Move</strong>), fails vertical climbs/gap jumps on <strong>5+ Initiative</strong>, and carries <strong>Toughness 4 + 5+ Mesh Armour</strong>. Out-climb them onto Tier 2/3 perches, pin their 1-Wound Drill-kyn with Lasguns, and use <strong>Toxin</strong> to slice right through T4 and Mesh Armour. Dropping 3 Squats triggers Bottle checks.
+      </div>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r1">#1 PRIORITY</span> <span class="target-title">MC Hammer — Charter Master Leader (260 Cr)</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: 3" Versatile Strike Only</span><span class="tag tag-hunter">Hunters: Black Widow (3" Versatile + Chem-synth)</span></div>
+      </div>
+      <div class="target-gear">Ironhead Power Fist (S+2, AP -2, D2, Pulverise), Power Hammer, Grapnel Launcher, Mesh Armour | Skill: Crushing Blow | T4, 3W</div>
+      <p>Slow 4" Move, <strong>EXCEPT</strong> his <strong>Grapnel Launcher</strong> lets him launch straight onto upper walkways, and his Power Fist deletes anything in base contact. Never enter base-to-base contact; slingshot Black Widow with Chem-synth to strike at <strong>3" Versatile range</strong> with zero reaction swings.</p>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r2">#2 PRIORITY</span> <span class="target-title">Heavy — Drill-kyn Specialist (160 Cr)</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Out-Range &amp; Pin</span><span class="tag tag-hunter">Hunters: Copperhead (25"+) / Lasgun Sisters</span></div>
+      </div>
+      <div class="target-gear">Ironhead Boltgun (12"/24", Rapid Fire 2, AP -1, D2), Mesh Armour | Skill: Ballistics Expert | T4, 1W</div>
+      <p><em>Rapid Fire (2)</em> Boltgun with <em>Ballistics Expert</em> on a <strong>1-Wound, 6+ Cool</strong> Squat. Out-range him at 25"+ with Copperhead or pin him every turn with +1 Short Acc Lasguns.</p>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r3">#3 PRIORITY</span> <span class="target-title">Gunslinger — Drill Master Champion (190 Cr)</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Kite at 13"–24" → Ambush</span><span class="tag tag-hunter">Hunters: Lasgun Sisters → Black Widow</span></div>
+      </div>
+      <div class="target-gear">Ironhead Bolt Pistol (6"/12", Rapid Fire 1, AP -1, D2), Mesh Armour | Skill: Gunfighter | BS 3+, T4, 2W</div>
+      <p>Short-ranged (12" max) and 4" Move, paying full Champion XP. Keep him pinned at 13"–24" with Lasguns before finishing him with Black Widow.</p>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r4">#4 PRIORITY</span> <span class="target-title">Gunner (90 Cr) &amp; Long Autogun (90 Cr) — Drill-kyn</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Pin &amp; Toxin Rush</span><span class="tag tag-hunter">Hunters: Lasgun Sisters + Vixen / Fang / Talon</span></div>
+      </div>
+      <div class="target-gear">Ironhead Autoguns (8"/24", Rapid Fire 2), Mesh Armour | Gunner: Precision Shot | T4, 1W</div>
+      <p><em>Rapid Fire (2)</em> autoguns on 1-Wound models; pin from cover and finish with Little Sister Toxin knives.</p>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r5">#5 PRIORITY</span> <span class="target-title">Stubby fakefist (75 Cr), Autogun noob (75 Cr) &amp; The Sprog (55 Cr)</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Farm XP &amp; Bottle</span><span class="tag tag-hunter">Hunters: Vixen, Fang, Talon</span></div>
+      </div>
+      <div class="target-gear">Stubby: Scrap skill | The Sprog: 5" Move + Sprint (objective runner) | T4, 1W</div>
+      <p>Watch for <em>The Sprog</em> sprinting for objectives; drop three Squats total to trigger 7+ Leadership Bottle checks.</p>
+    </div>
+  </div>
+
+  <!-- TAB 8: ROBIN'S SPYRERS -->
+  <div id="spyrers" class="tab-panel">
+    <div class="gang-header">
+      <div class="gang-header-top">
+        <div class="gang-name">Target List F: Robin’s Spyre Hunting Party</div>
+        <div class="gang-meta">Owner: Robin • Rating: 815 Cr • 3 Elite Fighters • Active Rig Glitches • 1 Kill = Bottle</div>
+      </div>
+      <div class="exploit-box">
+        <strong>Core Gang Exploit (3-Model Elite Trap):</strong> With only <strong>3 Spyre Hunters</strong> on the entire board, taking down <strong>just 1 of Robin’s Spyrers</strong> forces immediate Bottle checks (on 7+ Leadership), and every takedown pays full Champion/Leader XP. Both the <strong>Orrus</strong> and <strong>Yeld</strong> carry active <strong>Rig Glitches</strong>, none have <em>Nerves of Steel</em> or <em>Spring Up</em>, and you out-activate them 10-to-3!
+      </div>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r1">#1 PRIORITY</span> <span class="target-title">Hunt master — Spyre Hunt Master Leader (245 Cr)</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Out-Reach at 2.5"–3"</span><span class="tag tag-hunter">Hunters: Black Widow (3" Versatile + Chem-synth)</span></div>
+      </div>
+      <div class="target-gear">Naga Blade (2" Versatile, S+2, AP -1, D2, Disarm), Mirror Shield (Energy Shield, Parry), Sovereign Rig | WS 2+, T3, 3W</div>
+      <p>His Naga Blade reaches <strong>2" Versatile</strong>, while <strong>Black Widow’s Combat Virtuoso</strong> reaches <strong>3" Versatile</strong>. Position Black Widow between <strong>2.1" and 3.0"</strong> with Chem-synth active—she strikes first with Toxin (bypassing his Mirror Shield completely) while his 2" blade cannot swing back!</p>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r2">#2 PRIORITY</span> <span class="target-title">Orrus — Orrus Spyre Hunter Champion (350 Cr)</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Pin at 21"+ → 3" Toxin</span><span class="tag tag-hunter">Hunters: Copperhead (21"–40") + Black Widow</span></div>
+      </div>
+      <div class="target-gear">Bolt Launchers x2 (8"/20", Rapid Fire 1, AP -1), Paired Orrus Power Talons (AP -3, Rain of Blows) | T4, 3W | Rig Glitch: Multiple Glitches</div>
+      <p>Slowest Spyrer (5" Move) with 20" max range and <strong>Multiple Glitches</strong>. Pin him from 21"–40" with Copperhead’s Heavy Stubber (he lacks <em>Spring Up</em>), then slingshot Black Widow into 3" Versatile range so his AP -3 talons never get to swing.</p>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r3">#3 PRIORITY</span> <span class="target-title">Yeld — Yeld Spyre Hunter Champion (220 Cr)</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Guard Edges &amp; Pin</span><span class="tag tag-hunter">Hunters: Lasgun Sisters + Miss Whips + Little Sisters</span></div>
+      </div>
+      <div class="target-gear">Paired Yeld Missile Gauntlets (15"/30", Str 5, Knockback, Rapid Fire 1), Yeld Wings (7" Move + Mighty Leap) | T3, 2W | Rig Glitch: Targeting Uplink Disruption</div>
+      <p>Fastest flanker (7" Move + <em>Mighty Leap</em>) with 30" Knockback missiles, but <strong>Toughness 3, 2 Wounds</strong> and suffering <strong>Targeting Uplink Disruption</strong>. Stay away from unrailed catwalk edges, pin him every turn with +1 Short Acc Lasguns, and finish him with Toxin.</p>
+    </div>
+  </div>
+
+  <!-- TAB 9: JACK'S CHASOS HUNTERS 2.0 -->
+  <div id="orlock" class="tab-panel">
+    <div class="gang-header">
+      <div class="gang-header-top">
+        <div class="gang-name">Target List G: Jack’s Chasos Hunters 2.0 (House Orlock)</div>
+        <div class="gang-meta">Owner: Jack • Rating: 920 Cr • 6 Fighters (5 + Cyber-Mastiff) • Short-Range 12" Rush • All T3</div>
+      </div>
+      <div class="exploit-box">
+        <strong>Core Gang Exploit:</strong> Every single fighter in Jack’s gang has <strong>zero weapons beyond 12" range</strong> (Meltagun, Bolt Pistols, Sawn-off Shotgun, Stub Gun, Grenades) and <strong>Toughness 3</strong>! Out-range them at 13"–24" with your Lasguns and 20"–40" with Copperhead’s Heavy Stubber—and remember that dropping just <strong>2 of Jack’s fighters</strong> triggers immediate Bottle checks.
+      </div>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r1">#1 PRIORITY</span> <span class="target-title">Big lad — Arms Master Champion (380 Cr) + Cyber-mastiff</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Out-Range at 13"+ → 3" Strike</span><span class="tag tag-hunter">Hunters: Copperhead (13"+) / Black Widow (3" Strike)</span></div>
+      </div>
+      <div class="target-gear">Meltagun (6"/12", Str 8, AP -4, D3, Melta, Scarce), Mesh Armour, Cred Sniffer, Cyber-mastiff (Loyal Protector, Disarm) | Skills: Nerves of Steel, Inspirational | T3, 2W</div>
+      <p>380-credit linchpin carrying a 12" Meltagun, <em>Nerves of Steel</em>, and a bodyguard Cyber-mastiff (<em>Loyal Protector</em> blocks charges against Big lad unless the Mastiff is pinned or engaged first). Melt his 2 Wounds from 13"+ with Copperhead, or pin/kill the Cyber-mastiff first before Black Widow strikes from 3" Versatile range.</p>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r2">#2 PRIORITY</span> <span class="target-title">Princess b — Road Captain Leader (205 Cr)</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Kite at 13"+ or 3" Ambush</span><span class="tag tag-hunter">Hunters: Black Widow (3" Versatile) / Her Majesty</span></div>
+      </div>
+      <div class="target-gear">Bolt Pistol (12"), Chainsword (Parry, Rending), Fighting Knife (Backstab), Mesh Armour | Skills: Counter-attack, Inspirational | T3, 3W</div>
+      <p><em>Counter-attack</em> punishes melee opponents in base contact, and her Bolt Pistol stops at 12". Either shoot her safely from 13"–24" or strike at <strong>3" Versatile range</strong> with Black Widow + Chem-synth so <em>Counter-attack</em> never triggers.</p>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r3">#3 PRIORITY</span> <span class="target-title">Jumpman (145 Cr) &amp; Jump man 2.0 (110 Cr) — Wrecker Prospects</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Zone Landings &amp; Pin</span><span class="tag tag-hunter">Hunters: Miss Whips (3" Shock) / Lasgun Sisters</span></div>
+      </div>
+      <div class="target-gear">Jump Boosters (6" Move + Mighty Leap), Flak Armour (6+ save) | Jumpman: Krak Grenades, Sawn-off Shotgun (Scattershot / Solid Knockback), Dodge | Jump man 2.0: Bolt Pistol | T3, 1W</div>
+      <p>Fast vertical jumpers (T3, 1W, 6+ Flak save) who threaten upper tiers early, though <em>Hot-headed</em> makes them vulnerable to Nerve checks. Guard upper landings with <strong>Miss Whips’ 3" Shock Whip</strong> and pin them out of the air with +1 Short Acc Lasguns.</p>
+    </div>
+
+    <div class="target-card">
+      <div class="target-top">
+        <div><span class="rank-badge r4">#4 PRIORITY</span> <span class="target-title">Specs — Gunner Specialist (80 Cr)</span></div>
+        <div class="meta-strip"><span class="tag tag-posture">Posture: Space &gt;3" &amp; Farm Bottle</span><span class="tag tag-hunter">Hunters: Vixen, Fang, Talon + Lasguns</span></div>
+      </div>
+      <div class="target-gear">Frag Grenades (Blast 3", Knockback), Stub Gun (12") | T3, 1W | Lasting Injury: Critical Injury</div>
+      <p>Unarmoured 1-Wound Specialist carrying a <em>Critical Injury</em>. Space sisters &gt;3" apart against his Frag grenades and drop him early for easy <em>Fast Learner</em> XP and Bottle pressure.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openTab(id, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if (btn) btn.classList.add('active');
+  }
+
+  function jumpToTab(id) {
+    const btn = document.querySelector(`.tab-btn[data-tab="${id}"]`);
+    openTab(id, btn);
+    if (btn) btn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // Case- and folder-resilient GitHub Pages portrait loader
+  document.querySelectorAll('[data-img]').forEach(el => {
+    const base = el.getAttribute('data-img');
+    const title = base.charAt(0).toUpperCase() + base.slice(1);
+    const upper = base.toUpperCase();
+    const folders = ['images', 'Images'];
+    const names = [base, title, upper];
+    const exts = ['jpg', 'jpeg', 'png', 'webp', 'JPG', 'JPEG', 'PNG'];
+    const candidates = [];
+    folders.forEach(f => names.forEach(n => exts.forEach(e => candidates.push(`${f}/${n}.${e}`))));
+
+    let idx = 0;
+    const img = document.createElement('img');
+    img.alt = base;
+    img.onload = () => { el.innerHTML = ''; el.appendChild(img); };
+    img.onerror = () => {
+      idx++;
+      if (idx < candidates.length) img.src = candidates[idx];
+    };
+    img.src = candidates[0];
+  });
+</script>
+</body>
+</html>

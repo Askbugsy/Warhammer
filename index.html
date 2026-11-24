@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Blades of the Crown — House Escher Tactical Deck</title>
+<style>
+  :root {
+    --bg: #0b090e;
+    --panel: #14101a;
+    --panel2: #1c1624;
+    --plum: #3b1742;
+    --plum-bright: #6b2478;
+    --gold: #d4af37;
+    --gold-dim: #8f7322;
+    --crimson: #c93b4b;
+    --emerald: #34a875;
+    --cyan: #3da5d9;
+    --amber: #e08e36;
+    --text: #efe9f4;
+    --muted: #a699b3;
+    --border: rgba(212, 175, 55, 0.26);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: radial-gradient(circle at top right, #1f1126 0%, var(--bg) 55%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.45;
+    padding-bottom: 56px;
+  }
+  a { text-decoration: none; color: inherit; }
+
+  /* Sticky Top Navigation Bar */
+  .topbar {
+    position: sticky; top: 0; z-index: 60;
+    background: rgba(11, 9, 14, 0.94);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .crest {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1.5px solid var(--gold);
+    background: var(--plum);
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: var(--gold); font-size: 13px; flex-shrink: 0;
+  }
+  .crest img { width: 100%; height: 100%; object-fit: cover; }
+  .brand-title { font-size: 15px; font-weight: 800; letter-spacing: 0.6px; color: var(--gold); text-transform: uppercase; }
+  .brand-sub { font-size: 11px; color: var(--muted); }
+  .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    padding: 7px 12px; border-radius: 7px; font-size: 12px; font-weight: 700;
+    border: 1px solid var(--border); background: var(--panel2); color: var(--text);
+    cursor: pointer; transition: 0.15s; display: inline-flex; align-items: center; gap: 5px;
+  }
+  .btn:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-active {
+    background: linear-gradient(135deg, var(--plum), #261430);
+    border-color: var(--gold); color: var(--gold);
+  }
+
+  /* Hero & Gang Summary */
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 14px; }
+  .hero {
+    margin: 16px 0 14px; padding: 18px 20px;
+    background: linear-gradient(135deg, rgba(59, 23, 66, 0.72), rgba(20, 16, 26, 0.95));
+    border: 1px solid var(--border); border-radius: 12px;
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px;
+  }
+  .hero h1 { font-size: 21px; color: var(--gold); letter-spacing: 0.5px; margin-bottom: 4px; }
+  .hero p { font-size: 13px; color: var(--muted); max-width: 680px; }
+  .summary-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .pill {
+    font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 999px;
+    background: rgba(11, 9, 14, 0.78); border: 1px solid var(--border); color: var(--gold);
+  }
+
+  /* Filter & Tracker Controls */
+  .toolbar {
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px;
+    margin-bottom: 14px;
+  }
+  .filter-group { display: flex; flex-wrap: wrap; gap: 6px; }
+  .filter-btn {
+    padding: 6px 11px; border-radius: 7px; font-size: 12px; font-weight: 700;
+    background: var(--panel); border: 1px solid var(--border); color: var(--muted);
+    cursor: pointer; transition: 0.15s;
+  }
+  .filter-btn:hover { color: var(--text); border-color: var(--gold-dim); }
+  .filter-btn.active {
+    background: linear-gradient(135deg, var(--plum), #261430);
+    border-color: var(--gold); color: var(--gold);
+  }
+  .reset-btn {
+    padding: 6px 11px; border-radius: 7px; font-size: 12px; font-weight: 700;
+    background: rgba(201, 59, 75, 0.16); border: 1px solid rgba(201, 59, 75, 0.45);
+    color: #ff9ba6; cursor: pointer;
+  }
+  .reset-btn:hover { background: rgba(201, 59, 75, 0.28); }
+
+  /* Fighter Cards Grid */
+  .deck-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 14px;
+  }
+  .f-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 15px;
+    display: flex; flex-direction: column; gap: 10px;
+    transition: opacity 0.2s, border-color 0.2s;
+  }
+  .f-card.activated {
+    opacity: 0.52;
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+  .f-head { display: flex; gap: 12px; align-items: center; }
+  .avatar {
+    width: 64px; height: 64px; border-radius: 10px; flex-shrink: 0;
+    border: 1.5px solid var(--gold); background: var(--plum);
+    overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: var(--gold); font-size: 18px;
+  }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .avatar::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(11,9,14,0.6), transparent 55%);
+    pointer-events: none;
+  }
+  .f-title-wrap { flex: 1; min-width: 0; }
+  .f-name-row { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+  .f-name { font-size: 16.5px; font-weight: 800; color: #fff; }
+  .f-cost {
+    font-size: 11.5px; font-weight: 800; padding: 2px 8px; border-radius: 6px;
+    background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold-dim); color: var(--gold);
+  }
+  .f-role { font-size: 12px; color: var(--gold); font-weight: 700; margin-top: 2px; }
+  .f-skills { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+
+  /* Stat Strip */
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(10, 1fr);
+    background: var(--panel2); border: 1px solid var(--border); border-radius: 8px;
+    overflow: hidden; text-align: center;
+  }
+  .stat-cell { padding: 4px 2px; border-right: 1px solid rgba(255,255,255,0.06); }
+  .stat-cell:last-child { border-right: none; }
+  .stat-lbl { font-size: 9.5px; font-weight: 800; color: var(--muted); text-transform: uppercase; }
+  .stat-val { font-size: 12px; font-weight: 800; color: #fff; }
+
+  /* Weapons & Gear */
+  .wep-table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+  .wep-table th {
+    text-align: left; color: var(--muted); font-weight: 700; padding: 3px 4px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .wep-table td { padding: 4px 4px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: top; }
+  .wep-name { font-weight: 700; color: #f6e299; }
+  .trait-pill {
+    display: inline-block; font-size: 10.5px; padding: 1px 6px; border-radius: 4px;
+    background: rgba(59, 23, 66, 0.55); border: 1px solid rgba(212, 175, 55, 0.25);
+    color: #e6d8f2; margin: 1px 2px 1px 0;
+  }
+  .gear-line { font-size: 12px; color: #dfd7e8; }
+  .injury-tag {
+    font-size: 11.5px; padding: 5px 8px; border-radius: 6px;
+    background: rgba(201, 59, 75, 0.15); border-left: 3px solid var(--crimson);
+    color: #ffb3bc;
+  }
+
+  /* Interactive Status Controls */
+  .status-bar {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 6px;
+    border-top: 1px solid rgba(255,255,255,0.07);
+  }
+  .st-btn {
+    flex: 1; min-width: 72px; padding: 6px 6px; border-radius: 6px;
+    font-size: 11px; font-weight: 800; cursor: pointer;
+    background: var(--panel2); border: 1px solid var(--border); color: var(--muted);
+    transition: 0.15s; text-align: center;
+  }
+  .st-btn.active-ready { background: rgba(52, 168, 117, 0.22); border-color: var(--emerald); color: #8ff0c3; }
+  .st-btn.active-act { background: rgba(61, 165, 217, 0.2); border-color: var(--cyan); color: #9be0ff; }
+  .st-btn.active-pin { background: rgba(224, 142, 54, 0.22); border-color: var(--amber); color: #ffd099; }
+  .st-btn.active-inj { background: rgba(201, 59, 75, 0.25); border-color: var(--crimson); color: #ff9ba6; }
+
+  /* Quick Rules Footer Reference */
+  .rules-box {
+    margin-top: 18px; background: var(--panel); border: 1px solid var(--border);
+    border-radius: 12px; padding: 15px 18px;
+  }
+  .rules-box h2 { font-size: 15px; color: var(--gold); margin-bottom: 8px; }
+  .rules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; font-size: 12.5px; }
+  .rule-item { background: var(--panel2); padding: 9px 11px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06); }
+  .rule-item strong { color: var(--gold); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="crest" data-img="gangcrest">BC</div>
+    <div>
+      <div class="brand-title">Blades of the Crown</div>
+      <div class="brand-sub">House Escher • Tabletop Fighter Deck</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a class="btn btn-active" href="index.html">⚔️ Tactical Deck</a>
+    <a class="btn" href="bible.html">📖 Character Bible</a>
+    <a class="btn" href="campaign.html">🗺️ Campaign Playbook</a>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="hero">
+    <div>
+      <h1>Live Tabletop Fighter Deck</h1>
+      <p>Mobile-first stat cards, weapon profiles, trait reminders, and live activation/status tracking for all 10 fighters.</p>
+      <div class="summary-pills">
+        <span class="pill">Gang Rating: 1,250 Cr</span>
+        <span class="pill">10 Fighters</span>
+        <span class="pill">Bottle Check: 4+ Out/Injured</span>
+        <span class="pill">Leader Ld: 5+ • Cl: 5+</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <div class="filter-group">
+      <button class="filter-btn active" onclick="filterCards('all', this)">All (10)</button>
+      <button class="filter-btn" onclick="filterCards('hierarchy', this)">Leaders &amp; Champs (3)</button>
+      <button class="filter-btn" onclick="filterCards('ganger', this)">Gang Sisters (4)</button>
+      <button class="filter-btn" onclick="filterCards('juve', this)">Little Sisters (3)</button>
+      <button class="filter-btn" onclick="filterCards('toxin', this)">Toxin Carriers (5)</button>
+    </div>
+    <button class="reset-btn" onclick="resetTurn()">🔄 New Turn (Reset Ready)</button>
+  </div>
+
+  <div class="deck-grid" id="deck"></div>
+
+  <div class="rules-box">
+    <h2>⚡ Key Weapon &amp; Skill Quick-Reference</h2>
+    <div class="rules-grid">
+      <div class="rule-item"><strong>Toxin:</strong> Instead of normal Wound roll, roll D6 + modifiers vs target's Toughness (or equal/beat on Chem-synth). If equal/higher, bypasses Wounds &amp; Armour straight to Injury dice!</div>
+      <div class="rule-item"><strong>Combat Virtuoso (Black Widow):</strong> Adds <em>Versatile (3")</em> to melee weapons—strike up to 3" away with zero enemy reaction attacks.</div>
+      <div class="rule-item"><strong>Overseer (Her Majesty):</strong> Double action; pick friendly fighter within 12" to immediately make 2 actions. Pairs with <em>Group Activation (2)</em>.</div>
+      <div class="rule-item"><strong>Spring Up (Copperhead):</strong> Pass Initiative (3+) when Pinned to stand up for free without spending an action.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const fighters = [
+  {
+    id: "hermajesty",
+    name: "Her Majesty",
+    role: "Gang Queen • Leader",
+    cost: "245 Cr",
+    cats: ["hierarchy", "toxin"],
+    stats: { M:'5"', WS:'3+', BS:'3+', S:'3', T:'3', W:'3', I:'2+', A:'3', Ld:'5+', Cl:'5+' },
+    skills: "Overseer • Gang Hierarchy (Leader) • Group Activation (2) • Tools of the Trade",
+    wargear: "Mesh armour, Undersuit (5+ save)",
+    injury: "Old Battle Wound",
+    weapons: [
+      { name: "Boltgun", rng: '12" / 24"', acc: "+1 / -", str: "4", ap: "-1", d: "2", am: "6+", traits: ["Rapid Fire (1)"] },
+      { name: "Needle pistol", rng: '4" / 9"', acc: "+2 / -", str: "-", ap: "-", d: "-", am: "6+", traits: ["Scarce", "Sidearm", "Silent", "Toxin"] }
+    ]
+  },
+  {
+    id: "blackwidow",
+    name: "Black Widow",
+    role: "Death-Maiden • Champion",
+    cost: "295 Cr",
+    cats: ["hierarchy", "toxin"],
+    stats: { M:'6"', WS:'2+', BS:'4+', S:'3', T:'3', W:'2', I:'2+', A:'3', Ld:'7+', Cl:'5+' },
+    skills: "Combat Virtuoso (3\" Versatile) • Gang Hierarchy (Champion) • Group Activation (1) • Poison Blood",
+    wargear: "Chem-synth, Displacer field (4+ dodge), Mesh armour, Undersuit",
+    injury: "Out Cold",
+    weapons: [
+      { name: "Stiletto sword", rng: '- / 3"', acc: "-", str: "-", ap: "-", d: "-", am: "-", traits: ["Melee", "Parry", "Toxin", "Versatile (3\")"] },
+      { name: "Needle pistol", rng: '4" / 9"', acc: "+2 / -", str: "-", ap: "-", d: "-", am: "6+", traits: ["Scarce", "Sidearm", "Silent", "Toxin"] }
+    ]
+  },
+  {
+    id: "copperhead",
+    name: "Copperhead",
+    role: "Gang Matriarch • Champion",
+    cost: "335 Cr",
+    cats: ["hierarchy"],
+    stats: { M:'5"', WS:'3+', BS:'3+', S:'3', T:'3', W:'2', I:'3+', A:'2', Ld:'6+', Cl:'6+' },
+    skills: "Spring Up • Gang Hierarchy (Champion) • Group Activation (1) • Tools of the Trade",
+    wargear: "Suspensors (ignores Unwieldy), Mesh armour, Undersuit",
+    injury: null,
+    weapons: [
+      { name: "Heavy stubber", rng: '20" / 40"', acc: "- / -1", str: "4", ap: "-", d: "1", am: "4+", traits: ["Rapid Fire (2)", "Unwieldy*"] },
+      { name: "Lasgun", rng: '18" / 24"', acc: "+1 / -", str: "3", ap: "-", d: "1", am: "2+", traits: ["Plentiful"] }
+    ]
+  },
+  {
+    id: "misswhips",
+    name: "Miss Whips",
+    role: "Gang Sister • Ganger",
+    cost: "75 Cr",
+    cats: ["ganger"],
+    stats: { M:'5"', WS:'4+', BS:'4+', S:'3', T:'3', W:'1', I:'3+', A:'1', Ld:'7+', Cl:'7+' },
+    skills: "Gang Fighter (Ganger)",
+    wargear: "None (Unarmoured)",
+    injury: "Critical Injury",
+    weapons: [
+      { name: "Shock whip", rng: '- / 3"', acc: "-", str: "S", ap: "-", d: "1", am: "-", traits: ["Melee", "Shock", "Versatile (3\")"] }
+    ]
+  },
+  {
+    id: "nightshade",
+    name: "Nightshade",
+    role: "Gang Sister • Specialist",
+    cost: "55 Cr",
+    cats: ["ganger"],
+    stats: { M:'5"', WS:'4+', BS:'4+', S:'3', T:'3', W:'1', I:'3+', A:'1', Ld:'7+', Cl:'7+' },
+    skills: "Gang Fighter (Specialist) • Tools of the Trade",
+    wargear: "None (Unarmoured)",
+    injury: null,
+    weapons: [
+      { name: "Lasgun", rng: '18" / 24"', acc: "+1 / -", str: "3", ap: "-", d: "1", am: "2+", traits: ["Plentiful"] }
+    ]
+  },
+  {
+    id: "mamba",
+    name: "Mamba",
+    role: "Gang Sister • Ganger",
+    cost: "55 Cr",
+    cats: ["ganger"],
+    stats: { M:'5"', WS:'4+', BS:'4+', S:'3', T:'3', W:'1', I:'3+', A:'1', Ld:'7+', Cl:'7+' },
+    skills: "Gang Fighter (Ganger)",
+    wargear: "None (Unarmoured)",
+    injury: null,
+    weapons: [
+      { name: "Lasgun", rng: '18" / 24"', acc: "+1 / -", str: "3", ap: "-", d: "1", am: "2+", traits: ["Plentiful"] }
+    ]
+  },
+  {
+    id: "scorpio",
+    name: "Scorpio",
+    role: "Gang Sister • Ganger",
+    cost: "55 Cr",
+    cats: ["ganger"],
+    stats: { M:'5"', WS:'4+', BS:'4+', S:'3', T:'3', W:'1', I:'3+', A:'1', Ld:'7+', Cl:'7+' },
+    skills: "Gang Fighter (Ganger)",
+    wargear: "None (Unarmoured)",
+    injury: null,
+    weapons: [
+      { name: "Lasgun", rng: '18" / 24"', acc: "+1 / -", str: "3", ap: "-", d: "1", am: "2+", traits: ["Plentiful"] }
+    ]
+  },
+  {
+    id: "vixen",
+    name: "Vixen",
+    role: "Little Sister • Juve",
+    cost: "45 Cr",
+    cats: ["juve", "toxin"],
+    stats: { M:'6"', WS:'5+', BS:'5+', S:'3', T:'3', W:'1', I:'3+', A:'1', Ld:'9+', Cl:'8+' },
+    skills: "Fast Learner • Gang Fighter (Juve) • Promotion (Gang Sister)",
+    wargear: "None (Unarmoured)",
+    injury: null,
+    weapons: [
+      { name: "Stiletto knife", rng: '- / E', acc: "-", str: "-", ap: "-", d: "-", am: "-", traits: ["Melee", "Toxin"] },
+      { name: "Stub gun", rng: '6" / 12"', acc: "+2 / -", str: "3", ap: "-", d: "1", am: "4+", traits: ["Plentiful", "Sidearm"] }
+    ]
+  },
+  {
+    id: "fang",
+    name: "Fang",
+    role: "Little Sister • Juve",
+    cost: "45 Cr",
+    cats: ["juve", "toxin"],
+    stats: { M:'6"', WS:'5+', BS:'5+', S:'3', T:'3', W:'1', I:'3+', A:'1', Ld:'9+', Cl:'8+' },
+    skills: "Fast Learner • Gang Fighter (Juve) • Promotion (Gang Sister)",
+    wargear: "None (Unarmoured)",
+    injury: null,
+    weapons: [
+      { name: "Stiletto knife", rng: '- / E', acc: "-", str: "-", ap: "-", d: "-", am: "-", traits: ["Melee", "Toxin"] },
+      { name: "Stub gun", rng: '6" / 12"', acc: "+2 / -", str: "3", ap: "-", d: "1", am: "4+", traits: ["Plentiful", "Sidearm"] }
+    ]
+  },
+  {
+    id: "talon",
+    name: "Talon",
+    role: "Little Sister • Juve",
+    cost: "45 Cr",
+    cats: ["juve", "toxin"],
+    stats: { M:'6"', WS:'5+', BS:'5+', S:'3', T:'3', W:'1', I:'3+', A:'1', Ld:'9+', Cl:'8+' },
+    skills: "Fast Learner • Gang Fighter (Juve) • Promotion (Gang Sister)",
+    wargear: "None (Unarmoured)",
+    injury: null,
+    weapons: [
+      { name: "Stiletto knife", rng: '- / E', acc: "-", str: "-", ap: "-", d: "-", am: "-", traits: ["Melee", "Toxin"] },
+      { name: "Stub gun", rng: '6" / 12"', acc: "+2 / -", str: "3", ap: "-", d: "1", am: "4+", traits: ["Plentiful", "Sidearm"] }
+    ]
+  }
+];
+
+const deck = document.getElementById("deck");
+
+fighters.forEach(f => {
+  const statKeys = ["M","WS","BS","S","T","W","I","A","Ld","Cl"];
+  const statsHtml = statKeys.map(k =>
+    `<div class="stat-cell"><div class="stat-lbl">${k}</div><div class="stat-val">${f.stats[k]}</div></div>`
+  ).join("");
+
+  const weaponsHtml = f.weapons.map(w => `
+    <tr>
+      <td><div class="wep-name">${w.name}</div><div>${w.traits.map(t => `<span class="trait-pill">${t}</span>`).join("")}</div></td>
+      <td>${w.rng}</td>
+      <td>${w.acc}</td>
+      <td>${w.str}</td>
+      <td>${w.ap}</td>
+      <td>${w.d}</td>
+      <td>${w.am}</td>
+    </tr>
+  `).join("");
+
+  const card = document.createElement("div");
+  card.className = "f-card";
+  card.dataset.cats = f.cats.join(" ");
+  card.dataset.id = f.id;
+  card.innerHTML = `
+    <div class="f-head">
+      <div class="avatar" data-img="${f.id}">${f.name.slice(0,2).toUpperCase()}</div>
+      <div class="f-title-wrap">
+        <div class="f-name-row">
+          <span class="f-name">${f.name}</span>
+          <span class="f-cost">${f.cost}</span>
+        </div>
+        <div class="f-role">${f.role}</div>
+        <div class="f-skills">${f.skills}</div>
+      </div>
+    </div>
+    <div class="stats-grid">${statsHtml}</div>
+    <table class="wep-table">
+      <thead><tr><th>Weapon</th><th>Rng</th><th>Acc</th><th>S</th><th>AP</th><th>D</th><th>Am</th></tr></thead>
+      <tbody>${weaponsHtml}</tbody>
+    </table>
+    <div class="gear-line"><strong>Wargear:</strong> ${f.wargear}</div>
+    ${f.injury ? `<div class="injury-tag">⚠️ <strong>Lasting Injury:</strong> ${f.injury}</div>` : ""}
+    <div class="status-bar">
+      <button class="st-btn active-ready" onclick="setStatus(this, 'ready')">✅ Ready</button>
+      <button class="st-btn" onclick="setStatus(this, 'act')">⚡ Activated</button>
+      <button class="st-btn" onclick="setStatus(this, 'pin')">⬇️ Pinned</button>
+      <button class="st-btn" onclick="setStatus(this, 'inj')">🩸 Injured</button>
+    </div>
+  `;
+  deck.appendChild(card);
+});
+
+function setStatus(btn, state) {
+  const bar = btn.parentElement;
+  const card = bar.parentElement;
+  bar.querySelectorAll(".st-btn").forEach(b => b.className = "st-btn");
+  if (state === "ready") { btn.classList.add("active-ready"); card.classList.remove("activated"); }
+  if (state === "act")   { btn.classList.add("active-act"); card.classList.add("activated"); }
+  if (state === "pin")   { btn.classList.add("active-pin"); card.classList.remove("activated"); }
+  if (state === "inj")   { btn.classList.add("active-inj"); card.classList.add("activated"); }
+}
+
+function resetTurn() {
+  document.querySelectorAll(".f-card").forEach(card => {
+    const firstBtn = card.querySelector(".st-btn");
+    if (!card.querySelector(".active-inj")) {
+      setStatus(firstBtn, "ready");
+    }
+  });
+}
+
+function filterCards(cat, btn) {
+  document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  document.querySelectorAll(".f-card").forEach(card => {
+    if (cat === "all" || card.dataset.cats.includes(cat)) {
+      card.style.display = "flex";
+    } else {
+      card.style.display = "none";
+    }
+  });
+}
+
+// Case- and folder-resilient GitHub Pages portrait loader
+document.querySelectorAll('[data-img]').forEach(el => {
+  const base = el.getAttribute('data-img');
+  const title = base.charAt(0).toUpperCase() + base.slice(1);
+  const upper = base.toUpperCase();
+  const folders = ['images', 'Images'];
+  const names = [base, title, upper];
+  const exts = ['jpg', 'jpeg', 'png', 'webp', 'JPG', 'JPEG', 'PNG'];
+  const candidates = [];
+  folders.forEach(f => names.forEach(n => exts.forEach(e => candidates.push(`${f}/${n}.${e}`))));
+
+  let idx = 0;
+  const img = document.createElement('img');
+  img.alt = base;
+  img.onload = () => { el.innerHTML = ''; el.appendChild(img); };
+  img.onerror = () => {
+    idx++;
+    if (idx < candidates.length) img.src = candidates[idx];
+  };
+  img.src = candidates[0];
+});
+</script>
+</body>
+</html>

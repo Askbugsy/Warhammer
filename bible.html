@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Blades of the Crown — Character & Lore Bible</title>
+<style>
+  :root {
+    --bg: #0b090e;
+    --panel: #14101a;
+    --panel2: #1c1624;
+    --plum: #3b1742;
+    --plum-bright: #6b2478;
+    --gold: #d4af37;
+    --gold-dim: #8f7322;
+    --crimson: #c93b4b;
+    --emerald: #34a875;
+    --text: #efe9f4;
+    --muted: #a699b3;
+    --border: rgba(212, 175, 55, 0.26);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: radial-gradient(circle at top left, #211029 0%, var(--bg) 55%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.5;
+    padding-bottom: 56px;
+  }
+  a { text-decoration: none; color: inherit; }
+
+  /* Sticky Top Navigation Bar */
+  .topbar {
+    position: sticky; top: 0; z-index: 60;
+    background: rgba(11, 9, 14, 0.94);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .crest {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1.5px solid var(--gold);
+    background: var(--plum);
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: var(--gold); font-size: 13px; flex-shrink: 0;
+  }
+  .crest img { width: 100%; height: 100%; object-fit: cover; }
+  .brand-title { font-size: 15px; font-weight: 800; letter-spacing: 0.6px; color: var(--gold); text-transform: uppercase; }
+  .brand-sub { font-size: 11px; color: var(--muted); }
+  .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    padding: 7px 12px; border-radius: 7px; font-size: 12px; font-weight: 700;
+    border: 1px solid var(--border); background: var(--panel2); color: var(--text);
+    cursor: pointer; transition: 0.15s; display: inline-flex; align-items: center; gap: 5px;
+  }
+  .btn:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-active {
+    background: linear-gradient(135deg, var(--plum), #261430);
+    border-color: var(--gold); color: var(--gold);
+  }
+
+  /* Hero Lore Banner */
+  .wrap { max-width: 1140px; margin: 0 auto; padding: 0 14px; }
+  .hero {
+    margin: 16px 0 18px; padding: 22px 24px;
+    background: linear-gradient(135deg, rgba(59, 23, 66, 0.78), rgba(20, 16, 26, 0.96));
+    border: 1px solid var(--border); border-radius: 14px;
+    display: flex; flex-wrap: wrap; gap: 20px; align-items: center;
+  }
+  .hero-crest {
+    width: 96px; height: 96px; border-radius: 14px; flex-shrink: 0;
+    border: 2px solid var(--gold); background: var(--plum);
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+    font-weight: 900; color: var(--gold); font-size: 24px;
+    box-shadow: 0 0 22px rgba(212, 175, 55, 0.22);
+  }
+  .hero-crest img { width: 100%; height: 100%; object-fit: cover; }
+  .hero-copy { flex: 1; min-width: 260px; }
+  .hero-copy h1 { font-size: 24px; color: var(--gold); letter-spacing: 0.6px; margin-bottom: 6px; }
+  .hero-copy p { font-size: 13.5px; color: #e2d9eb; margin-bottom: 10px; }
+  .motto {
+    display: inline-block; font-style: italic; font-size: 12.5px; font-weight: 700;
+    color: var(--gold); background: rgba(11, 9, 14, 0.75);
+    border-left: 3px solid var(--gold); padding: 5px 12px; border-radius: 5px;
+  }
+
+  /* Character Dossiers */
+  .section-title {
+    font-size: 15px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px;
+    color: var(--gold); margin: 18px 0 10px; padding-bottom: 5px;
+    border-bottom: 1px solid var(--border);
+  }
+  .dossier-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 14px;
+  }
+  .dossier {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px; display: flex; flex-direction: column; gap: 10px;
+  }
+  .d-top { display: flex; gap: 14px; align-items: center; }
+  .portrait {
+    width: 84px; height: 84px; border-radius: 12px; flex-shrink: 0;
+    border: 1.5px solid var(--gold); background: var(--plum);
+    overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: var(--gold); font-size: 20px;
+  }
+  .portrait img { width: 100%; height: 100%; object-fit: cover; }
+  .portrait::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(11,9,14,0.68), transparent 52%);
+    pointer-events: none;
+  }
+  .d-name { font-size: 18px; font-weight: 800; color: #fff; }
+  .d-epithet { font-size: 12px; font-weight: 700; color: var(--gold); margin-top: 2px; }
+  .d-meta { font-size: 11.5px; color: var(--muted); margin-top: 3px; }
+  .d-bio { font-size: 13px; color: #dfd7e8; }
+  .d-quote {
+    font-size: 12px; font-style: italic; color: #f4dc8c;
+    background: rgba(59, 23, 66, 0.35); border-left: 2.5px solid var(--gold);
+    padding: 6px 10px; border-radius: 5px;
+  }
+  .d-sig {
+    font-size: 12px; color: var(--muted);
+    padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.07);
+  }
+  .d-sig strong { color: var(--text); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="crest" data-img="gangcrest">BC</div>
+    <div>
+      <div class="brand-title">Blades of the Crown</div>
+      <div class="brand-sub">House Escher • Character &amp; Lore Bible</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a class="btn" href="index.html">⚔️ Tactical Deck</a>
+    <a class="btn btn-active" href="bible.html">📖 Character Bible</a>
+    <a class="btn" href="campaign.html">🗺️ Campaign Playbook</a>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="hero-crest" data-img="gangcrest">BC</div>
+    <div class="hero-copy">
+      <h1>The Blades of the Crown</h1>
+      <p>Forged in the neon-lit chem-spires of Hive Primus, the <strong>Blades of the Crown</strong> are a regally ruthless House Escher court draped in royal plum silk, hammered gold filigree, and synthetic venoms distilled in their own hidden alchemical sanctuaries. Where rival gangs rely on brute bulk or rusted iron, the Blades rule the upper gantries through precision toxin, vertical mastery, and calculated assassination.</p>
+      <div class="motto">“Every crown is bought in gold; every throne is kept in venom.”</div>
+    </div>
+  </div>
+
+  <div class="section-title">👑 Court Hierarchy (Leaders &amp; Champions)</div>
+  <div class="dossier-grid">
+    <div class="dossier">
+      <div class="d-top">
+        <div class="portrait" data-img="hermajesty">HM</div>
+        <div>
+          <div class="d-name">Her Majesty</div>
+          <div class="d-epithet">The Sovereign of Spires • Gang Queen (245 Cr)</div>
+          <div class="d-meta">Boltgun • Silent Needle Pistol • Mesh &amp; Undersuit</div>
+        </div>
+      </div>
+      <div class="d-bio">A cold-eyed strategist who treats every sump skirmish like a royal execution. Bearing an <em>Old Battle Wound</em> from the spire wars that placed the golden diadem on her brow, she commands from behind cover—orchestrating lethal slingshot strikes with a flick of her gloved hand before finishing survivors with whisper-quiet toxin darts.</div>
+      <div class="d-quote">“Do not waste breath threatening them, darling. Simply point out where they are about to fall.”</div>
+      <div class="d-sig"><strong>Signature Aesthetic:</strong> High royal plum collar, gold crown circlet, tailored flak-silk coat, pearl-inlaid needle pistol.</div>
+    </div>
+
+    <div class="dossier">
+      <div class="d-top">
+        <div class="portrait" data-img="blackwidow">BW</div>
+        <div>
+          <div class="d-name">Black Widow</div>
+          <div class="d-epithet">The Silk Executioner • Death-Maiden (295 Cr)</div>
+          <div class="d-meta">3" Versatile Stiletto Sword • Chem-Synth • Displacer Field</div>
+        </div>
+      </div>
+      <div class="d-bio">Brought back from the brink of chem-death and bound to Her Majesty’s court, Black Widow glides across catwalk railings like a phantom. Her <em>Combat Virtuoso</em> bladework lets her strike rivals across three paces of open air—delivering hyper-concentrated Chem-synth toxins before enemy blades can even rise to parry.</div>
+      <div class="d-quote">“Three paces is more than enough room for a corpse to kneel.”</div>
+      <div class="d-sig"><strong>Signature Aesthetic:</strong> Obsidian-and-plum respirator veil, glowing green chem-vials, shimmering Displacer field aura.</div>
+    </div>
+
+    <div class="dossier">
+      <div class="d-top">
+        <div class="portrait" data-img="copperhead">CH</div>
+        <div>
+          <div class="d-name">Copperhead</div>
+          <div class="d-epithet">Mistress of the High Perch • Gang Matriarch (335 Cr)</div>
+          <div class="d-meta">Suspensor Heavy Stubber • Lasgun • Spring Up</div>
+        </div>
+      </div>
+      <div class="d-bio">An iron-nerved veteran gunner whose burnished copper-and-gold hair stands like a beacon atop the highest gantry towers. Thanks to her gyro-stabilised Suspensor rig and feline <em>Spring Up</em> reflexes, not even heavy suppressing fire can keep her down for long.</div>
+      <div class="d-quote">“Take the high gantry, sisters. Everything below the railings is just targets.”</div>
+      <div class="d-sig"><strong>Signature Aesthetic:</strong> Burnished copper mane, gold-trimmed heavy stubber harness, elevated sniper stance.</div>
+    </div>
+  </div>
+
+  <div class="section-title">🗡️ The Royal Guard (Gang Sisters)</div>
+  <div class="dossier-grid">
+    <div class="dossier">
+      <div class="d-top">
+        <div class="portrait" data-img="misswhips">MW</div>
+        <div>
+          <div class="d-name">Miss Whips</div>
+          <div class="d-epithet">The Gantry Warden • Gang Sister (75 Cr)</div>
+          <div class="d-meta">3" Versatile Shock Whip • Critical Injury Survivor</div>
+        </div>
+      </div>
+      <div class="d-bio">Scarred by a near-fatal <em>Critical Injury</em> early in the campaign, Miss Whips turned survival into sadistic artistry. She patrols narrow catwalk chokepoints beside Her Majesty, cracking her arc-charged Shock Whip across three paces to stun charging brutes dead in their tracks.</div>
+      <div class="d-quote">“One step closer to the Queen and I’ll peel the armour right off your ribs.”</div>
+      <div class="d-sig"><strong>Signature Aesthetic:</strong> Coiled gold-handled electro-whip, plum-and-brass bracers, fierce scarred smirk.</div>
+    </div>
+
+    <div class="dossier">
+      <div class="d-top">
+        <div class="portrait" data-img="nightshade">NS</div>
+        <div>
+          <div class="d-name">Nightshade</div>
+          <div class="d-epithet">First Marksman • Gang Sister Specialist (55 Cr)</div>
+          <div class="d-meta">Precision Lasgun • Specialist</div>
+        </div>
+      </div>
+      <div class="d-bio">Elevated to Specialist for her unerring accuracy in dim sump-light, Nightshade anchors the court’s mid-tier firing line—pinning enemy heavy gunners in place so Black Widow can advance unseen.</div>
+      <div class="d-quote">“Keep their heads down; Widow is already behind them.”</div>
+      <div class="d-sig"><strong>Signature Aesthetic:</strong> Plum-tinted targeting visor, gold-etched lasgun barrel, poised marksman stance.</div>
+    </div>
+
+    <div class="dossier">
+      <div class="d-top">
+        <div class="portrait" data-img="mamba">MB</div>
+        <div>
+          <div class="d-name">Mamba</div>
+          <div class="d-epithet">Left Flank Sentinel • Gang Sister (55 Cr)</div>
+          <div class="d-meta">Lasgun (+1 Short Acc, Plentiful)</div>
+        </div>
+      </div>
+      <div class="d-bio">Relentless and disciplined, Mamba holds the left gantry flank alongside Nightshade, laying down rhythmic las-volleys to strip enemy Overwatch before close-quarters assaults begin.</div>
+      <div class="d-quote">“Hold the lane. Nothing crosses this bridge standing.”</div>
+      <div class="d-sig"><strong>Signature Aesthetic:</strong> Emerald-and-gold serpent motifs woven into royal plum combat leathers.</div>
+    </div>
+
+    <div class="dossier">
+      <div class="d-top">
+        <div class="portrait" data-img="scorpio">SC</div>
+        <div>
+          <div class="d-name">Scorpio</div>
+          <div class="d-epithet">Right Flank Sentinel • Gang Sister (55 Cr)</div>
+          <div class="d-meta">Lasgun (+1 Short Acc, Plentiful)</div>
+        </div>
+      </div>
+      <div class="d-bio">Sharp-tongued and fiercely loyal, Scorpio guards the secondary ladder approaches to Copperhead’s sniper roost, punishing any flanker foolish enough to climb into her crosshairs.</div>
+      <div class="d-quote">“Climb if you like—it’s a long drop back to the sump.”</div>
+      <div class="d-sig"><strong>Signature Aesthetic:</strong> High braided crest, gold shoulder pauldrons, braced lasgun posture.</div>
+    </div>
+  </div>
+
+  <div class="section-title">🧪 The Venom Novices (Little Sisters)</div>
+  <div class="dossier-grid">
+    <div class="dossier">
+      <div class="d-top">
+        <div class="portrait" data-img="vixen">VX</div>
+        <div>
+          <div class="d-name">Vixen</div>
+          <div class="d-epithet">Spire Runner • Little Sister Juve (45 Cr)</div>
+          <div class="d-meta">Toxin Stiletto Knife • Stub Gun • Fast Learner</div>
+        </div>
+      </div>
+      <div class="d-bio">The boldest of the court’s three initiates, Vixen sprints up unguarded ladders to claim upper-tier objectives and finish pinned heavy-armoured rivals with her venom-coated stiletto.</div>
+      <div class="d-quote">“Big armour just means a bigger prize for the Queen!”</div>
+      <div class="d-sig"><strong>Signature Aesthetic:</strong> Agile runner boots, plum sash, twin hip holsters and glowing stiletto blade.</div>
+    </div>
+
+    <div class="dossier">
+      <div class="d-top">
+        <div class="portrait" data-img="fang">FG</div>
+        <div>
+          <div class="d-name">Fang</div>
+          <div class="d-epithet">Sump Stalker • Little Sister Juve (45 Cr)</div>
+          <div class="d-meta">Toxin Stiletto Knife • Stub Gun • Fast Learner</div>
+        </div>
+      </div>
+      <div class="d-bio">Quiet and opportunistic, Fang shadows Black Widow’s wake—slipping into melee against already-pinned targets to earn rapid <em>Fast Learner</em> advancement toward full Gang Sister rank.</div>
+      <div class="d-quote">“One nick is all the venom needs.”</div>
+      <div class="d-sig"><strong>Signature Aesthetic:</strong> Gold fang-shaped hairpins, plum-and-black leathers, low lunging silhouette.</div>
+    </div>
+
+    <div class="dossier">
+      <div class="d-top">
+        <div class="portrait" data-img="talon">TL</div>
+        <div>
+          <div class="d-name">Talon</div>
+          <div class="d-epithet">Gantry Acrobat • Little Sister Juve (45 Cr)</div>
+          <div class="d-meta">Toxin Stiletto Knife • Stub Gun • Fast Learner</div>
+        </div>
+      </div>
+      <div class="d-bio">Fearless across narrow beams and broken walkways, Talon uses her 6" sprint and 3+ Initiative to out-manoeuvre sluggish Goliath and Squat gunlines and secure distant loot caskets.</div>
+      <div class="d-quote">“Too slow, heavy-boots!”</div>
+      <div class="d-sig"><strong>Signature Aesthetic:</strong> Plum scarf trailing in the spire draft, gold-hilted stiletto, stub gun drawn.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Case- and folder-resilient GitHub Pages portrait loader
+document.querySelectorAll('[data-img]').forEach(el => {
+  const base = el.getAttribute('data-img');
+  const title = base.charAt(0).toUpperCase() + base.slice(1);
+  const upper = base.toUpperCase();
+  const folders = ['images', 'Images'];
+  const names = [base, title, upper];
+  const exts = ['jpg', 'jpeg', 'png', 'webp', 'JPG', 'JPEG', 'PNG'];
+  const candidates = [];
+  folders.forEach(f => names.forEach(n => exts.forEach(e => candidates.push(`${f}/${n}.${e}`))));
+
+  let idx = 0;
+  const img = document.createElement('img');
+  img.alt = base;
+  img.onload = () => { el.innerHTML = ''; el.appendChild(img); };
+  img.onerror = () => {
+    idx++;
+    if (idx < candidates.length) img.src = candidates[idx];
+  };
+  img.src = candidates[0];
+});
+</script>
+</body>
+</html>
