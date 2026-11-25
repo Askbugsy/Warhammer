@@ -954,52 +954,53 @@ function saveState() {
 /* Portrait files: explicit paths per fighter (no filename guessing).
    Thumbnails are ~400px squares, full art ~1000px tall. */
 const PORTRAITS = {
-  hermajesty:  { square: "images/hermajestysquare.JPG",  full: "images/hermajesty.jpg" },
-  blackwidow:  { square: "images/blackwidowsquare.jpg",  full: "images/blackwidow.jpg" },
-  copperhead:  { square: "images/copperheadsquare.JPG",  full: "images/copperhead.jpg" },
-  nightshade:  { square: "images/nightshadesquare.jpg",  full: "images/nightshade.jpg" },
-  mamba:       { square: "images/mambasquare.JPG",       full: "images/mamba.jpeg" },
-  scorpio:     { square: "images/scorpiosquare.JPG",     full: "images/scorpio.jpeg" },
-  misswhips:   { square: "images/misswhipssquare.jpg",   full: "images/misswhips.jpg" },
-  vixen:       { square: "images/vixensquare.JPG",       full: "images/vixen.jpg" },
-  fang:        { square: "images/fangsquare.jpg",        full: "images/fang.jpg" },
-  talon:       { square: "images/talonsquare.JPG",       full: "images/talon.jpeg" }
+  hermajesty:  { square: "images/hermajestysquare",  full: "images/hermajesty" },
+  blackwidow:  { square: "images/blackwidowsquare",  full: "images/blackwidow" },
+  copperhead:  { square: "images/copperheadsquare",  full: "images/copperhead" },
+  nightshade:  { square: "images/nightshadesquare",  full: "images/nightshade" },
+  mamba:       { square: "images/mambasquare",       full: "images/mamba" },
+  scorpio:     { square: "images/scorpiosquare",     full: "images/scorpio" },
+  misswhips:   { square: "images/misswhipssquare",   full: "images/misswhips" },
+  vixen:       { square: "images/vixensquare",       full: "images/vixen" },
+  fang:        { square: "images/fangsquare",        full: "images/fang" },
+  talon:       { square: "images/talonsquare",       full: "images/talon" }
 };
 
 const resolvedSquare = {};
 const resolvedFull = {};
 
-/* Header crest: uses images/gangcrest.* if one exists, otherwise keeps the crown emoji.
-   Checks a short fixed list of paths rather than guessing filenames. */
-const CREST_CANDIDATES = [
-  "images/gangcrest.png",
-  "images/gangcrest.jpg",
-  "images/gangcrest.jpeg",
-  "images/gangcrest.webp"
-];
+/* Image lookup: each base path is tried with several common extensions,
+   so jpg, jpeg or png uploads (and upper-case variants) all work. */
+const IMAGE_EXTS = [".jpg", ".jpeg", ".png", ".JPG", ".JPEG", ".PNG"];
 
-function loadCrest(i) {
-  if (i >= CREST_CANDIDATES.length) return;
+function firstLoadingImage(base, onFound, i = 0) {
+  if (i >= IMAGE_EXTS.length) return;
+  const src = base + IMAGE_EXTS[i];
   const img = new Image();
-  img.onload = () => {
-    document.getElementById("gangCrestBox").innerHTML = `<img src="${CREST_CANDIDATES[i]}" alt="Crest">`;
-  };
-  img.onerror = () => loadCrest(i + 1);
-  img.src = CREST_CANDIDATES[i];
+  img.onload = () => onFound(src);
+  img.onerror = () => firstLoadingImage(base, onFound, i + 1);
+  img.src = src;
+}
+
+/* Header crest: images/gangcrest.* if one exists, otherwise the crown emoji stays. */
+function loadCrest() {
+  firstLoadingImage("images/gangcrest", src => {
+    document.getElementById("gangCrestBox").innerHTML = `<img src="${src}" alt="Crest">`;
+  });
 }
 
 function initPortraits() {
-  loadCrest(0);
+  loadCrest();
   ROSTER.forEach(f => {
     const p = PORTRAITS[f.id];
     if (!p) return;
-    // Only use a path if the file actually loads; otherwise the initials fallback stays.
-    const sq = new Image();
-    sq.onload = () => { resolvedSquare[f.id] = p.square; renderAll(); };
-    sq.src = p.square;
-    const full = new Image();
-    full.onload = () => { resolvedFull[f.id] = p.full; if (!resolvedSquare[f.id]) resolvedSquare[f.id] = p.full; renderAll(); };
-    full.src = p.full;
+    // Only show an image that actually loads; otherwise the initials fallback stays.
+    firstLoadingImage(p.square, src => { resolvedSquare[f.id] = src; renderAll(); });
+    firstLoadingImage(p.full, src => {
+      resolvedFull[f.id] = src;
+      if (!resolvedSquare[f.id]) resolvedSquare[f.id] = src;
+      renderAll();
+    });
   });
 }
 
