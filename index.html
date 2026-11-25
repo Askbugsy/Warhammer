@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Blades of the Crown — House Escher Tactical Deck</title>
 <style>
   :root {
@@ -630,13 +630,13 @@
 
   <div class="controls-group">
     <div class="round-box">
-      <button class="btn btn-sm" onclick="changeRound(-1)" title="Previous Round">◀</button>
-      <span class="round-label" id="roundDisplay">🎲 Round 1</span>
-      <button class="btn btn-sm btn-gold" onclick="nextRound()" title="Advance Round & Reset Activated">Next ▶</button>
-      <button class="btn btn-sm" onclick="resetRound()" title="Reset to Round 1">↺</button>
+      <button class="btn btn-sm" onclick="changeRound(-1)" title="Previous round" aria-label="Previous round">◀</button>
+      <span class="round-label" id="roundDisplay" aria-live="polite">🎲 Round 1</span>
+      <button class="btn btn-sm btn-gold" onclick="nextRound()" title="Advance round and reset Activated" aria-label="Next round">Next ▶</button>
+      <button class="btn btn-sm" onclick="resetRound()" title="Reset to Round 1" aria-label="Reset to round 1">↺</button>
     </div>
-    <button class="btn" onclick="newTurnReset()">↺ New Turn</button>
-    <button class="btn" onclick="syncDefaultXp()">↺ Sync XP</button>
+    <button class="btn" onclick="newTurnReset()" aria-label="New turn: set Activated fighters back to Ready">↺ New Turn</button>
+    <button class="btn" onclick="syncDefaultXp()" aria-label="Reset all fighter XP to defaults">↺ Sync XP</button>
     <a class="btn" href="bible.html">📖 Bible</a>
     <a class="btn" href="campaign.html">🗺️ Campaign</a>
   </div>
@@ -881,9 +881,18 @@ function loadState() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      state = { ...state, ...parsed };
+      // Only accept saved values of the expected type; anything else falls back to defaults.
+      if (parsed && typeof parsed === "object") {
+        if (ROSTER.some(f => f.id === parsed.selectedId)) state.selectedId = parsed.selectedId;
+        if (["all", "crown", "venom"].includes(parsed.filter)) state.filter = parsed.filter;
+        if (Number.isInteger(parsed.round) && parsed.round >= 1) state.round = parsed.round;
+        if (parsed.statuses && typeof parsed.statuses === "object") state.statuses = parsed.statuses;
+        if (parsed.xp && typeof parsed.xp === "object") state.xp = parsed.xp;
+      }
     }
-  } catch (e) {}
+  } catch (e) {
+    // Corrupt saved state: keep defaults rather than breaking the page.
+  }
   ROSTER.forEach(f => {
     if (!state.statuses[f.id]) state.statuses[f.id] = f.defaultStatus;
     if (typeof state.xp[f.id] !== "number") state.xp[f.id] = f.defaultXp;
@@ -894,64 +903,35 @@ function saveState() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
 }
 
-/* Resilient Image Loader (square + full portrait matching) */
+/* Portrait files: explicit paths per fighter (no filename guessing).
+   Thumbnails are ~400px squares, full art ~1000px tall. */
+const PORTRAITS = {
+  hermajesty:  { square: "images/hermajestysquare.JPG",  full: "images/hermajesty.jpg" },
+  blackwidow:  { square: "images/blackwidowsquare.jpg",  full: "images/blackwidow.jpg" },
+  copperhead:  { square: "images/copperheadsquare.JPG",  full: "images/copperhead.jpg" },
+  nightshade:  { square: "images/nightshadesquare.JPG",  full: "images/nightshade.jpeg" },
+  mamba:       { square: "images/mambasquare.JPG",       full: "images/mamba.jpeg" },
+  scorpio:     { square: "images/scorpiosquare.JPG",     full: "images/scorpio.jpeg" },
+  misswhips:   { square: "images/misswhipssquare.jpg",   full: "images/misswhips.jpg" },
+  vixen:       { square: "images/vixensquare.JPG",       full: "images/vixen.jpg" },
+  fang:        { square: "images/fangsquare.jpg",        full: "images/fang.jpeg" },
+  talon:       { square: "images/talonsquare.JPG",       full: "images/talon.jpeg" }
+};
+
 const resolvedSquare = {};
 const resolvedFull = {};
 
-function buildCandidates(baseName) {
-  const cap = baseName.charAt(0).toUpperCase() + baseName.slice(1);
-  const upper = baseName.toUpperCase();
-  const names = [baseName, cap, upper];
-  const folders = ["images/", "Images/"];
-  const exts = [".jpg", ".jpeg", ".png", ".webp", ".JPG", ".JPEG", ".PNG"];
-  const list = [];
-  folders.forEach(fld => {
-    names.forEach(nm => {
-      exts.forEach(ext => list.push(fld + nm + ext));
-    });
-  });
-  return list;
-}
-
-function probeImage(candidates, callback) {
-  let idx = 0;
-  function tryNext() {
-    if (idx >= candidates.length) { callback(null); return; }
-    const url = candidates[idx++];
-    const img = new Image();
-    img.onload = () => callback(url);
-    img.onerror = tryNext;
-    img.src = url;
-  }
-  tryNext();
-}
-
 function initPortraits() {
-  probeImage(buildCandidates("gangcrest"), url => {
-    if (url) {
-      document.getElementById("gangCrestBox").innerHTML = `<img src="${url}" alt="Crest">`;
-    }
-  });
   ROSTER.forEach(f => {
-    const sqCands = buildCandidates(f.id + "square");
-    const fullCands = buildCandidates(f.id);
-    probeImage(sqCands, sqUrl => {
-      if (sqUrl) {
-        resolvedSquare[f.id] = sqUrl;
-        renderAll();
-      } else {
-        probeImage(fullCands, fUrl => {
-          if (fUrl) {
-            resolvedSquare[f.id] = fUrl;
-            resolvedFull[f.id] = fUrl;
-            renderAll();
-          }
-        });
-      }
-    });
-    probeImage(fullCands, fUrl => {
-      if (fUrl) resolvedFull[f.id] = fUrl;
-    });
+    const p = PORTRAITS[f.id];
+    if (!p) return;
+    // Only use a path if the file actually loads; otherwise the initials fallback stays.
+    const sq = new Image();
+    sq.onload = () => { resolvedSquare[f.id] = p.square; renderAll(); };
+    sq.src = p.square;
+    const full = new Image();
+    full.onload = () => { resolvedFull[f.id] = p.full; if (!resolvedSquare[f.id]) resolvedSquare[f.id] = p.full; renderAll(); };
+    full.src = p.full;
   });
 }
 
@@ -964,7 +944,7 @@ function openLightbox(fighterId) {
   if (fullSrc) {
     body.innerHTML = `<img src="${fullSrc}" alt="${f.name}">`;
   } else {
-    body.innerHTML = `<div style="padding:48px;color:var(--muted);text-align:center;">Full portrait not found in <code>images/${f.id}.jpg</code></div>`;
+    body.innerHTML = `<div style="padding:48px;color:var(--muted);text-align:center;">Portrait for ${f.name} could not be loaded.</div>`;
   }
   document.getElementById("portraitLightbox").classList.add("open");
 }
@@ -991,12 +971,14 @@ function nextRound() {
 }
 
 function resetRound() {
+  if (!confirm("Reset the round counter to Round 1?")) return;
   state.round = 1;
   saveState();
   renderAll();
 }
 
 function newTurnReset() {
+  if (!confirm("Start a new turn? All fighters marked Activated will be set back to Ready.")) return;
   ROSTER.forEach(f => {
     if (state.statuses[f.id] === "done") state.statuses[f.id] = "ready";
   });
@@ -1005,6 +987,7 @@ function newTurnReset() {
 }
 
 function syncDefaultXp() {
+  if (!confirm("Reset XP for every fighter to the default values? Current XP will be lost.")) return;
   ROSTER.forEach(f => { state.xp[f.id] = f.defaultXp; });
   saveState();
   renderAll();
@@ -1024,6 +1007,7 @@ function adjustXp(id, delta) {
 
 function setFilter(flt) {
   state.filter = flt;
+  saveState();
   document.querySelectorAll(".filter-btn").forEach(b => {
     b.classList.toggle("active", b.dataset.filter === flt);
   });
@@ -1068,6 +1052,9 @@ function renderMetrics() {
 }
 
 function renderSidebar() {
+  document.querySelectorAll(".filter-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.filter === state.filter);
+  });
   const list = document.getElementById("rosterList");
   const filtered = ROSTER.filter(f => state.filter === "all" || f.squad === state.filter);
   list.innerHTML = filtered.map(f => {
@@ -1152,10 +1139,10 @@ function renderDetail() {
 
       <div class="xp-box">
         <span class="xp-display">⭐ ${xp} XP</span>
-        <button class="xp-btn" onclick="adjustXp('${f.id}', -1)">-1</button>
-        <button class="xp-btn" onclick="adjustXp('${f.id}', 1)">+1</button>
-        <button class="xp-btn" onclick="adjustXp('${f.id}', 2)">+2</button>
-        <button class="xp-btn" onclick="adjustXp('${f.id}', 3)">+3</button>
+        <button class="xp-btn" onclick="adjustXp('${f.id}', -1)" aria-label="Remove 1 XP">-1</button>
+        <button class="xp-btn" onclick="adjustXp('${f.id}', 1)" aria-label="Add 1 XP">+1</button>
+        <button class="xp-btn" onclick="adjustXp('${f.id}', 2)" aria-label="Add 2 XP">+2</button>
+        <button class="xp-btn" onclick="adjustXp('${f.id}', 3)" aria-label="Add 3 XP">+3</button>
       </div>
     </div>
 
