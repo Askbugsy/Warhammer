@@ -1046,7 +1046,7 @@ function renderMetrics() {
     <div class="metric-pill"><span>Active Squad</span><strong>${activeCount} / ${ROSTER.length} Fighters</strong></div>
     <div class="metric-pill"><span>Deployed Rating</span><strong>${activeRating.toLocaleString()} Cr</strong></div>
     <div class="metric-pill"><span>Gang Wealth / Stash</span><strong>1,400 / 150 Cr</strong></div>
-    <div class="metric-pill"><span>Reputation</span><strong>4</strong></div>
+    <div class="metric-pill"><span>Reputation</span><strong>5</strong></div>
     <div class="metric-pill"><span>Total Squad XP</span><strong>⭐ ${totalXp} XP</strong></div>
   `;
 }
@@ -1139,10 +1139,6 @@ function renderDetail() {
 
       <div class="xp-box">
         <span class="xp-display">⭐ ${xp} XP</span>
-        <button class="xp-btn" onclick="adjustXp('${f.id}', -1)" aria-label="Remove 1 XP">-1</button>
-        <button class="xp-btn" onclick="adjustXp('${f.id}', 1)" aria-label="Add 1 XP">+1</button>
-        <button class="xp-btn" onclick="adjustXp('${f.id}', 2)" aria-label="Add 2 XP">+2</button>
-        <button class="xp-btn" onclick="adjustXp('${f.id}', 3)" aria-label="Add 3 XP">+3</button>
       </div>
     </div>
 
