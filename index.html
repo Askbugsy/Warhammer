@@ -952,7 +952,27 @@ const PORTRAITS = {
 const resolvedSquare = {};
 const resolvedFull = {};
 
+/* Header crest: uses images/gangcrest.* if one exists, otherwise keeps the crown emoji.
+   Checks a short fixed list of paths rather than guessing filenames. */
+const CREST_CANDIDATES = [
+  "images/gangcrest.png",
+  "images/gangcrest.jpg",
+  "images/gangcrest.jpeg",
+  "images/gangcrest.webp"
+];
+
+function loadCrest(i) {
+  if (i >= CREST_CANDIDATES.length) return;
+  const img = new Image();
+  img.onload = () => {
+    document.getElementById("gangCrestBox").innerHTML = `<img src="${CREST_CANDIDATES[i]}" alt="Crest">`;
+  };
+  img.onerror = () => loadCrest(i + 1);
+  img.src = CREST_CANDIDATES[i];
+}
+
 function initPortraits() {
+  loadCrest(0);
   ROSTER.forEach(f => {
     const p = PORTRAITS[f.id];
     if (!p) return;
