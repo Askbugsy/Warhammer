@@ -301,6 +301,13 @@
     align-items: center;
   }
   .portrait-frame {
+    display: block;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    appearance: none;
+    -webkit-appearance: none;
     width: 118px;
     height: 118px;
     border-radius: 14px;
@@ -1179,9 +1186,9 @@ function renderDetail() {
 
   document.getElementById("fighterDetail").innerHTML = `
     <div class="hero-header">
-      <div class="portrait-frame" onclick="openLightbox('${f.id}')" title="Click to open full portrait">
+      <button type="button" class="portrait-frame" onclick="openLightbox('${f.id}')" aria-label="Open full portrait of ${f.name}" title="Open full portrait">
         ${sqUrl ? `<img src="${sqUrl}" alt="${f.name}">` : `<div class="portrait-fallback">${initials}</div>`}
-      </div>
+      </button>
       <div class="hero-meta">
         <div class="badge-row">
           <span class="squad-badge ${f.squad === 'crown' ? 'sq-crown' : 'sq-venom'}">
