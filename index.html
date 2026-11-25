@@ -590,6 +590,13 @@
   }
   .tick-box.on { background: var(--gold); border-color: var(--gold); }
 
+  /* Touch devices (iPad/iPhone) only fire taps on elements with a pointer cursor.
+     Keep the zoom cursor on desktop, but use a pointer on touch screens. */
+  @media (hover: none) {
+    .portrait-frame { cursor: pointer; }
+    .lightbox { cursor: pointer; }
+  }
+
   /* Full Portrait Lightbox */
   .lightbox {
     position: fixed;
