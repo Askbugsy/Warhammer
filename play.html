@@ -745,7 +745,7 @@ const FOOTER_RE = /^(SI|OOA|R\s*\/\s*A|Ld\s*\/\s*Ch|Misc|Participation)\b/;
 
 let GANG = null;      // { title, house, credits, rating, wealth, reputation }
 let ROSTER = [];      // parsed fighters
-let state = { selectedId: null, round: 1, statuses: {}, xp: {}, ticks: {} };
+let state = { selectedId: null, round: 1, statuses: {}, ticks: {} };
 
 /* ---------- PDF reading ---------- */
 
@@ -960,7 +960,7 @@ function loadAll() {
     if (!saved || !Array.isArray(saved.roster) || !saved.gang) return false;
     GANG = saved.gang;
     ROSTER = saved.roster;
-    state = Object.assign({ selectedId: null, round: 1, statuses: {}, xp: {}, ticks: {} }, saved.state || {});
+    state = Object.assign({ selectedId: null, round: 1, statuses: {}, ticks: {} }, saved.state || {});
     return true;
   } catch (e) { return false; }
 }
@@ -968,7 +968,6 @@ function loadAll() {
 function ensureDefaults() {
   ROSTER.forEach(f => {
     if (!state.statuses[f.id]) state.statuses[f.id] = f.defaultStatus;
-    if (typeof state.xp[f.id] !== "number") state.xp[f.id] = f.defaultXp;
     if (!state.ticks[f.id]) state.ticks[f.id] = {};
   });
   if (!ROSTER.some(f => f.id === state.selectedId)) state.selectedId = ROSTER[0] ? ROSTER[0].id : null;
@@ -1005,7 +1004,7 @@ document.getElementById("pdfInput").addEventListener("change", async (e) => {
     const parsed = await parseMundaPdf(buf);
     GANG = parsed.gang;
     ROSTER = parsed.fighters;
-    state = { selectedId: null, round: 1, statuses: {}, xp: {}, ticks: {} };
+    state = { selectedId: null, round: 1, statuses: {}, ticks: {} };
     ensureDefaults();
     saveAll();
     showPlay();
@@ -1084,9 +1083,8 @@ function tickPanelHtml(f) {
 
 function renderMetrics() {
   document.getElementById("roundDisplay").textContent = `Round ${state.round}`;
-  let active = 0, activeRating = 0, totalXp = 0;
+  let active = 0, activeRating = 0;
   ROSTER.forEach(f => {
-    totalXp += state.xp[f.id] || 0;
     if (state.statuses[f.id] !== "unavailable") { active++; activeRating += f.rating; }
   });
   document.getElementById("gangMetrics").innerHTML = `
@@ -1094,7 +1092,7 @@ function renderMetrics() {
     <div class="metric-pill"><span>Deployed Rating</span><strong>${activeRating.toLocaleString()} Cr</strong></div>
     <div class="metric-pill"><span>Gang Wealth / Stash</span><strong>${GANG.wealth.toLocaleString()} / ${GANG.credits} Cr</strong></div>
     <div class="metric-pill"><span>Reputation</span><strong>${GANG.reputation}</strong></div>
-    <div class="metric-pill"><span>Total Squad XP</span><strong>⭐ ${totalXp} XP</strong></div>`;
+    `;
   document.querySelector('.filter-btn[data-filter="all"]').textContent = `All (${ROSTER.length})`;
 }
 
@@ -1102,14 +1100,12 @@ function renderSidebar() {
   document.getElementById("rosterList").innerHTML = ROSTER.map(f => {
     const st = state.statuses[f.id] || "ready";
     const meta = statusMeta(st);
-    const xp = state.xp[f.id] || 0;
     return `
       <div class="nav-card ${state.selectedId === f.id ? "selected" : ""} ${st === "unavailable" ? "is-unavailable" : ""} ${st === "done" ? "is-done" : ""}" onclick="selectFighter('${f.id}')">
         <div class="nav-thumb">${initials(f.name)}</div>
         <div class="nav-info">
           <div class="nav-name-row">
             <span class="nav-name">${f.name}</span>
-            <span class="nav-xp">⭐ ${xp}</span>
           </div>
           <div class="nav-sub">
             <span>${(f.role.split("•")[0] || "").trim()} • ${f.rating}</span>
@@ -1124,7 +1120,6 @@ function renderDetail() {
   const f = ROSTER.find(x => x.id === state.selectedId) || ROSTER[0];
   if (!f) { document.getElementById("fighterDetail").innerHTML = ""; return; }
   const st = state.statuses[f.id] || "ready";
-  const xp = state.xp[f.id] || 0;
   const statOrder = ["M","WS","BS","S","T","W","I","A","Ld","Cl","Wil","Int"];
   const mental = new Set(["Ld","Cl","Wil","Int"]);
 
@@ -1158,7 +1153,6 @@ function renderDetail() {
         <button class="st-btn ${st==='injured'?'active':''}" data-st="injured" onclick="setStatus('${f.id}','injured')">Ser. Injured</button>
         <button class="st-btn ${st==='unavailable'?'active':''}" data-st="unavailable" onclick="setStatus('${f.id}','unavailable')">Unavailable</button>
       </div>
-      <div class="xp-box"><span class="xp-display">⭐ ${xp} XP</span></div>
     </div>
 
     ${tickPanelHtml(f)}
