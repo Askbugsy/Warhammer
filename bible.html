@@ -295,26 +295,27 @@
 </div>
 
 <script>
-// Case- and folder-resilient GitHub Pages portrait loader
-document.querySelectorAll('[data-img]').forEach(el => {
-  const base = el.getAttribute('data-img');
-  const title = base.charAt(0).toUpperCase() + base.slice(1);
-  const upper = base.toUpperCase();
-  const folders = ['images', 'Images'];
-  const names = [base, title, upper];
-  const exts = ['jpg', 'jpeg', 'png', 'webp', 'JPG', 'JPEG', 'PNG'];
-  const candidates = [];
-  folders.forEach(f => names.forEach(n => exts.forEach(e => candidates.push(`${f}/${n}.${e}`))));
+// Square thumbnails for each fighter (explicit paths, no filename guessing).
+const SQUARE_PORTRAITS = {
+  hermajesty: "images/hermajestysquare.JPG",
+  blackwidow: "images/blackwidowsquare.jpg",
+  copperhead: "images/copperheadsquare.JPG",
+  nightshade: "images/nightshadesquare.JPG",
+  mamba:      "images/mambasquare.JPG",
+  scorpio:    "images/scorpiosquare.JPG",
+  misswhips:  "images/misswhipssquare.jpg",
+  vixen:      "images/vixensquare.JPG",
+  fang:       "images/fangsquare.jpg",
+  talon:      "images/talonsquare.JPG"
+};
 
-  let idx = 0;
-  const img = document.createElement('img');
-  img.alt = base;
-  img.onload = () => { el.innerHTML = ''; el.appendChild(img); };
-  img.onerror = () => {
-    idx++;
-    if (idx < candidates.length) img.src = candidates[idx];
-  };
-  img.src = candidates[0];
+document.querySelectorAll('[data-img]').forEach(el => {
+  const src = SQUARE_PORTRAITS[el.getAttribute('data-img')];
+  if (!src) return; // e.g. header crest: keep its text fallback
+  const img = new Image();
+  img.alt = el.getAttribute('data-img');
+  img.onload = () => { el.textContent = ''; el.appendChild(img); };
+  img.src = src;
 });
 </script>
 </body>
