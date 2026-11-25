@@ -1240,16 +1240,17 @@ const TICK_GROUPS = [
   { key: "SI", label: "Serious injury" },
   { key: "OOA", label: "Out of action" }
 ];
-const TICK_MAX = {
-  default:    { W: 0, FW: 2, SI: 6, OOA: 7 },
-  hermajesty: { W: 1, FW: 2, SI: 6, OOA: 7 },
-  blackwidow: { W: 1, FW: 3, SI: 6, OOA: 7 },
-  copperhead: { W: 1, FW: 2, SI: 6, OOA: 7 }
-};
-
-function tickMax(id, key) {
-  const m = TICK_MAX[id] || TICK_MAX.default;
-  return m[key];
+/* Box counts follow the Munda Manager rule:
+   Wounds boxes = W - 1, Flesh Wounds boxes = T - 1 (from the fighter's stats).
+   Serious Injury (6) and Out of Action (7) are as printed on the sheet. */
+function tickMax(f, key) {
+  const w = parseInt(f.stats.W, 10);
+  const t = parseInt(f.stats.T, 10);
+  if (key === "W") return Math.max(0, w - 1);
+  if (key === "FW") return Math.max(0, t - 1);
+  if (key === "SI") return 6;
+  if (key === "OOA") return 7;
+  return 0;
 }
 
 function setTick(id, key, i) {
@@ -1266,7 +1267,7 @@ function setTick(id, key, i) {
 function tickPanelHtml(f) {
   const t = state.ticks[f.id] || {};
   const groups = TICK_GROUPS.map(g => {
-    const max = tickMax(f.id, g.key);
+    const max = tickMax(f, g.key);
     if (!max) return "";
     const count = Math.min(t[g.key] || 0, max);
     const boxes = Array.from({ length: max }, (_, i) =>
