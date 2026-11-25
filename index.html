@@ -1,46 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>Blades of the Crown — House Escher Tactical Deck</title>
 <style>
   :root {
-    --obsidian: #0a080d;
+    --bg: #0a080d;
     --panel: #130f1a;
-    --panel-2: #1b1525;
-    --plum: #3b174d;
-    --plum-glow: #6d2891;
-    --gold: #d4af37;
-    --gold-bright: #f5d76e;
-    --gold-dim: rgba(212, 175, 55, 0.25);
-    --venom: #10b981;
-    --venom-dim: rgba(16, 185, 129, 0.18);
-    --crown: #eab308;
-    --crown-dim: rgba(234, 179, 8, 0.18);
-    --crimson: #ef4444;
-    --amber: #f59e0b;
-    --slate: #94a3b8;
-    --text: #f8fafc;
-    --muted: #a1a1aa;
-    --border: rgba(212, 175, 55, 0.22);
+    --panel-2: #1a1424;
+    --panel-3: #221a30;
+    --border: #2e243d;
+    --gold: #e2b857;
+    --gold-dim: #9e7e34;
+    --plum: #9d4edd;
+    --crimson: #e63946;
+    --emerald: #2ec4b6;
+    --amber: #f4a261;
+    --slate: #6c757d;
+    --text: #f3effa;
+    --muted: #a69bb8;
   }
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background: radial-gradient(circle at top right, #231130 0%, var(--obsidian) 55%);
+    background: radial-gradient(circle at top right, #1b1128 0%, var(--bg) 55%);
     color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     min-height: 100vh;
-    overflow-x: hidden;
+    padding-bottom: 32px;
   }
 
   /* Top Command Bar */
   .topbar {
     position: sticky;
     top: 0;
-    z-index: 40;
-    background: rgba(10, 8, 13, 0.94);
+    z-index: 50;
+    background: rgba(12, 9, 17, 0.94);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
     padding: 10px 14px;
@@ -60,32 +55,29 @@
     height: 38px;
     border-radius: 10px;
     border: 1px solid var(--gold);
-    background: linear-gradient(135deg, var(--plum), #160c21);
+    background: linear-gradient(135deg, #2b183d, #120c1a);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
-    box-shadow: 0 0 14px rgba(212, 175, 55, 0.25);
+    overflow: hidden;
+    font-size: 18px;
+    flex-shrink: 0;
   }
+  .brand-crest img { width: 100%; height: 100%; object-fit: cover; }
   .brand-title h1 {
-    margin: 0;
     font-size: 16px;
     letter-spacing: 0.6px;
+    color: var(--gold);
     text-transform: uppercase;
-    color: var(--gold-bright);
+    font-weight: 800;
   }
-  .brand-sub {
+  .brand-title p {
     font-size: 11px;
     color: var(--muted);
-    margin-top: 2px;
-  }
-  .brand-sub span {
-    color: var(--gold);
-    font-weight: 700;
   }
 
   /* Round Counter & Controls */
-  .controls-cluster {
+  .controls-group {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -95,25 +87,25 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    background: linear-gradient(135deg, rgba(59, 23, 77, 0.75), rgba(19, 15, 26, 0.95));
-    border: 1px solid var(--gold);
+    background: linear-gradient(135deg, #241934, #161021);
+    border: 1px solid var(--gold-dim);
     border-radius: 10px;
-    padding: 5px 9px;
-    box-shadow: 0 0 12px rgba(212, 175, 55, 0.16);
+    padding: 5px 10px;
   }
   .round-label {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 800;
-    color: var(--gold-bright);
+    color: var(--gold);
     letter-spacing: 0.4px;
-    padding: 0 4px;
+    min-width: 78px;
+    text-align: center;
   }
   .btn {
-    border: 1px solid var(--border);
     background: var(--panel-2);
     color: var(--text);
-    padding: 6px 10px;
+    border: 1px solid var(--border);
     border-radius: 8px;
+    padding: 6px 10px;
     font-size: 12px;
     font-weight: 700;
     cursor: pointer;
@@ -123,39 +115,47 @@
     gap: 5px;
     transition: all 0.15s ease;
   }
-  .btn:active { transform: scale(0.97); }
+  .btn:hover, .btn:active { border-color: var(--gold); background: var(--panel-3); }
   .btn-gold {
-    background: linear-gradient(135deg, #d4af37, #a8821d);
-    color: #0a080d;
-    border-color: var(--gold-bright);
-  }
-  .btn-mini {
-    padding: 4px 8px;
-    font-size: 11px;
-  }
-  .nav-links {
-    display: flex;
-    gap: 6px;
-  }
-  .nav-links .btn.active-page {
+    background: linear-gradient(135deg, #d4a63f, #9c7421);
+    color: #0b080f;
     border-color: var(--gold);
-    background: rgba(212, 175, 55, 0.16);
-    color: var(--gold-bright);
   }
+  .btn-gold:hover { filter: brightness(1.08); }
+  .btn-sm { padding: 4px 8px; font-size: 11px; border-radius: 6px; }
 
-  /* Main Split Layout */
-  .layout {
+  /* Gang Summary Strip */
+  .gang-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
+    gap: 8px;
+    padding: 10px 14px 4px;
+    max-width: 1380px;
+    margin: 0 auto;
+  }
+  .metric-pill {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 7px 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  .metric-pill span { font-size: 10px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.5px; }
+  .metric-pill strong { font-size: 14px; color: var(--gold); margin-top: 2px; }
+
+  /* Main Split Deck */
+  .deck-layout {
     display: grid;
     grid-template-columns: 310px 1fr;
     gap: 14px;
-    padding: 14px;
-    max-width: 1440px;
+    padding: 10px 14px;
+    max-width: 1380px;
     margin: 0 auto;
+    align-items: start;
   }
   @media (max-width: 860px) {
-    .layout {
-      grid-template-columns: 1fr;
-    }
+    .deck-layout { grid-template-columns: 1fr; }
   }
 
   /* Left Sidebar */
@@ -163,13 +163,9 @@
     background: var(--panel);
     border: 1px solid var(--border);
     border-radius: 14px;
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    height: fit-content;
+    padding: 10px;
     position: sticky;
-    top: 72px;
+    top: 66px;
   }
   @media (max-width: 860px) {
     .sidebar { position: static; }
@@ -178,91 +174,85 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 6px;
+    margin-bottom: 10px;
   }
   .filter-btn {
     background: var(--panel-2);
     border: 1px solid var(--border);
     color: var(--muted);
-    padding: 7px 6px;
     border-radius: 8px;
+    padding: 6px 4px;
     font-size: 11px;
     font-weight: 700;
     cursor: pointer;
     text-align: center;
   }
   .filter-btn.active {
-    background: rgba(212, 175, 55, 0.18);
+    background: linear-gradient(135deg, #2d1b46, #1b112b);
     border-color: var(--gold);
-    color: var(--gold-bright);
+    color: var(--gold);
   }
   .roster-list {
     display: flex;
     flex-direction: column;
     gap: 7px;
+    max-height: calc(100vh - 190px);
+    overflow-y: auto;
+    padding-right: 2px;
   }
-  .roster-item {
+  @media (max-width: 860px) {
+    .roster-list { max-height: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  }
+  .nav-card {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 8px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
     border-radius: 10px;
-    background: linear-gradient(135deg, rgba(27, 21, 37, 0.9), rgba(14, 11, 19, 0.95));
-    border: 1px solid rgba(255,255,255,0.07);
+    padding: 7px 9px;
     cursor: pointer;
     transition: all 0.15s ease;
     position: relative;
-    overflow: hidden;
   }
-  .roster-item.selected {
+  .nav-card:hover { border-color: var(--gold-dim); }
+  .nav-card.selected {
     border-color: var(--gold);
-    box-shadow: 0 0 14px rgba(212, 175, 55, 0.22);
-    background: linear-gradient(135deg, rgba(59, 23, 77, 0.55), rgba(19, 15, 26, 0.98));
+    background: linear-gradient(135deg, #28193d, #181124);
+    box-shadow: 0 0 0 1px rgba(226, 184, 87, 0.35);
   }
-  .roster-item.status-done { opacity: 0.62; }
-  .roster-item.status-unavailable { opacity: 0.42; filter: grayscale(0.75); }
-  .thumb-wrap {
-    width: 46px;
-    height: 46px;
-    border-radius: 9px;
+  .nav-card.is-unavailable { opacity: 0.48; filter: grayscale(0.65); }
+  .nav-card.is-done { opacity: 0.72; }
+  .nav-thumb {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
     border: 1px solid var(--gold-dim);
+    background: #1c1429;
     overflow: hidden;
     flex-shrink: 0;
     position: relative;
-    background: linear-gradient(135deg, var(--plum), #0e0a14);
     display: flex;
     align-items: center;
     justify-content: center;
+    font-weight: 800;
+    color: var(--gold);
+    font-size: 13px;
   }
-  .thumb-wrap img {
+  .nav-thumb img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: center top;
-    display: block;
   }
-  .thumb-wrap::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(10,8,13,0.55) 0%, transparent 55%);
-    pointer-events: none;
-  }
-  .thumb-fallback {
-    font-weight: 800;
-    font-size: 13px;
-    color: var(--gold);
-  }
-  .roster-meta {
-    flex: 1;
-    min-width: 0;
-  }
-  .roster-name-row {
+  .nav-info { flex: 1; min-width: 0; }
+  .nav-name-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 4px;
   }
-  .roster-name {
+  .nav-name {
     font-size: 13px;
     font-weight: 800;
     color: var(--text);
@@ -270,95 +260,86 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .squad-pill {
-    font-size: 9px;
+  .nav-xp {
+    font-size: 10px;
     font-weight: 800;
-    padding: 2px 5px;
+    color: var(--gold);
+    background: rgba(226, 184, 87, 0.14);
+    border: 1px solid rgba(226, 184, 87, 0.35);
+    padding: 1px 5px;
     border-radius: 5px;
-    text-transform: uppercase;
     flex-shrink: 0;
   }
-  .squad-crown { background: var(--crown-dim); color: var(--gold-bright); border: 1px solid rgba(234,179,8,0.4); }
-  .squad-venom { background: var(--venom-dim); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.4); }
-  .roster-role {
+  .nav-sub {
     font-size: 11px;
     color: var(--muted);
     margin-top: 2px;
-  }
-  .roster-badges {
     display: flex;
     align-items: center;
-    gap: 5px;
-    margin-top: 4px;
+    justify-content: space-between;
+    gap: 4px;
   }
-  .mini-badge {
+  .status-dot {
     font-size: 10px;
-    font-weight: 700;
+    font-weight: 800;
     padding: 1px 6px;
-    border-radius: 4px;
+    border-radius: 5px;
+    text-transform: uppercase;
   }
-  .st-ready { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
-  .st-done { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; }
-  .st-pinned { background: rgba(245, 158, 11, 0.22); color: #fcd34d; }
-  .st-injured { background: rgba(239, 68, 68, 0.24); color: #fca5a5; }
-  .st-unavailable { background: rgba(113, 113, 122, 0.25); color: #a1a1aa; }
-  .xp-mini { background: rgba(212, 175, 55, 0.16); color: var(--gold-bright); }
+  .st-ready { background: rgba(46, 196, 182, 0.16); color: var(--emerald); border: 1px solid rgba(46, 196, 182, 0.4); }
+  .st-done { background: rgba(108, 117, 125, 0.22); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.4); }
+  .st-pinned { background: rgba(244, 162, 97, 0.18); color: var(--amber); border: 1px solid rgba(244, 162, 97, 0.45); }
+  .st-injured { background: rgba(230, 57, 70, 0.2); color: #ff758f; border: 1px solid rgba(230, 57, 70, 0.45); }
+  .st-unavailable { background: rgba(120, 113, 108, 0.25); color: #a8a29e; border: 1px solid #57534e; }
 
-  /* Center Fighter Card */
-  .stage {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-  .fighter-card {
+  /* Center Fighter Sheet */
+  .fighter-stage {
     background: var(--panel);
     border: 1px solid var(--border);
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.55);
+    box-shadow: 0 14px 34px rgba(0,0,0,0.45);
   }
-  .hero-banner {
+  .hero-header {
     position: relative;
     padding: 18px;
-    background: linear-gradient(135deg, rgba(59, 23, 77, 0.85) 0%, rgba(19, 15, 26, 0.98) 68%);
+    background: linear-gradient(135deg, #251538 0%, #140e1f 65%, #1d1429 100%);
     border-bottom: 1px solid var(--border);
     display: flex;
     flex-wrap: wrap;
-    gap: 18px;
+    gap: 16px;
     align-items: center;
   }
-  .portrait-box {
-    width: 126px;
-    height: 126px;
+  .portrait-frame {
+    width: 118px;
+    height: 118px;
     border-radius: 14px;
     border: 2px solid var(--gold);
+    background: linear-gradient(180deg, #261838, #0f0b16);
     overflow: hidden;
     position: relative;
     cursor: zoom-in;
     flex-shrink: 0;
-    background: linear-gradient(145deg, #2b103a, #0a080d);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.65);
+    box-shadow: 0 8px 22px rgba(0,0,0,0.55);
   }
-  .portrait-box img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center top;
-    display: block;
-  }
-  .portrait-box::after {
-    content: "🔍 FULL ART";
+  .portrait-frame::after {
+    content: "🔍 Full Art";
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 5px 0;
-    text-align: center;
-    font-size: 9px;
+    background: linear-gradient(to top, rgba(10,8,13,0.92), transparent);
+    color: var(--gold);
+    font-size: 10px;
     font-weight: 800;
-    letter-spacing: 0.7px;
-    color: var(--gold-bright);
-    background: linear-gradient(to top, rgba(10, 8, 13, 0.92), transparent);
+    text-align: center;
+    padding: 10px 4px 4px;
+  }
+  .portrait-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
   }
   .portrait-fallback {
     width: 100%;
@@ -366,36 +347,41 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 900;
     color: var(--gold);
   }
-  .hero-info {
-    flex: 1;
-    min-width: 240px;
-  }
-  .hero-top-tags {
+  .hero-meta { flex: 1; min-width: 230px; }
+  .badge-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    align-items: center;
+    gap: 6px;
     margin-bottom: 6px;
   }
-  .rating-tag {
-    background: rgba(212, 175, 55, 0.2);
-    border: 1px solid var(--gold);
-    color: var(--gold-bright);
+  .squad-badge {
     font-size: 11px;
     font-weight: 800;
     padding: 3px 8px;
     border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .sq-crown { background: rgba(226, 184, 87, 0.16); color: var(--gold); border: 1px solid var(--gold-dim); }
+  .sq-venom { background: rgba(157, 78, 221, 0.18); color: #d8b4fe; border: 1px solid #7e22ce; }
+  .rating-badge {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    color: var(--text);
   }
   .hero-name {
-    margin: 0;
-    font-size: 26px;
+    font-size: 24px;
     font-weight: 900;
-    letter-spacing: 0.5px;
-    color: #ffffff;
+    color: var(--text);
+    letter-spacing: 0.3px;
   }
   .hero-role {
     font-size: 13px;
@@ -404,23 +390,24 @@
     margin-top: 2px;
   }
   .hero-quote {
-    margin: 8px 0 0;
-    font-size: 12.5px;
+    margin-top: 8px;
+    font-size: 12px;
     font-style: italic;
-    color: #d4d4d8;
-    line-height: 1.4;
+    color: var(--muted);
+    border-left: 2px solid var(--gold-dim);
+    padding-left: 9px;
   }
 
-  /* Status & XP Action Strip */
+  /* Interactive Status & XP Bar */
   .action-strip {
     padding: 12px 18px;
-    background: #0f0c15;
+    background: var(--panel-2);
     border-bottom: 1px solid var(--border);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 10px;
   }
   .status-buttons {
     display: flex;
@@ -428,214 +415,205 @@
     gap: 6px;
   }
   .st-btn {
-    padding: 7px 11px;
+    padding: 6px 10px;
     border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.12);
-    background: var(--panel-2);
+    border: 1px solid var(--border);
+    background: var(--panel);
     color: var(--muted);
     font-size: 12px;
     font-weight: 700;
     cursor: pointer;
   }
-  .st-btn.active[data-st="ready"] { background: rgba(16,185,129,0.24); border-color: #10b981; color: #6ee7b7; }
-  .st-btn.active[data-st="done"] { background: rgba(148,163,184,0.24); border-color: #94a3b8; color: #f8fafc; }
-  .st-btn.active[data-st="pinned"] { background: rgba(245,158,11,0.25); border-color: #f59e0b; color: #fcd34d; }
-  .st-btn.active[data-st="injured"] { background: rgba(239,68,68,0.28); border-color: #ef4444; color: #fca5a5; }
-  .st-btn.active[data-st="unavailable"] { background: rgba(113,113,122,0.32); border-color: #a1a1aa; color: #e4e4e7; }
+  .st-btn.active[data-st="ready"] { background: rgba(46, 196, 182, 0.2); border-color: var(--emerald); color: var(--emerald); }
+  .st-btn.active[data-st="done"] { background: rgba(148, 163, 184, 0.22); border-color: #cbd5e1; color: #f8fafc; }
+  .st-btn.active[data-st="pinned"] { background: rgba(244, 162, 97, 0.22); border-color: var(--amber); color: var(--amber); }
+  .st-btn.active[data-st="injured"] { background: rgba(230, 57, 70, 0.24); border-color: var(--crimson); color: #ff8fa3; }
+  .st-btn.active[data-st="unavailable"] { background: rgba(120, 113, 108, 0.3); border-color: #a8a29e; color: #e7e5e4; }
 
   .xp-box {
     display: flex;
     align-items: center;
     gap: 6px;
-    background: var(--panel-2);
+    background: var(--panel);
     border: 1px solid var(--gold-dim);
     padding: 5px 10px;
     border-radius: 9px;
   }
-  .xp-val {
+  .xp-display {
     font-size: 13px;
-    font-weight: 800;
-    color: var(--gold-bright);
+    font-weight: 900;
+    color: var(--gold);
     margin-right: 4px;
   }
   .xp-btn {
-    background: rgba(212, 175, 55, 0.16);
-    border: 1px solid var(--gold-dim);
-    color: var(--gold-bright);
-    border-radius: 6px;
-    padding: 4px 8px;
+    background: var(--panel-3);
+    border: 1px solid var(--border);
+    color: var(--text);
     font-size: 11px;
     font-weight: 800;
+    padding: 4px 7px;
+    border-radius: 6px;
     cursor: pointer;
   }
-  .xp-btn:active { transform: scale(0.95); }
+  .xp-btn:hover { border-color: var(--gold); color: var(--gold); }
 
   /* 12-Stat Necromunda Grid */
-  .section {
-    padding: 16px 18px;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-  }
-  .section:last-child { border-bottom: none; }
-  .section-title {
+  .sheet-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 16px; }
+  .section-label {
     font-size: 11px;
-    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.9px;
+    letter-spacing: 0.8px;
     color: var(--gold);
-    margin: 0 0 10px;
+    font-weight: 800;
+    margin-bottom: 7px;
   }
-  .stat-grid {
+  .stats-grid {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
-    gap: 5px;
+    gap: 4px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 6px;
+    text-align: center;
   }
-  @media (max-width: 640px) {
-    .stat-grid { grid-template-columns: repeat(6, 1fr); }
+  @media (max-width: 600px) {
+    .stats-grid { grid-template-columns: repeat(6, 1fr); gap: 6px; }
   }
   .stat-cell {
-    background: var(--panel-2);
-    border: 1px solid rgba(212, 175, 55, 0.18);
-    border-radius: 8px;
-    text-align: center;
-    padding: 6px 2px;
+    background: var(--panel);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 6px;
+    padding: 5px 2px;
   }
-  .stat-lbl {
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--muted);
-  }
-  .stat-num {
-    font-size: 14px;
-    font-weight: 900;
-    color: #fff;
-    margin-top: 2px;
-  }
+  .stat-cell span { display: block; font-size: 10px; color: var(--muted); font-weight: 700; }
+  .stat-cell strong { display: block; font-size: 14px; color: var(--text); font-weight: 900; margin-top: 2px; }
+  .stat-cell.mental strong { color: #d8b4fe; }
 
   /* Weapons Table */
   .table-wrap {
     overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--panel-2);
   }
   table {
     width: 100%;
     border-collapse: collapse;
     font-size: 12px;
+    min-width: 540px;
   }
   th {
-    text-align: left;
-    padding: 8px;
-    background: rgba(59, 23, 77, 0.45);
-    color: var(--gold-bright);
-    font-size: 10.5px;
+    background: #1f172b;
+    color: var(--gold);
+    font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    padding: 8px 8px;
+    text-align: center;
     border-bottom: 1px solid var(--border);
   }
+  th:first-child, td:first-child { text-align: left; padding-left: 12px; }
   td {
     padding: 9px 8px;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    vertical-align: top;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    color: var(--text);
   }
-  .wpn-name {
-    font-weight: 800;
-    color: #fff;
-  }
+  tr:last-child td { border-bottom: none; }
+  .w-name { font-weight: 800; color: #fff; }
   .trait-pill {
     display: inline-block;
-    background: rgba(212, 175, 55, 0.14);
-    border: 1px solid rgba(212, 175, 55, 0.32);
-    color: var(--gold-bright);
-    font-size: 10.5px;
+    background: rgba(157, 78, 221, 0.16);
+    border: 1px solid rgba(157, 78, 221, 0.4);
+    color: #e9d5ff;
+    font-size: 10px;
     font-weight: 700;
     padding: 2px 6px;
     border-radius: 5px;
-    margin: 2px 3px 2px 0;
+    margin: 1px 2px;
   }
   .trait-toxin {
-    background: rgba(16, 185, 129, 0.18);
-    border-color: rgba(16, 185, 129, 0.45);
-    color: #6ee7b7;
+    background: rgba(46, 196, 182, 0.16);
+    border-color: rgba(46, 196, 182, 0.45);
+    color: #99f6e4;
   }
 
   /* Info Cards Grid */
   .info-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 10px;
   }
-  .info-card {
+  .info-box {
     background: var(--panel-2);
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 12px;
+    padding: 11px 12px;
   }
-  .info-card h4 {
-    margin: 0 0 6px;
+  .info-box h4 {
     font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 0.7px;
     color: var(--gold);
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
   }
-  .info-card p {
-    margin: 0;
+  .info-box p, .info-box li {
     font-size: 12.5px;
     line-height: 1.45;
-    color: #e4e4e7;
+    color: var(--text);
   }
   .injury-alert {
-    border-color: rgba(239, 68, 68, 0.4);
-    background: rgba(239, 68, 68, 0.08);
+    background: rgba(230, 57, 70, 0.12);
+    border-color: rgba(230, 57, 70, 0.45);
   }
-  .injury-alert h4 { color: #fca5a5; }
+  .injury-alert h4 { color: #ff8fa3; }
 
   /* Full Portrait Lightbox */
   .lightbox {
     position: fixed;
     inset: 0;
     z-index: 100;
-    background: rgba(6, 5, 9, 0.92);
-    backdrop-filter: blur(10px);
+    background: rgba(6, 4, 10, 0.92);
+    backdrop-filter: blur(8px);
     display: none;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 18px;
   }
   .lightbox.open { display: flex; }
-  .lightbox-inner {
-    max-width: 520px;
-    width: 100%;
+  .lightbox-card {
     background: var(--panel);
     border: 2px solid var(--gold);
     border-radius: 16px;
+    max-width: 460px;
+    width: 100%;
     overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8);
   }
-  .lightbox-head {
-    padding: 12px 16px;
+  .lightbox-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 10px 14px;
+    background: var(--panel-2);
     border-bottom: 1px solid var(--border);
-    background: linear-gradient(135deg, var(--plum), var(--panel));
   }
-  .lightbox-head h3 {
-    margin: 0;
-    font-size: 15px;
-    color: var(--gold-bright);
-  }
-  .lightbox-body {
-    background: #08060b;
+  .lightbox-top strong { color: var(--gold); font-size: 14px; }
+  .lightbox-img-wrap {
+    width: 100%;
+    max-height: 72vh;
+    background: #09070c;
     display: flex;
     align-items: center;
     justify-content: center;
-    max-height: 75vh;
     overflow: hidden;
   }
-  .lightbox-body img {
+  .lightbox-img-wrap img {
     width: 100%;
     height: auto;
-    max-height: 75vh;
+    max-height: 72vh;
     object-fit: contain;
-    display: block;
   }
 </style>
 </head>
@@ -643,260 +621,253 @@
 
 <header class="topbar">
   <div class="brand">
-    <div class="brand-crest">👑</div>
+    <div class="brand-crest" id="gangCrestBox">👑</div>
     <div class="brand-title">
       <h1>Blades of the Crown</h1>
-      <div class="brand-sub" id="gangSummary">
-        House Escher • Active: <span id="activeRating">1250 Cr</span> (<span id="activeCount">10</span>/10) • Stash: <span>150 Cr</span> • Rep: <span>4</span> • Gang XP: <span id="totalXp">27</span>
-      </div>
+      <p>House Escher • Live Tabletop Deck</p>
     </div>
   </div>
 
-  <div class="controls-cluster">
+  <div class="controls-group">
     <div class="round-box">
-      <button class="btn btn-mini" id="prevRoundBtn" title="Previous Round">◀</button>
+      <button class="btn btn-sm" onclick="changeRound(-1)" title="Previous Round">◀</button>
       <span class="round-label" id="roundDisplay">🎲 Round 1</span>
-      <button class="btn btn-gold btn-mini" id="nextRoundBtn" title="Advance Round & Reset Activated Fighters">Next ▶</button>
-      <button class="btn btn-mini" id="resetRoundBtn" title="Reset to Round 1">↺</button>
+      <button class="btn btn-sm btn-gold" onclick="nextRound()" title="Advance Round & Reset Activated">Next ▶</button>
+      <button class="btn btn-sm" onclick="resetRound()" title="Reset to Round 1">↺</button>
     </div>
-
-    <button class="btn" id="newTurnBtn" title="Reset Activated fighters to Ready">↺ New Turn</button>
-    <button class="btn" id="syncXpBtn" title="Reset XP to Munda Manager baseline">↺ Sync XP</button>
-
-    <nav class="nav-links">
-      <a class="btn active-page" href="index.html">⚔️ Deck</a>
-      <a class="btn" href="bible.html">📖 Bible</a>
-      <a class="btn" href="campaign.html">🗺️ Campaign</a>
-    </nav>
+    <button class="btn" onclick="newTurnReset()">↺ New Turn</button>
+    <button class="btn" onclick="syncDefaultXp()">↺ Sync XP</button>
+    <a class="btn" href="bible.html">📖 Bible</a>
+    <a class="btn" href="campaign.html">🗺️ Campaign</a>
   </div>
 </header>
 
-<main class="layout">
+<section class="gang-strip" id="gangMetrics"></section>
+
+<main class="deck-layout">
   <aside class="sidebar">
     <div class="filter-bar">
-      <button class="filter-btn active" data-filter="all">All (10)</button>
-      <button class="filter-btn" data-filter="crown">👑 Crown</button>
-      <button class="filter-btn" data-filter="venom">🐍 Venom</button>
+      <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">All (10)</button>
+      <button class="filter-btn" data-filter="crown" onclick="setFilter('crown')">👑 Crown</button>
+      <button class="filter-btn" data-filter="venom" onclick="setFilter('venom')">🐍 Venom</button>
     </div>
     <div class="roster-list" id="rosterList"></div>
   </aside>
 
-  <section class="stage" id="fighterStage"></section>
+  <section class="fighter-stage" id="fighterDetail"></section>
 </main>
 
-<div class="lightbox" id="lightbox">
-  <div class="lightbox-inner">
-    <div class="lightbox-head">
-      <h3 id="lightboxTitle">Fighter Portrait</h3>
-      <button class="btn btn-mini" id="closeLightboxBtn">✕ Close</button>
+<div class="lightbox" id="portraitLightbox" onclick="closeLightbox(event)">
+  <div class="lightbox-card" onclick="event.stopPropagation()">
+    <div class="lightbox-top">
+      <strong id="lightboxTitle">Fighter Portrait</strong>
+      <button class="btn btn-sm" onclick="closeLightbox()">✕ Close</button>
     </div>
-    <div class="lightbox-body">
-      <img id="lightboxImg" src="" alt="Full Fighter Portrait">
-    </div>
+    <div class="lightbox-img-wrap" id="lightboxBody"></div>
   </div>
 </div>
 
 <script>
-const FIGHTERS = [
+const ROSTER = [
   {
     id: "hermajesty",
-    num: 1,
     name: "Her Majesty",
-    role: "Gang Queen • Leader",
     squad: "crown",
+    role: "Gang Queen • Leader",
     rating: 245,
-    baseXp: 4,
+    defaultXp: 4,
+    defaultStatus: "ready",
     stats: { M:'5"', WS:'3+', BS:'3+', S:'3', T:'3', W:'2', I:'2+', A:'3', Ld:'5+', Cl:'5+', Wil:'6+', Int:'7+' },
-    skills: "Overseer",
-    wargear: "Armoured undersuit, Mesh armour (4+ Save)",
-    rules: "Gang Leader, Tools of the Trade, Gang Hierarchy (Leader), Group Activation (2)",
-    injury: "Old Battle Wound",
-    tactics: "Tempo Engine: Stay in Tier 1/2 cover within 12" of Black Widow or objective runners. Use Group Activation (2) + Overseer (Double) to slingshot Black Widow up vertical tiers before her normal activation.",
-    quote: "“A throne is merely a chair until someone bleeds to keep you off it. Hold the line, darlings—and try not to get blood on the velvet.”",
+    skills: ["Overseer"],
     weapons: [
-      { name: "Boltgun", rngS: '12"', rngL: '24"', accS: '+1', accL: '-', str: '4', ap: '-1', d: '2', am: '6+', traits: ["Rapid Fire (1)"] },
-      { name: "Needle pistol", rngS: '4"', rngL: '9"', accS: '+2', accL: '-', str: '-', ap: '-1', d: '-', am: '6+', traits: ["Scarce", "Sidearm", "Silent", "Toxin"] }
-    ]
+      { name: "Boltgun", rngS:'12"', rngL:'24"', accS:'+1', accL:'-', str:'4', ap:'-1', d:'2', am:'6+', traits:["Rapid Fire (1)"] },
+      { name: "Needle pistol", rngS:'4"', rngL:'9"', accS:'+2', accL:'-', str:'-', ap:'-1', d:'-', am:'6+', traits:["Scarce","Sidearm","Silent","Toxin"] }
+    ],
+    wargear: ["Armoured undersuit", "Mesh armour (4+ save)"],
+    rules: ["Gang Leader", "Tools of the Trade", "Gang Hierarchy (Leader)", "Group Activation (2)"],
+    injuries: ["Old Battle Wound"],
+    quote: "A throne is merely a chair until someone bleeds to keep you off it. Hold the line, darlings—and try not to get blood on the velvet.",
+    tactics: "Tempo Engine: Keep behind Tier 1/2 cover within 12\" of Black Widow or runners to trigger Group Activation (2) + Overseer slingshots."
   },
   {
     id: "blackwidow",
-    num: 2,
     name: "Black Widow",
-    role: "Death-Maiden • Champion",
     squad: "venom",
+    role: "Death-Maiden • Champion",
     rating: 295,
-    baseXp: 4,
+    defaultXp: 4,
+    defaultStatus: "ready",
     stats: { M:'6"', WS:'2+', BS:'3+', S:'3', T:'4', W:'2', I:'2+', A:'3', Ld:'8+', Cl:'4+', Wil:'7+', Int:'7+' },
-    skills: "Combat Virtuoso",
-    wargear: "Armoured undersuit, Chem-synth, Displacer field, Mesh armour (4+ Save)",
-    rules: "Gang Hierarchy (Champion), Tools of the Trade, Poison Blood",
-    injury: "Out Cold",
-    tactics: "Primary Assassin: Combat Virtuoso grants 3" Versatile to her Stiletto Sword. Move within 3" (across railings or gaps) and Fight without entering base contact—enemies without 3" Versatile get zero reaction swings. Trigger Chem-synth before striking T4 targets.",
-    quote: "“I already died once in the dark. You won't enjoy how quickly I share the experience—nor what is waiting in Silence.”",
+    skills: ["Combat Virtuoso"],
     weapons: [
-      { name: "Stiletto sword", rngS: '-', rngL: 'E (3" Virt.)', accS: '-', accL: '-', str: '-', ap: '-1', d: '-', am: '-', traits: ["Melee", "Parry", "Toxin", "Versatile (3" Virtuoso)"] },
-      { name: "Needle pistol", rngS: '4"', rngL: '9"', accS: '+2', accL: '-', str: '-', ap: '-1', d: '-', am: '6+', traits: ["Scarce", "Sidearm", "Silent", "Toxin"] }
-    ]
+      { name: "Stiletto sword", rngS:'-', rngL:'E (3" Virt.)', accS:'-', accL:'-', str:'-', ap:'-1', d:'-', am:'-', traits:["Melee","Parry","Toxin","Versatile 3\""] },
+      { name: "Needle pistol", rngS:'4"', rngL:'9"', accS:'+2', accL:'-', str:'-', ap:'-1', d:'-', am:'6+', traits:["Scarce","Sidearm","Silent","Toxin"] }
+    ],
+    wargear: ["Armoured undersuit", "Mesh armour (4+ save)", "Chem-synth", "Displacer field"],
+    rules: ["Gang Hierarchy (Champion)", "Tools of the Trade", "Poison Blood"],
+    injuries: ["Out Cold"],
+    quote: "I already died once in the dark. You won't enjoy how quickly I share the experience—nor what is waiting in Silence.",
+    tactics: "Trigger Chem-synth (Int 7+) before striking, then use Combat Virtuoso (3\" Versatile) across railings/gaps to deal Toxin with zero reaction attacks."
   },
   {
     id: "copperhead",
-    num: 3,
     name: "Copperhead",
-    role: "Gang Matriarch • Champion",
     squad: "crown",
+    role: "Gang Matriarch • Champion",
     rating: 335,
-    baseXp: 7,
+    defaultXp: 7,
+    defaultStatus: "ready",
     stats: { M:'5"', WS:'3+', BS:'3+', S:'3', T:'3', W:'2', I:'2+', A:'2', Ld:'6+', Cl:'6+', Wil:'6+', Int:'6+' },
-    skills: "Spring Up",
-    wargear: "Armoured undersuit, Mesh armour (4+ Save), Suspensors",
-    rules: "Gang Hierarchy (Champion), Tools of the Trade, Group Activation (1)",
-    injury: "None",
-    tactics: "Elevated Fire Base (7 XP — Ready for 6 XP Advancement!): Claim Tier 2/3 cover early. Suspensors + Spring Up let her stand from pinned and fire Rapid Fire (2) Heavy Stubber bursts every turn. Watch out for Knockback weapons near unrailed ledges.",
-    quote: "“Six hundred rounds a minute says this corridor belongs to Her Majesty. Any Goliath stupid enough to argue can count the brass.”",
+    skills: ["Spring Up"],
     weapons: [
-      { name: "Heavy stubber (Suspensors)", rngS: '20"', rngL: '40"', accS: '-', accL: '-1', str: '4', ap: '-1', d: '1', am: '4+', traits: ["Rapid Fire (2)", "Unwieldy (Negated)"] },
-      { name: "Lasgun", rngS: '18"', rngL: '24"', accS: '+1', accL: '-', str: '3', ap: '-', d: '1', am: '2+', traits: ["Plentiful"] }
-    ]
+      { name: "Heavy stubber (Susp.)", rngS:'20"', rngL:'40"', accS:'-', accL:'-1', str:'4', ap:'-1', d:'1', am:'4+', traits:["Rapid Fire (2)","Unwieldy (Suspensors)"] },
+      { name: "Lasgun", rngS:'18"', rngL:'24"', accS:'+1', accL:'-', str:'3', ap:'-', d:'1', am:'2+', traits:["Plentiful"] }
+    ],
+    wargear: ["Armoured undersuit", "Mesh armour (4+ save)", "Suspensors"],
+    rules: ["Gang Hierarchy (Champion)", "Tools of the Trade", "Group Activation (1)"],
+    injuries: [],
+    quote: "Six hundred rounds a minute says this corridor belongs to Her Majesty. Any Goliath stupid enough to argue can count the brass.",
+    tactics: "Claim Tier 2/3 high ground with cover. Spring Up stands her for free after pinning, and Suspensors let her move & fire Rapid Fire (2) every turn."
   },
   {
     id: "nightshade",
-    num: 4,
     name: "Nightshade",
-    role: "Gang Sister • Specialist",
     squad: "venom",
+    role: "Gang Sister • Specialist",
     rating: 55,
-    baseXp: 3,
+    defaultXp: 3,
+    defaultStatus: "ready",
     stats: { M:'5"', WS:'4+', BS:'4+', S:'3', T:'3', W:'1', I:'3+', A:'1', Ld:'7+', Cl:'7+', Wil:'7+', Int:'7+' },
-    skills: "None",
-    wargear: "Flak armour (6+ Save)",
-    rules: "Gang Fighter (Specialist), Tools of the Trade",
-    injury: "None",
-    tactics: "Pinning Core & Top Special-Weapon Candidate: Advance in mid-tier cover and use +1 Short Accuracy Lasgun shots to strip Overwatch from enemy heavy gunners before Black Widow crosses open lanes.",
-    quote: "“Everyone stares at the shadows in the Deep Dome. They never notice the violet glow until the coils finish charging.”",
+    skills: [],
     weapons: [
-      { name: "Lasgun", rngS: '18"', rngL: '24"', accS: '+1', accL: '-', str: '3', ap: '-', d: '1', am: '2+', traits: ["Plentiful"] }
-    ]
+      { name: "Lasgun", rngS:'18"', rngL:'24"', accS:'+1', accL:'-', str:'3', ap:'-', d:'1', am:'2+', traits:["Plentiful"] }
+    ],
+    wargear: [],
+    rules: ["Gang Fighter (Specialist)", "Tools of the Trade"],
+    injuries: [],
+    quote: "Everyone stares at the shadows in the Deep Dome. They never notice the violet glow until the coils finish charging.",
+    tactics: "Pinning Core & Specialist: Shoot enemy Overwatch/heavy shooters at +1 Short Acc before Black Widow crosses open lanes."
   },
   {
     id: "mamba",
-    num: 5,
     name: "Mamba",
-    role: "Gang Sister • Ganger",
     squad: "venom",
+    role: "Gang Sister • Ganger",
     rating: 55,
-    baseXp: 2,
+    defaultXp: 2,
+    defaultStatus: "ready",
     stats: { M:'5"', WS:'4+', BS:'4+', S:'3', T:'3', W:'1', I:'3+', A:'1', Ld:'7+', Cl:'7+', Wil:'7+', Int:'7+' },
-    skills: "None",
-    wargear: "Flak armour (6+ Save)",
-    rules: "Gang Fighter (Ganger), Promotion (Escher Specialist)",
-    injury: "None",
-    tactics: "Mid-Tier Pinning Support: Pair with Nightshade to focus-fire dangerous shooters—pinning blocks Overwatch without forcing them to stand up into engagement.",
-    quote: "“Everything down here sweats poison if you know where to squeeze. Hold still—this won't hurt for very long.”",
+    skills: [],
     weapons: [
-      { name: "Lasgun", rngS: '18"', rngL: '24"', accS: '+1', accL: '-', str: '3', ap: '-', d: '1', am: '2+', traits: ["Plentiful"] }
-    ]
+      { name: "Lasgun", rngS:'18"', rngL:'24"', accS:'+1', accL:'-', str:'3', ap:'-', d:'1', am:'2+', traits:["Plentiful"] }
+    ],
+    wargear: [],
+    rules: ["Gang Fighter (Ganger)", "Promotion (Escher Specialist)"],
+    injuries: [],
+    quote: "Everything down here sweats poison if you know where to squeeze. Hold still—this won't hurt for very long.",
+    tactics: "Mid-tier firing line: Pair with Nightshade to focus-pin dangerous enemy guns and strip Overwatch."
   },
   {
     id: "scorpio",
-    num: 6,
     name: "Scorpio",
-    role: "Gang Sister • Ganger",
     squad: "crown",
+    role: "Gang Sister • Ganger",
     rating: 55,
-    baseXp: 3,
+    defaultXp: 3,
+    defaultStatus: "ready",
     stats: { M:'5"', WS:'4+', BS:'4+', S:'3', T:'3', W:'1', I:'3+', A:'1', Ld:'7+', Cl:'7+', Wil:'7+', Int:'7+' },
-    skills: "None",
-    wargear: "Flak armour (6+ Save)",
-    rules: "Gang Fighter (Ganger), Promotion (Escher Specialist)",
-    injury: "None",
-    tactics: "Flank Overwatch & Ladder Guard: Hold secondary mid-tier angles to pin enemy climbers trying to flank Copperhead's elevated perch.",
-    quote: "“Let the Guilders count their tallies in the Fort. Out here in the Deeps, territory belongs to whoever still holds the high ground.”",
+    skills: [],
     weapons: [
-      { name: "Lasgun", rngS: '18"', rngL: '24"', accS: '+1', accL: '-', str: '3', ap: '-', d: '1', am: '2+', traits: ["Plentiful"] }
-    ]
+      { name: "Lasgun", rngS:'18"', rngL:'24"', accS:'+1', accL:'-', str:'3', ap:'-', d:'1', am:'2+', traits:["Plentiful"] }
+    ],
+    wargear: [],
+    rules: ["Gang Fighter (Ganger)", "Promotion (Escher Specialist)"],
+    injuries: [],
+    quote: "Let the Guilders count their tallies in the Fort. Out here in the Deeps, territory belongs to whoever still holds the high gantries.",
+    tactics: "Flank Overwatch: Cover secondary ladders so enemy climbers cannot flank Copperhead's perch."
   },
   {
     id: "misswhips",
-    num: 7,
     name: "Miss Whips",
-    role: "Gang Sister • Ganger",
     squad: "crown",
+    role: "Gang Sister • Ganger",
     rating: 75,
-    baseXp: 2,
+    defaultXp: 2,
+    defaultStatus: "ready",
     stats: { M:'5"', WS:'4+', BS:'4+', S:'3', T:'3', W:'1', I:'3+', A:'1', Ld:'7+', Cl:'7+', Wil:'7+', Int:'7+' },
-    skills: "None",
-    wargear: "Flak armour (6+ Save)",
-    rules: "Gang Fighter (Ganger), Promotion (Escher Specialist)",
-    injury: "Critical Injury",
-    tactics: "Gantry Bodyguard: Patrol narrow catwalk bridges and guard Her Majesty. Her 3" Versatile Shock Whip hits rushers before base contact without giving them free reaction attacks.",
-    quote: "“Three paces, sweetheart. Step any closer to the Queen and I’ll peel that cheap flak armour off you in strips.”",
+    skills: [],
     weapons: [
-      { name: "Shock whip", rngS: 'E', rngL: '3"', accS: '-1', accL: '-', str: 'S+1', ap: '-', d: '1', am: '-', traits: ["Melee", "Shock", "Versatile (3")"] }
-    ]
+      { name: "Shock whip", rngS:'E', rngL:'3"', accS:'-1', accL:'-', str:'S+1', ap:'-', d:'1', am:'-', traits:["Melee","Shock","Versatile 3\""] }
+    ],
+    wargear: [],
+    rules: ["Gang Fighter (Ganger)", "Promotion (Escher Specialist)"],
+    injuries: ["Critical Injury"],
+    quote: "Three paces, sweetheart. Step any closer to the Queen and I'll peel that cheap flak armour off you in strips.",
+    tactics: "Gantry Bodyguard: Patrol narrow bridges and protect Her Majesty; her 3\" Versatile Shock Whip hits rushers without giving reaction swings."
   },
   {
     id: "vixen",
-    num: 8,
     name: "Vixen",
-    role: "Little Sister • Juve",
     squad: "venom",
+    role: "Little Sister • Juve",
     rating: 45,
-    baseXp: 1,
+    defaultXp: 1,
+    defaultStatus: "ready",
     stats: { M:'5"', WS:'4+', BS:'5+', S:'3', T:'3', W:'1', I:'3+', A:'1', Ld:'8+', Cl:'8+', Wil:'8+', Int:'8+' },
-    skills: "None",
-    wargear: "None",
-    rules: "Gang Fighter (Juve), Promotion (Escher Specialist), Fast Learner",
-    injury: "None",
-    tactics: "Fast Learner Objective Runner & Toxin Finisher: Climb secondary ladders away from Blast templates, grab upper objectives, and coup-de-grâce pinned 1-Wound targets for accelerated XP.",
-    quote: "“Go ahead, waste your Overwatch on me—I'm already three alleys ahead and Widow's right behind your shoulder.”",
+    skills: [],
     weapons: [
-      { name: "Stiletto knife", rngS: '-', rngL: 'E', accS: '-', accL: '-', str: '-', ap: '-', d: '-', am: '-', traits: ["Melee", "Toxin"] },
-      { name: "Stub gun", rngS: '6"', rngL: '12"', accS: '+2', accL: '-', str: '3', ap: '-', d: '1', am: '4+', traits: ["Plentiful", "Sidearm"] }
-    ]
+      { name: "Stiletto knife", rngS:'-', rngL:'E', accS:'-', accL:'-', str:'-', ap:'-', d:'-', am:'-', traits:["Melee","Toxin"] },
+      { name: "Stub gun", rngS:'6"', rngL:'12"', accS:'+2', accL:'-', str:'3', ap:'-', d:'1', am:'4+', traits:["Plentiful","Sidearm"] }
+    ],
+    wargear: [],
+    rules: ["Gang Fighter (Juve)", "Promotion (Escher Specialist)", "Fast Learner"],
+    injuries: [],
+    quote: "Go ahead, waste your Overwatch on me—I'm already three alleys ahead and Widow's right behind your shoulder.",
+    tactics: "Objective Runner & Toxin Finisher: Sprint secondary ladders for loot/objectives and finish pinned 1-Wound targets for Fast Learner XP."
   },
   {
     id: "fang",
-    num: 9,
     name: "Fang",
-    role: "Little Sister • Juve",
     squad: "venom",
+    role: "Little Sister • Juve",
     rating: 45,
-    baseXp: 1,
+    defaultXp: 1,
+    defaultStatus: "ready",
     stats: { M:'5"', WS:'4+', BS:'5+', S:'3', T:'3', W:'1', I:'3+', A:'1', Ld:'8+', Cl:'8+', Wil:'8+', Int:'8+' },
-    skills: "None",
-    wargear: "None",
-    rules: "Gang Fighter (Juve), Promotion (Escher Specialist), Fast Learner",
-    injury: "None",
-    tactics: "Armour-Piercing Ambusher: Use her Toxin Stiletto Knife to bypass T4 Goliaths/Squats and 4+ Enforcer armour once Copperhead pins them down.",
-    quote: "“Keep your head down when the heavy stubber starts singing. Once they hit the dirt, that's when my blade comes out.”",
+    skills: [],
     weapons: [
-      { name: "Stiletto knife", rngS: '-', rngL: 'E', accS: '-', accL: '-', str: '-', ap: '-', d: '-', am: '-', traits: ["Melee", "Toxin"] },
-      { name: "Stub gun", rngS: '6"', rngL: '12"', accS: '+2', accL: '-', str: '3', ap: '-', d: '1', am: '4+', traits: ["Plentiful", "Sidearm"] }
-    ]
+      { name: "Stiletto knife", rngS:'-', rngL:'E', accS:'-', accL:'-', str:'-', ap:'-', d:'-', am:'-', traits:["Melee","Toxin"] },
+      { name: "Stub gun", rngS:'6"', rngL:'12"', accS:'+2', accL:'-', str:'3', ap:'-', d:'1', am:'4+', traits:["Plentiful","Sidearm"] }
+    ],
+    wargear: [],
+    rules: ["Gang Fighter (Juve)", "Promotion (Escher Specialist)", "Fast Learner"],
+    injuries: [],
+    quote: "Keep your head down when the heavy stubber starts singing. Once they hit the dirt, that's when my blade comes out.",
+    tactics: "Follow Copperhead's Heavy Stubber suppression to Coup de Grâce pinned targets and bypass 4+ armour with Toxin."
   },
   {
     id: "talon",
-    num: 10,
     name: "Talon",
-    role: "Little Sister • Juve",
     squad: "crown",
+    role: "Little Sister • Juve",
     rating: 45,
-    baseXp: 1,
+    defaultXp: 1,
+    defaultStatus: "ready",
     stats: { M:'5"', WS:'4+', BS:'5+', S:'3', T:'3', W:'1', I:'3+', A:'1', Ld:'8+', Cl:'8+', Wil:'8+', Int:'8+' },
-    skills: "None",
-    wargear: "None",
-    rules: "Gang Fighter (Juve), Promotion (Escher Specialist), Fast Learner",
-    injury: "None",
-    tactics: "Crown Flank Runner: Escort Team Crown up vertical routes, screen catwalks alongside Miss Whips, and secure loot crates for Fast Learner promotions.",
-    quote: "“Blink and the loot crate’s gone; blink twice and you’re bleeding out on the gantry. Try to keep up!”",
+    skills: [],
     weapons: [
-      { name: "Stiletto knife", rngS: '-', rngL: 'E', accS: '-', accL: '-', str: '-', ap: '-', d: '-', am: '-', traits: ["Melee", "Toxin"] },
-      { name: "Stub gun", rngS: '6"', rngL: '12"', accS: '+2', accL: '-', str: '3', ap: '-', d: '1', am: '4+', traits: ["Plentiful", "Sidearm"] }
-    ]
+      { name: "Stiletto knife", rngS:'-', rngL:'E', accS:'-', accL:'-', str:'-', ap:'-', d:'-', am:'-', traits:["Melee","Toxin"] },
+      { name: "Stub gun", rngS:'6"', rngL:'12"', accS:'+2', accL:'-', str:'3', ap:'-', d:'1', am:'4+', traits:["Plentiful","Sidearm"] }
+    ],
+    wargear: [],
+    rules: ["Gang Fighter (Juve)", "Promotion (Escher Specialist)", "Fast Learner"],
+    injuries: [],
+    quote: "Blink and the loot crate's gone; blink twice and you're bleeding out on the gantry. Try to keep up!",
+    tactics: "Crown Flank Scout: Grab upper objectives early and threaten isolated enemies with +2 Short Acc Stub Gun + Toxin blade."
   }
 ];
 
-const STATE_KEY = "blades_crown_deck_v10";
+const STORAGE_KEY = "botc_deck_state_v9";
 let state = {
   selectedId: "hermajesty",
   filter: "all",
@@ -907,342 +878,355 @@ let state = {
 
 function loadState() {
   try {
-    const saved = JSON.parse(localStorage.getItem(STATE_KEY));
-    if (saved) state = { ...state, ...saved };
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      state = { ...state, ...parsed };
+    }
   } catch (e) {}
-  FIGHTERS.forEach(f => {
-    if (!state.statuses[f.id]) state.statuses[f.id] = "ready";
-    if (typeof state.xp[f.id] !== "number") state.xp[f.id] = f.baseXp;
+  ROSTER.forEach(f => {
+    if (!state.statuses[f.id]) state.statuses[f.id] = f.defaultStatus;
+    if (typeof state.xp[f.id] !== "number") state.xp[f.id] = f.defaultXp;
   });
 }
 
 function saveState() {
-  try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch (e) {}
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
 }
+
+/* Resilient Image Loader (square + full portrait matching) */
+const resolvedSquare = {};
+const resolvedFull = {};
 
 function buildCandidates(baseName) {
   const cap = baseName.charAt(0).toUpperCase() + baseName.slice(1);
   const upper = baseName.toUpperCase();
-  const folders = ["images/", "Images/"];
   const names = [baseName, cap, upper];
+  const folders = ["images/", "Images/"];
   const exts = [".jpg", ".jpeg", ".png", ".webp", ".JPG", ".JPEG", ".PNG"];
   const list = [];
-  folders.forEach(dir => {
-    names.forEach(n => {
-      exts.forEach(ext => list.push(dir + n + ext));
+  folders.forEach(fld => {
+    names.forEach(nm => {
+      exts.forEach(ext => list.push(fld + nm + ext));
     });
   });
   return list;
 }
 
-function loadSmartImage(imgEl, candidates, onFound, onFail) {
+function probeImage(candidates, callback) {
   let idx = 0;
   function tryNext() {
-    if (idx >= candidates.length) {
-      if (onFail) onFail();
-      return;
-    }
-    const src = candidates[idx++];
-    const tester = new Image();
-    tester.onload = () => {
-      imgEl.src = src;
-      if (onFound) onFound(src);
-    };
-    tester.onerror = tryNext;
-    tester.src = src;
+    if (idx >= candidates.length) { callback(null); return; }
+    const url = candidates[idx++];
+    const img = new Image();
+    img.onload = () => callback(url);
+    img.onerror = tryNext;
+    img.src = url;
   }
   tryNext();
 }
 
-function updateSummary() {
-  let activeRating = 0;
-  let activeCount = 0;
-  let totalXp = 0;
-  FIGHTERS.forEach(f => {
-    const st = state.statuses[f.id] || "ready";
-    if (st !== "unavailable") {
-      activeRating += f.rating;
-      activeCount += 1;
+function initPortraits() {
+  probeImage(buildCandidates("gangcrest"), url => {
+    if (url) {
+      document.getElementById("gangCrestBox").innerHTML = `<img src="${url}" alt="Crest">`;
     }
-    totalXp += (state.xp[f.id] ?? f.baseXp);
   });
-  document.getElementById("activeRating").textContent = activeRating + " Cr";
-  document.getElementById("activeCount").textContent = activeCount;
-  document.getElementById("totalXp").textContent = totalXp;
-  document.getElementById("roundDisplay").textContent = "🎲 Round " + state.round;
+  ROSTER.forEach(f => {
+    const sqCands = buildCandidates(f.id + "square");
+    const fullCands = buildCandidates(f.id);
+    probeImage(sqCands, sqUrl => {
+      if (sqUrl) {
+        resolvedSquare[f.id] = sqUrl;
+        renderAll();
+      } else {
+        probeImage(fullCands, fUrl => {
+          if (fUrl) {
+            resolvedSquare[f.id] = fUrl;
+            resolvedFull[f.id] = fUrl;
+            renderAll();
+          }
+        });
+      }
+    });
+    probeImage(fullCands, fUrl => {
+      if (fUrl) resolvedFull[f.id] = fUrl;
+    });
+  });
 }
 
-const statusLabels = {
-  ready: "Ready",
-  done: "Activated",
-  pinned: "Pinned",
-  injured: "Ser. Injured",
-  unavailable: "Unavailable"
-};
+function openLightbox(fighterId) {
+  const f = ROSTER.find(x => x.id === fighterId);
+  if (!f) return;
+  const fullSrc = resolvedFull[f.id] || resolvedSquare[f.id];
+  document.getElementById("lightboxTitle").textContent = `${f.name} — ${f.role}`;
+  const body = document.getElementById("lightboxBody");
+  if (fullSrc) {
+    body.innerHTML = `<img src="${fullSrc}" alt="${f.name}">`;
+  } else {
+    body.innerHTML = `<div style="padding:48px;color:var(--muted);text-align:center;">Full portrait not found in <code>images/${f.id}.jpg</code></div>`;
+  }
+  document.getElementById("portraitLightbox").classList.add("open");
+}
+
+function closeLightbox() {
+  document.getElementById("portraitLightbox").classList.remove("open");
+}
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeLightbox(); });
+
+/* Round & Status Actions */
+function changeRound(delta) {
+  state.round = Math.max(1, (state.round || 1) + delta);
+  saveState();
+  renderAll();
+}
+
+function nextRound() {
+  state.round = (state.round || 1) + 1;
+  ROSTER.forEach(f => {
+    if (state.statuses[f.id] === "done") state.statuses[f.id] = "ready";
+  });
+  saveState();
+  renderAll();
+}
+
+function resetRound() {
+  state.round = 1;
+  saveState();
+  renderAll();
+}
+
+function newTurnReset() {
+  ROSTER.forEach(f => {
+    if (state.statuses[f.id] === "done") state.statuses[f.id] = "ready";
+  });
+  saveState();
+  renderAll();
+}
+
+function syncDefaultXp() {
+  ROSTER.forEach(f => { state.xp[f.id] = f.defaultXp; });
+  saveState();
+  renderAll();
+}
+
+function setStatus(id, st) {
+  state.statuses[id] = st;
+  saveState();
+  renderAll();
+}
+
+function adjustXp(id, delta) {
+  state.xp[id] = Math.max(0, (state.xp[id] || 0) + delta);
+  saveState();
+  renderAll();
+}
+
+function setFilter(flt) {
+  state.filter = flt;
+  document.querySelectorAll(".filter-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.filter === flt);
+  });
+  renderSidebar();
+}
+
+function selectFighter(id) {
+  state.selectedId = id;
+  saveState();
+  renderAll();
+}
+
+function statusMeta(st) {
+  switch (st) {
+    case "done": return { label: "Done", cls: "st-done" };
+    case "pinned": return { label: "Pinned", cls: "st-pinned" };
+    case "injured": return { label: "Injured", cls: "st-injured" };
+    case "unavailable": return { label: "Unavail.", cls: "st-unavailable" };
+    default: return { label: "Ready", cls: "st-ready" };
+  }
+}
+
+function renderMetrics() {
+  document.getElementById("roundDisplay").textContent = `🎲 Round ${state.round || 1}`;
+  let activeCount = 0;
+  let activeRating = 0;
+  let totalXp = 0;
+  ROSTER.forEach(f => {
+    totalXp += (state.xp[f.id] || 0);
+    if (state.statuses[f.id] !== "unavailable") {
+      activeCount++;
+      activeRating += f.rating;
+    }
+  });
+  document.getElementById("gangMetrics").innerHTML = `
+    <div class="metric-pill"><span>Active Squad</span><strong>${activeCount} / ${ROSTER.length} Fighters</strong></div>
+    <div class="metric-pill"><span>Deployed Rating</span><strong>${activeRating.toLocaleString()} Cr</strong></div>
+    <div class="metric-pill"><span>Gang Wealth / Stash</span><strong>1,400 / 150 Cr</strong></div>
+    <div class="metric-pill"><span>Reputation</span><strong>4</strong></div>
+    <div class="metric-pill"><span>Total Squad XP</span><strong>⭐ ${totalXp} XP</strong></div>
+  `;
+}
 
 function renderSidebar() {
-  const listEl = document.getElementById("rosterList");
-  listEl.innerHTML = "";
-  FIGHTERS.filter(f => state.filter === "all" || f.squad === state.filter).forEach(f => {
+  const list = document.getElementById("rosterList");
+  const filtered = ROSTER.filter(f => state.filter === "all" || f.squad === state.filter);
+  list.innerHTML = filtered.map(f => {
     const st = state.statuses[f.id] || "ready";
-    const xpVal = state.xp[f.id] ?? f.baseXp;
-    const item = document.createElement("div");
-    item.className = `roster-item ${state.selectedId === f.id ? "selected" : ""} status-${st}`;
-    item.onclick = () => {
-      state.selectedId = f.id;
-      saveState();
-      renderAll();
-    };
-
+    const meta = statusMeta(st);
+    const xp = state.xp[f.id] ?? f.defaultXp;
+    const sqUrl = resolvedSquare[f.id];
     const initials = f.name.split(" ").map(w => w[0]).join("").slice(0, 2);
-    item.innerHTML = `
-      <div class="thumb-wrap">
-        <span class="thumb-fallback">${initials}</span>
-        <img alt="${f.name}" style="display:none;">
-      </div>
-      <div class="roster-meta">
-        <div class="roster-name-row">
-          <span class="roster-name">#${f.num} ${f.name}</span>
-          <span class="squad-pill ${f.squad === "crown" ? "squad-crown" : "squad-venom"}">
-            ${f.squad === "crown" ? "👑 Crown" : "🐍 Venom"}
-          </span>
+    const sqIcon = f.squad === "crown" ? "👑" : "🐍";
+    return `
+      <div class="nav-card ${state.selectedId === f.id ? "selected" : ""} ${st === "unavailable" ? "is-unavailable" : ""} ${st === "done" ? "is-done" : ""}" onclick="selectFighter('${f.id}')">
+        <div class="nav-thumb">
+          ${sqUrl ? `<img src="${sqUrl}" alt="${f.name}">` : initials}
         </div>
-        <div class="roster-role">${f.role} • ${f.rating} Cr</div>
-        <div class="roster-badges">
-          <span class="mini-badge st-${st}">${statusLabels[st]}</span>
-          <span class="mini-badge xp-mini">⭐ ${xpVal} XP</span>
+        <div class="nav-info">
+          <div class="nav-name-row">
+            <span class="nav-name">${sqIcon} ${f.name}</span>
+            <span class="nav-xp">⭐ ${xp}</span>
+          </div>
+          <div class="nav-sub">
+            <span>${f.role.split("•")[0].trim()} • ${f.rating}</span>
+            <span class="status-dot ${meta.cls}">${meta.label}</span>
+          </div>
         </div>
       </div>
     `;
-
-    const imgEl = item.querySelector("img");
-    const fbEl = item.querySelector(".thumb-fallback");
-    const sqCandidates = [...buildCandidates(f.id + "square"), ...buildCandidates(f.id)];
-    loadSmartImage(imgEl, sqCandidates, () => {
-      fbEl.style.display = "none";
-      imgEl.style.display = "block";
-    });
-
-    listEl.appendChild(item);
-  });
+  }).join("");
 }
 
-function renderStage() {
-  const f = FIGHTERS.find(x => x.id === state.selectedId) || FIGHTERS[0];
+function renderDetail() {
+  const f = ROSTER.find(x => x.id === state.selectedId) || ROSTER[0];
   const st = state.statuses[f.id] || "ready";
-  const xpVal = state.xp[f.id] ?? f.baseXp;
+  const xp = state.xp[f.id] ?? f.defaultXp;
+  const sqUrl = resolvedSquare[f.id];
   const initials = f.name.split(" ").map(w => w[0]).join("").slice(0, 2);
 
-  const stage = document.getElementById("fighterStage");
-  stage.innerHTML = `
-    <article class="fighter-card">
-      <div class="hero-banner">
-        <div class="portrait-box" id="portraitTrigger" title="Click to view full uncropped art">
-          <div class="portrait-fallback">${initials}</div>
-          <img id="heroPortraitImg" alt="${f.name}" style="display:none;">
+  const statOrder = ["M","WS","BS","S","T","W","I","A","Ld","Cl","Wil","Int"];
+  const mentalSet = new Set(["Ld","Cl","Wil","Int"]);
+
+  const weaponsHtml = f.weapons.map(w => `
+    <tr>
+      <td class="w-name">${w.name}</td>
+      <td>${w.rngS}</td>
+      <td>${w.rngL}</td>
+      <td>${w.accS}</td>
+      <td>${w.accL}</td>
+      <td><strong>${w.str}</strong></td>
+      <td>${w.ap}</td>
+      <td>${w.d}</td>
+      <td>${w.am}</td>
+      <td style="text-align:left;">${w.traits.map(t => `<span class="trait-pill ${t.toLowerCase().includes('toxin') ? 'trait-toxin' : ''}">${t}</span>`).join("")}</td>
+    </tr>
+  `).join("");
+
+  document.getElementById("fighterDetail").innerHTML = `
+    <div class="hero-header">
+      <div class="portrait-frame" onclick="openLightbox('${f.id}')" title="Click to open full portrait">
+        ${sqUrl ? `<img src="${sqUrl}" alt="${f.name}">` : `<div class="portrait-fallback">${initials}</div>`}
+      </div>
+      <div class="hero-meta">
+        <div class="badge-row">
+          <span class="squad-badge ${f.squad === 'crown' ? 'sq-crown' : 'sq-venom'}">
+            ${f.squad === 'crown' ? '👑 Team Crown' : '🐍 Team Venom'}
+          </span>
+          <span class="rating-badge">Rating: ${f.rating} Cr</span>
+          ${f.skills.length ? `<span class="rating-badge" style="color:var(--gold);border-color:var(--gold-dim);">Skill: ${f.skills.join(", ")}</span>` : ""}
         </div>
-        <div class="hero-info">
-          <div class="hero-top-tags">
-            <span class="rating-tag">#${f.num} • ${f.rating} CREDITS</span>
-            <span class="squad-pill ${f.squad === "crown" ? "squad-crown" : "squad-venom"}">
-              ${f.squad === "crown" ? "👑 TEAM CROWN" : "🐍 TEAM VENOM"}
-            </span>
-          </div>
-          <h2 class="hero-name">${f.name}</h2>
-          <div class="hero-role">${f.role}</div>
-          <p class="hero-quote">${f.quote}</p>
-        </div>
+        <div class="hero-name">${f.name}</div>
+        <div class="hero-role">${f.role}</div>
+        <div class="hero-quote">"${f.quote}"</div>
+      </div>
+    </div>
+
+    <div class="action-strip">
+      <div class="status-buttons">
+        <button class="st-btn ${st==='ready'?'active':''}" data-st="ready" onclick="setStatus('${f.id}','ready')">🟢 Ready</button>
+        <button class="st-btn ${st==='done'?'active':''}" data-st="done" onclick="setStatus('${f.id}','done')">⚪ Activated</button>
+        <button class="st-btn ${st==='pinned'?'active':''}" data-st="pinned" onclick="setStatus('${f.id}','pinned')">🟠 Pinned</button>
+        <button class="st-btn ${st==='injured'?'active':''}" data-st="injured" onclick="setStatus('${f.id}','injured')">🔴 Ser. Injured</button>
+        <button class="st-btn ${st==='unavailable'?'active':''}" data-st="unavailable" onclick="setStatus('${f.id}','unavailable')">⛔ Unavailable</button>
       </div>
 
-      <div class="action-strip">
-        <div class="status-buttons">
-          <button class="st-btn ${st === "ready" ? "active" : ""}" data-st="ready">✅ Ready</button>
-          <button class="st-btn ${st === "done" ? "active" : ""}" data-st="done">💤 Activated</button>
-          <button class="st-btn ${st === "pinned" ? "active" : ""}" data-st="pinned">⚠️ Pinned</button>
-          <button class="st-btn ${st === "injured" ? "active" : ""}" data-st="injured">🩸 Ser. Injured</button>
-          <button class="st-btn ${st === "unavailable" ? "active" : ""}" data-st="unavailable">⛔ Unavailable</button>
-        </div>
-
-        <div class="xp-box">
-          <span class="xp-val">⭐ ${xpVal} XP</span>
-          <button class="xp-btn" data-dxp="-1">-1</button>
-          <button class="xp-btn" data-dxp="1">+1</button>
-          <button class="xp-btn" data-dxp="2">+2</button>
-          <button class="xp-btn" data-dxp="3">+3</button>
-        </div>
+      <div class="xp-box">
+        <span class="xp-display">⭐ ${xp} XP</span>
+        <button class="xp-btn" onclick="adjustXp('${f.id}', -1)">-1</button>
+        <button class="xp-btn" onclick="adjustXp('${f.id}', 1)">+1</button>
+        <button class="xp-btn" onclick="adjustXp('${f.id}', 2)">+2</button>
+        <button class="xp-btn" onclick="adjustXp('${f.id}', 3)">+3</button>
       </div>
+    </div>
 
-      <div class="section">
-        <h3 class="section-title">Fighter Characteristics</h3>
-        <div class="stat-grid">
-          ${Object.entries(f.stats).map(([k, v]) => `
-            <div class="stat-cell">
-              <div class="stat-lbl">${k}</div>
-              <div class="stat-num">${v}</div>
+    <div class="sheet-body">
+      <div>
+        <div class="section-label">Fighter Characteristics</div>
+        <div class="stats-grid">
+          ${statOrder.map(k => `
+            <div class="stat-cell ${mentalSet.has(k) ? 'mental' : ''}">
+              <span>${k}</span>
+              <strong>${f.stats[k]}</strong>
             </div>
           `).join("")}
         </div>
       </div>
 
-      <div class="section">
-        <h3 class="section-title">Weapons & Combat Profiles</h3>
+      <div>
+        <div class="section-label">Weapons & Attack Profiles</div>
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
                 <th>Weapon</th>
-                <th>Rng (S / L)</th>
-                <th>Acc (S / L)</th>
+                <th>Rng S</th>
+                <th>Rng L</th>
+                <th>Acc S</th>
+                <th>Acc L</th>
                 <th>Str</th>
                 <th>AP</th>
                 <th>D</th>
                 <th>Am</th>
-                <th>Traits</th>
+                <th style="text-align:left;">Traits</th>
               </tr>
             </thead>
-            <tbody>
-              ${f.weapons.map(w => `
-                <tr>
-                  <td class="wpn-name">${w.name}</td>
-                  <td>${w.rngS} / ${w.rngL}</td>
-                  <td>${w.accS} / ${w.accL}</td>
-                  <td>${w.str}</td>
-                  <td>${w.ap}</td>
-                  <td>${w.d}</td>
-                  <td>${w.am}</td>
-                  <td>${w.traits.map(t => `<span class="trait-pill ${t.toLowerCase().includes("toxin") ? "trait-toxin" : ""}">${t}</span>`).join("")}</td>
-                </tr>
-              `).join("")}
-            </tbody>
+            <tbody>${weaponsHtml}</tbody>
           </table>
         </div>
       </div>
 
-      <div class="section">
-        <h3 class="section-title">Skills, Wargear & Tactical Role</h3>
-        <div class="info-grid">
-          <div class="info-card">
-            <h4>Skills & Special Rules</h4>
-            <p><strong>Skills:</strong> ${f.skills}<br><strong>Rules:</strong> ${f.rules}</p>
-          </div>
-          <div class="info-card">
-            <h4>Armour & Wargear</h4>
-            <p>${f.wargear}</p>
-          </div>
-          <div class="info-card ${f.injury !== "None" ? "injury-alert" : ""}">
-            <h4>Lasting Injuries</h4>
-            <p>${f.injury}</p>
-          </div>
-          <div class="info-card">
-            <h4>Tabletop Tactical Job</h4>
-            <p>${f.tactics}</p>
-          </div>
+      <div class="info-grid">
+        <div class="info-box">
+          <h4>🛡️ Wargear & Special Rules</h4>
+          <p><strong>Wargear:</strong> ${f.wargear.length ? f.wargear.join(", ") : "None"}</p>
+          <p style="margin-top:5px;"><strong>Rules:</strong> ${f.rules.join(", ")}</p>
         </div>
+
+        <div class="info-box">
+          <h4>🎯 Vertical & Tabletop Role</h4>
+          <p>${f.tactics}</p>
+        </div>
+
+        ${f.injuries.length ? `
+          <div class="info-box injury-alert">
+            <h4>🩹 Lasting Injuries</h4>
+            <p><strong>${f.injuries.join(", ")}</strong></p>
+          </div>
+        ` : ""}
       </div>
-    </article>
+    </div>
   `;
-
-  stage.querySelectorAll(".st-btn").forEach(btn => {
-    btn.onclick = () => {
-      state.statuses[f.id] = btn.dataset.st;
-      saveState();
-      renderAll();
-    };
-  });
-
-  stage.querySelectorAll(".xp-btn").forEach(btn => {
-    btn.onclick = () => {
-      const delta = parseInt(btn.dataset.dxp, 10);
-      state.xp[f.id] = Math.max(0, (state.xp[f.id] ?? f.baseXp) + delta);
-      saveState();
-      renderAll();
-    };
-  });
-
-  const heroImg = document.getElementById("heroPortraitImg");
-  const fbEl = stage.querySelector(".portrait-fallback");
-  const sqCandidates = [...buildCandidates(f.id + "square"), ...buildCandidates(f.id)];
-  loadSmartImage(heroImg, sqCandidates, () => {
-    fbEl.style.display = "none";
-    heroImg.style.display = "block";
-  });
-
-  document.getElementById("portraitTrigger").onclick = () => openLightbox(f);
-}
-
-function openLightbox(f) {
-  const lb = document.getElementById("lightbox");
-  const lbImg = document.getElementById("lightboxImg");
-  document.getElementById("lightboxTitle").textContent = `${f.name} — ${f.role}`;
-  lbImg.src = "";
-  lb.classList.add("open");
-  const fullCandidates = [...buildCandidates(f.id), ...buildCandidates(f.id + "square")];
-  loadSmartImage(lbImg, fullCandidates);
 }
 
 function renderAll() {
-  updateSummary();
+  renderMetrics();
   renderSidebar();
-  renderStage();
+  renderDetail();
 }
-
-document.querySelectorAll(".filter-btn").forEach(btn => {
-  btn.onclick = () => {
-    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    state.filter = btn.dataset.filter;
-    saveState();
-    renderSidebar();
-  };
-});
-
-document.getElementById("nextRoundBtn").onclick = () => {
-  state.round += 1;
-  FIGHTERS.forEach(f => {
-    if (state.statuses[f.id] === "done") state.statuses[f.id] = "ready";
-  });
-  saveState();
-  renderAll();
-};
-
-document.getElementById("prevRoundBtn").onclick = () => {
-  state.round = Math.max(1, state.round - 1);
-  saveState();
-  updateSummary();
-};
-
-document.getElementById("resetRoundBtn").onclick = () => {
-  state.round = 1;
-  saveState();
-  updateSummary();
-};
-
-document.getElementById("newTurnBtn").onclick = () => {
-  FIGHTERS.forEach(f => {
-    if (state.statuses[f.id] === "done") state.statuses[f.id] = "ready";
-  });
-  saveState();
-  renderAll();
-};
-
-document.getElementById("syncXpBtn").onclick = () => {
-  FIGHTERS.forEach(f => { state.xp[f.id] = f.baseXp; });
-  saveState();
-  renderAll();
-};
-
-document.getElementById("closeLightboxBtn").onclick = () => {
-  document.getElementById("lightbox").classList.remove("open");
-};
-document.getElementById("lightbox").onclick = (e) => {
-  if (e.target.id === "lightbox") document.getElementById("lightbox").classList.remove("open");
-};
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") document.getElementById("lightbox").classList.remove("open");
-});
 
 loadState();
 renderAll();
+initPortraits();
 </script>
 </body>
 </html>
