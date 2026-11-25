@@ -651,6 +651,27 @@
     max-height: 72vh;
     object-fit: contain;
   }
+  /* Fallback for older Safari (e.g. iPad mini on iOS 13), which ignores flexbox gap:
+     use margins to give the same spacing. Modern browsers keep the gap rules above. */
+  @supports not (gap: 1px) {
+    .topbar > * { margin: 5px; }
+    .brand > * { margin: 0 5px; }
+    .controls-group > * { margin: 4px; }
+    .round-box > * { margin: 0 3px; }
+    .roster-list > * { margin: 3.5px 0; }
+    .nav-card > * { margin: 0 5px; }
+    .nav-name-row > * { margin: 0 2px; }
+    .nav-sub > * { margin: 0 2px; }
+    .hero-header > * { margin: 8px; }
+    .badge-row > * { margin: 3px; }
+    .action-strip > * { margin: 5px; }
+    .status-buttons > * { margin: 3px; }
+    .xp-box > * { margin: 0 3px; }
+    .sheet-body > * { margin: 8px 0; }
+    .tick-panel > * { margin: 5px 9px; }
+    .tick-group > * { margin: 0 3px; }
+    .tick-boxes > * { margin: 0 2px; }
+  }
 </style>
 </head>
 <body>
