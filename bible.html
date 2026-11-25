@@ -295,27 +295,33 @@
 </div>
 
 <script>
-// Square thumbnails for each fighter (explicit paths, no filename guessing).
+// Square thumbnails for each fighter. Each base path is tried with several common extensions.
 const SQUARE_PORTRAITS = {
-  hermajesty: "images/hermajestysquare.JPG",
-  blackwidow: "images/blackwidowsquare.jpg",
-  copperhead: "images/copperheadsquare.JPG",
-  nightshade: "images/nightshadesquare.JPG",
-  mamba:      "images/mambasquare.JPG",
-  scorpio:    "images/scorpiosquare.JPG",
-  misswhips:  "images/misswhipssquare.jpg",
-  vixen:      "images/vixensquare.JPG",
-  fang:       "images/fangsquare.jpg",
-  talon:      "images/talonsquare.JPG"
+  hermajesty: "images/hermajestysquare",
+  blackwidow: "images/blackwidowsquare",
+  copperhead: "images/copperheadsquare",
+  nightshade: "images/nightshadesquare",
+  mamba:      "images/mambasquare",
+  scorpio:    "images/scorpiosquare",
+  misswhips:  "images/misswhipssquare",
+  vixen:      "images/vixensquare",
+  fang:       "images/fangsquare",
+  talon:      "images/talonsquare"
 };
 
 document.querySelectorAll('[data-img]').forEach(el => {
-  const src = SQUARE_PORTRAITS[el.getAttribute('data-img')];
-  if (!src) return; // e.g. header crest: keep its text fallback
-  const img = new Image();
-  img.alt = el.getAttribute('data-img');
-  img.onload = () => { el.textContent = ''; el.appendChild(img); };
-  img.src = src;
+  const base = SQUARE_PORTRAITS[el.getAttribute('data-img')];
+  if (!base) return; // e.g. header crest: keep its text fallback
+  const exts = ['.jpg', '.jpeg', '.png', '.JPG', '.JPEG', '.PNG'];
+  const tryExt = (i) => {
+    if (i >= exts.length) return;
+    const img = new Image();
+    img.alt = el.getAttribute('data-img');
+    img.onload = () => { el.textContent = ''; el.appendChild(img); };
+    img.onerror = () => tryExt(i + 1);
+    img.src = base + exts[i];
+  };
+  tryExt(0);
 });
 </script>
 </body>
