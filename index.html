@@ -1060,7 +1060,7 @@ function renderSidebar() {
   list.innerHTML = filtered.map(f => {
     const st = state.statuses[f.id] || "ready";
     const meta = statusMeta(st);
-    const xp = state.xp[f.id] ?? f.defaultXp;
+    const xp = typeof state.xp[f.id] === "number" ? state.xp[f.id] : f.defaultXp;
     const sqUrl = resolvedSquare[f.id];
     const initials = f.name.split(" ").map(w => w[0]).join("").slice(0, 2);
     const sqIcon = f.squad === "crown" ? "👑" : "🐍";
@@ -1087,7 +1087,7 @@ function renderSidebar() {
 function renderDetail() {
   const f = ROSTER.find(x => x.id === state.selectedId) || ROSTER[0];
   const st = state.statuses[f.id] || "ready";
-  const xp = state.xp[f.id] ?? f.defaultXp;
+  const xp = typeof state.xp[f.id] === "number" ? state.xp[f.id] : f.defaultXp;
   const sqUrl = resolvedSquare[f.id];
   const initials = f.name.split(" ").map(w => w[0]).join("").slice(0, 2);
 
