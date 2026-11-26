@@ -204,8 +204,11 @@
   .pick-btn {
     flex: 0 0 auto;
     margin: 0 0 0 auto;
-    width: 30px;
-    height: 30px;
+    width: 24px;
+    height: 24px;
+    line-height: 1;
+    font-size: 15px;
+    padding: 0;
     border-radius: 50%;
     border: 1px solid var(--border);
     background: var(--panel-2);
@@ -1279,13 +1282,13 @@ function renderSidebar() {
         <div class="nav-info">
           <div class="nav-name-row">
             <span class="nav-name">${sqIcon} ${f.name}</span>
+            <button class="pick-btn ${picked ? "on" : ""}" aria-pressed="${picked}" aria-label="${picked ? "Remove" : "Pick"} ${f.name}" onclick="event.stopPropagation(); togglePick('${f.id}')">+</button>
           </div>
           <div class="nav-sub">
             <span>${f.role.split("•")[0].trim()} • ${f.rating}</span>
             <span class="status-dot ${meta.cls}">${meta.label}</span>
           </div>
         </div>
-        <button class="pick-btn ${picked ? "on" : ""}" aria-pressed="${picked}" aria-label="${picked ? "Remove" : "Pick"} ${f.name}" onclick="event.stopPropagation(); togglePick('${f.id}')">+</button>
       </div>
     `;
   }).join("");
