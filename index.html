@@ -167,7 +167,7 @@
   }
   .filter-bar {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 6px;
     margin-bottom: 10px;
   }
@@ -181,6 +181,42 @@
     font-weight: 700;
     cursor: pointer;
     text-align: center;
+  }
+  .pick-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .pick-bar > * { margin: 4px 6px 4px 0; }
+  .pick-bar input {
+    width: 56px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    padding: 4px 6px;
+    font-size: 12px;
+  }
+  .pick-bar .filter-btn { padding: 4px 10px; }
+  .pick-btn {
+    flex: 0 0 auto;
+    margin: 0 0 0 auto;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--panel-2);
+    color: var(--muted);
+    font-weight: 800;
+    cursor: pointer;
+  }
+  .pick-btn.on {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #1b112b;
   }
   .filter-btn.active {
     background: linear-gradient(135deg, #2d1b46, #1b112b);
@@ -703,6 +739,12 @@
       <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">All (10)</button>
       <button class="filter-btn" data-filter="crown" onclick="setFilter('crown')">👑 Crown</button>
       <button class="filter-btn" data-filter="venom" onclick="setFilter('venom')">🐍 Venom</button>
+      <button class="filter-btn" data-filter="picked" onclick="setFilter('picked')">⭐ Picked</button>
+    </div>
+    <div class="pick-bar">
+      <label>Max <input type="number" id="pickLimit" min="0" max="10" value="0" onchange="setPickLimit(this.value)" aria-label="Maximum fighters to pick"></label>
+      <span id="pickCount">Picked 0</span>
+      <button class="filter-btn" onclick="clearPicks()" aria-label="Clear all picks">Clear</button>
     </div>
     <div class="roster-list" id="rosterList"></div>
   </aside>
@@ -930,7 +972,9 @@ let state = {
   round: 1,
   statuses: {},
   xp: {},
-  ticks: {}
+  ticks: {},
+  picks: {},
+  pickLimit: 0
 };
 
 function loadState() {
@@ -941,7 +985,9 @@ function loadState() {
       // Only accept saved values of the expected type; anything else falls back to defaults.
       if (parsed && typeof parsed === "object") {
         if (ROSTER.some(f => f.id === parsed.selectedId)) state.selectedId = parsed.selectedId;
-        if (["all", "crown", "venom"].includes(parsed.filter)) state.filter = parsed.filter;
+        if (["all", "crown", "venom", "picked"].includes(parsed.filter)) state.filter = parsed.filter;
+        if (parsed.picks && typeof parsed.picks === "object") state.picks = parsed.picks;
+        if (Number.isInteger(parsed.pickLimit) && parsed.pickLimit >= 0) state.pickLimit = parsed.pickLimit;
         if (Number.isInteger(parsed.round) && parsed.round >= 1) state.round = parsed.round;
         if (parsed.statuses && typeof parsed.statuses === "object") state.statuses = parsed.statuses;
         if (parsed.xp && typeof parsed.xp === "object") state.xp = parsed.xp;
@@ -1084,6 +1130,43 @@ function adjustXp(id, delta) {
   renderAll();
 }
 
+function pickedCount() {
+  return Object.keys(state.picks).filter(k => state.picks[k]).length;
+}
+
+function togglePick(id) {
+  if (state.picks[id]) {
+    delete state.picks[id];
+  } else {
+    if (state.pickLimit > 0 && pickedCount() >= state.pickLimit) {
+      const el = document.getElementById("pickCount");
+      el.dataset.flash = "1";
+      el.textContent = `Limit of ${state.pickLimit} reached. Untick someone first.`;
+      setTimeout(() => { delete el.dataset.flash; renderSidebar(); }, 1800);
+      return;
+    }
+    state.picks[id] = true;
+  }
+  saveState();
+  renderSidebar();
+}
+
+function setPickLimit(v) {
+  const n = parseInt(v, 10);
+  const next = isNaN(n) || n < 0 ? 0 : n;
+  if (next === state.pickLimit) return; // no-op blur must not rebuild the list mid-tap
+  state.pickLimit = next;
+  saveState();
+  renderSidebar();
+}
+
+function clearPicks() {
+  if (!confirm("Clear all picked fighters?")) return;
+  state.picks = {};
+  saveState();
+  renderSidebar();
+}
+
 function setFilter(flt) {
   state.filter = flt;
   saveState();
@@ -1135,8 +1218,23 @@ function renderSidebar() {
     b.classList.toggle("active", b.dataset.filter === state.filter);
   });
   const list = document.getElementById("rosterList");
-  const filtered = ROSTER.filter(f => state.filter === "all" || f.squad === state.filter);
+  const filtered = ROSTER.filter(f => {
+    if (state.filter === "all") return true;
+    if (state.filter === "picked") return !!state.picks[f.id];
+    return f.squad === state.filter;
+  });
+  const pickCountEl = document.getElementById("pickCount");
+  if (pickCountEl && !pickCountEl.dataset.flash) {
+    pickCountEl.textContent = `Picked ${pickedCount()}${state.pickLimit ? " / " + state.pickLimit : ""}`;
+  }
+  const limitInput = document.getElementById("pickLimit");
+  if (limitInput && document.activeElement !== limitInput) limitInput.value = state.pickLimit;
+  if (!filtered.length && state.filter === "picked") {
+    list.innerHTML = `<div class="nav-card"><div class="nav-info"><span class="nav-sub">No fighters picked yet. Tap + on a fighter.</span></div></div>`;
+    return;
+  }
   list.innerHTML = filtered.map(f => {
+    const picked = !!state.picks[f.id];
     const st = state.statuses[f.id] || "ready";
     const meta = statusMeta(st);
     const xp = typeof state.xp[f.id] === "number" ? state.xp[f.id] : f.defaultXp;
@@ -1158,6 +1256,7 @@ function renderSidebar() {
             <span class="status-dot ${meta.cls}">${meta.label}</span>
           </div>
         </div>
+        <button class="pick-btn ${picked ? "on" : ""}" aria-pressed="${picked}" aria-label="${picked ? "Remove" : "Pick"} ${f.name}" onclick="event.stopPropagation(); togglePick('${f.id}')">${picked ? "✓" : "+"}</button>
       </div>
     `;
   }).join("");
