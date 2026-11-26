@@ -679,6 +679,15 @@
   .import-status { font-size: 13px; color: var(--muted); min-height: 20px; }
   .import-status.error { color: #ff8fa3; }
   .hidden { display: none !important; }
+  .filter-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
+  .filter-btn { background: var(--panel-2); border: 1px solid var(--border); color: var(--muted); border-radius: 8px; padding: 6px 4px; font-size: 11px; font-weight: 700; cursor: pointer; text-align: center; }
+  .filter-btn.active { background: linear-gradient(135deg, #2d1b46, #1b112b); border-color: var(--gold); color: var(--gold); }
+  .pick-bar { display: flex; align-items: center; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+  .pick-bar > * { margin: 4px 6px 4px 0; }
+  .pick-bar input { width: 64px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: 4px 6px; font-size: 12px; }
+  .pick-bar .filter-btn { padding: 4px 10px; }
+  .pick-btn { flex: 0 0 auto; margin: 0 0 0 auto; width: 24px; height: 24px; line-height: 1; font-size: 15px; padding: 0; border-radius: 50%; border: 1px solid var(--border); background: var(--panel-2); color: var(--muted); font-weight: 800; cursor: pointer; }
+  .pick-btn.on { background: var(--gold); border-color: var(--gold); color: #1b112b; }
   .tag-pill {
     display: inline-block;
     font-size: 11px;
@@ -725,7 +734,16 @@
 <main class="deck-layout hidden" id="deck">
   <aside class="sidebar">
     <div class="filter-bar">
-      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">All</button>
+      <button class="filter-btn" data-filter="picked" onclick="setFilter('picked')">⭐ Picked</button>
+    </div>
+    <div class="pick-bar">
+      <label>Max <input type="number" id="pickMax" min="0" max="30" value="0" onchange="setPickMax(this.value)" aria-label="Maximum fighters to pick"> fighters</label>
+      <label>or <input type="number" id="pickCr" min="0" step="25" value="0" onchange="setPickCr(this.value)" aria-label="Maximum Cr to pick"> Cr</label>
+    </div>
+    <div class="pick-bar">
+      <span id="pickCount">Picked 0</span>
+      <button class="filter-btn" onclick="clearPicks()" aria-label="Clear all picks">Clear</button>
     </div>
     <div class="roster-list" id="rosterList"></div>
   </aside>
@@ -745,7 +763,7 @@ const FOOTER_RE = /^(SI|OOA|R\s*\/\s*A|Ld\s*\/\s*Ch|Misc|Participation)\b/;
 
 let GANG = null;      // { title, house, credits, rating, wealth, reputation }
 let ROSTER = [];      // parsed fighters
-let state = { selectedId: null, round: 1, statuses: {}, ticks: {} };
+let state = { selectedId: null, round: 1, statuses: {}, ticks: {}, picks: {}, pickMax: 0, pickCr: 0 };
 
 /* ---------- PDF reading ---------- */
 
@@ -960,7 +978,7 @@ function loadAll() {
     if (!saved || !Array.isArray(saved.roster) || !saved.gang) return false;
     GANG = saved.gang;
     ROSTER = saved.roster;
-    state = Object.assign({ selectedId: null, round: 1, statuses: {}, ticks: {} }, saved.state || {});
+    state = Object.assign({ selectedId: null, round: 1, statuses: {}, ticks: {}, picks: {}, pickMax: 0, pickCr: 0 }, saved.state || {});
     return true;
   } catch (e) { return false; }
 }
@@ -1004,7 +1022,7 @@ document.getElementById("pdfInput").addEventListener("change", async (e) => {
     const parsed = await parseMundaPdf(buf);
     GANG = parsed.gang;
     ROSTER = parsed.fighters;
-    state = { selectedId: null, round: 1, statuses: {}, ticks: {} };
+    state = { selectedId: null, round: 1, statuses: {}, ticks: {}, picks: {}, pickMax: 0, pickCr: 0 };
     ensureDefaults();
     saveAll();
     showPlay();
@@ -1097,15 +1115,34 @@ function renderMetrics() {
 }
 
 function renderSidebar() {
-  document.getElementById("rosterList").innerHTML = ROSTER.map(f => {
+  document.querySelectorAll(".filter-btn[data-filter]").forEach(b => b.classList.toggle("active", b.dataset.filter === (state.filter || "all")));
+  const filtered = ROSTER.filter(f => {
+    if (!state.filter || state.filter === "all") return true;
+    if (state.filter === "picked") return !!state.picks[f.id];
+    return true;
+  });
+  const pickCountEl = document.getElementById("pickCount");
+  if (pickCountEl && !pickCountEl.dataset.flash) pickCountEl.textContent = pickSummary();
+  ["pickMax", "pickCr"].forEach(id => {
+    const el = document.getElementById(id);
+    const v = id === "pickMax" ? state.pickMax : state.pickCr;
+    if (el && document.activeElement !== el) el.value = v;
+  });
+  if (!filtered.length && state.filter === "picked") {
+    document.getElementById("rosterList").innerHTML = `<div class="nav-card"><div class="nav-info"><span class="nav-sub">No fighters picked yet. Tap + on a fighter.</span></div></div>`;
+    return;
+  }
+  document.getElementById("rosterList").innerHTML = filtered.map(f => {
     const st = state.statuses[f.id] || "ready";
     const meta = statusMeta(st);
+    const picked = !!state.picks[f.id];
     return `
       <div class="nav-card ${state.selectedId === f.id ? "selected" : ""} ${st === "unavailable" ? "is-unavailable" : ""} ${st === "done" ? "is-done" : ""}" onclick="selectFighter('${f.id}')">
         <div class="nav-thumb">${initials(f.name)}</div>
         <div class="nav-info">
           <div class="nav-name-row">
             <span class="nav-name">${f.name}</span>
+            <button class="pick-btn ${picked ? "on" : ""}" aria-pressed="${picked}" aria-label="${picked ? "Remove" : "Pick"} ${f.name}" onclick="event.stopPropagation(); togglePick('${f.id}')">+</button>
           </div>
           <div class="nav-sub">
             <span>${(f.role.split("•")[0] || "").trim()} • ${f.rating}</span>
@@ -1114,6 +1151,63 @@ function renderSidebar() {
         </div>
       </div>`;
   }).join("");
+}
+
+function pickedFighters() { return ROSTER.filter(f => state.picks[f.id]); }
+function pickedCount() { return pickedFighters().length; }
+function pickedRating() { return pickedFighters().reduce((sum, f) => sum + f.rating, 0); }
+
+function pickSummary() {
+  return `Picked ${pickedCount()}${state.pickMax ? " / " + state.pickMax : ""} • ${pickedRating()}${state.pickCr ? " / " + state.pickCr : ""} Cr`;
+}
+
+function flashPick(msg) {
+  const el = document.getElementById("pickCount");
+  el.dataset.flash = "1";
+  el.textContent = msg;
+  setTimeout(() => { delete el.dataset.flash; renderSidebar(); }, 1800);
+}
+
+function togglePick(id) {
+  if (state.picks[id]) {
+    delete state.picks[id];
+  } else {
+    const f = ROSTER.find(x => x.id === id);
+    if (state.pickMax > 0 && pickedCount() >= state.pickMax) {
+      flashPick(`Max of ${state.pickMax} fighters reached. Untick someone first.`);
+      return;
+    }
+    if (state.pickCr > 0 && pickedRating() + f.rating > state.pickCr) {
+      flashPick(`${f.name} (${f.rating} Cr) would go over ${state.pickCr} Cr.`);
+      return;
+    }
+    state.picks[id] = true;
+  }
+  saveAll();
+  renderSidebar();
+}
+
+function setPickMax(v) {
+  const n = parseInt(v, 10);
+  const next = isNaN(n) || n < 0 ? 0 : n;
+  if (next === state.pickMax) return;
+  state.pickMax = next; saveAll(); renderSidebar();
+}
+
+function setPickCr(v) {
+  const n = parseInt(v, 10);
+  const next = isNaN(n) || n < 0 ? 0 : n;
+  if (next === state.pickCr) return;
+  state.pickCr = next; saveAll(); renderSidebar();
+}
+
+function clearPicks() {
+  if (!confirm("Clear all picked fighters?")) return;
+  state.picks = {}; saveAll(); renderSidebar();
+}
+
+function setFilter(flt) {
+  state.filter = flt; saveAll(); renderSidebar();
 }
 
 function renderDetail() {
