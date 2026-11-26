@@ -192,7 +192,7 @@
   }
   .pick-bar > * { margin: 4px 6px 4px 0; }
   .pick-bar input {
-    width: 56px;
+    width: 64px;
     background: var(--panel-2);
     border: 1px solid var(--border);
     border-radius: 6px;
@@ -742,7 +742,8 @@
       <button class="filter-btn" data-filter="picked" onclick="setFilter('picked')">⭐ Picked</button>
     </div>
     <div class="pick-bar">
-      <label>Max <input type="number" id="pickLimit" min="0" max="10" value="0" onchange="setPickLimit(this.value)" aria-label="Maximum fighters to pick"></label>
+      <label>Max <input type="number" id="pickMax" min="0" max="30" value="0" onchange="setPickMax(this.value)" aria-label="Maximum fighters to pick"> fighters</label>
+      <label>or <input type="number" id="pickCr" min="0" step="25" value="0" onchange="setPickCr(this.value)" aria-label="Maximum Cr to pick"> Cr</label>
       <span id="pickCount">Picked 0</span>
       <button class="filter-btn" onclick="clearPicks()" aria-label="Clear all picks">Clear</button>
     </div>
@@ -974,7 +975,8 @@ let state = {
   xp: {},
   ticks: {},
   picks: {},
-  pickLimit: 0
+  pickMax: 0,
+  pickCr: 0
 };
 
 function loadState() {
@@ -987,7 +989,8 @@ function loadState() {
         if (ROSTER.some(f => f.id === parsed.selectedId)) state.selectedId = parsed.selectedId;
         if (["all", "crown", "venom", "picked"].includes(parsed.filter)) state.filter = parsed.filter;
         if (parsed.picks && typeof parsed.picks === "object") state.picks = parsed.picks;
-        if (Number.isInteger(parsed.pickLimit) && parsed.pickLimit >= 0) state.pickLimit = parsed.pickLimit;
+        if (Number.isInteger(parsed.pickMax) && parsed.pickMax >= 0) state.pickMax = parsed.pickMax;
+        if (Number.isInteger(parsed.pickCr) && parsed.pickCr >= 0) state.pickCr = parsed.pickCr;
         if (Number.isInteger(parsed.round) && parsed.round >= 1) state.round = parsed.round;
         if (parsed.statuses && typeof parsed.statuses === "object") state.statuses = parsed.statuses;
         if (parsed.xp && typeof parsed.xp === "object") state.xp = parsed.xp;
@@ -1130,19 +1133,37 @@ function adjustXp(id, delta) {
   renderAll();
 }
 
-function pickedCount() {
-  return Object.keys(state.picks).filter(k => state.picks[k]).length;
+function pickedFighters() {
+  return ROSTER.filter(f => state.picks[f.id]);
+}
+
+function pickedCount() { return pickedFighters().length; }
+function pickedRating() { return pickedFighters().reduce((sum, f) => sum + f.rating, 0); }
+
+function pickSummary() {
+  const parts = [`Picked ${pickedCount()}${state.pickMax ? " / " + state.pickMax : ""}`];
+  parts.push(`${pickedRating()}${state.pickCr ? " / " + state.pickCr : ""} Cr`);
+  return parts.join(" • ");
+}
+
+function flashPick(msg) {
+  const el = document.getElementById("pickCount");
+  el.dataset.flash = "1";
+  el.textContent = msg;
+  setTimeout(() => { delete el.dataset.flash; renderSidebar(); }, 1800);
 }
 
 function togglePick(id) {
   if (state.picks[id]) {
     delete state.picks[id];
   } else {
-    if (state.pickLimit > 0 && pickedCount() >= state.pickLimit) {
-      const el = document.getElementById("pickCount");
-      el.dataset.flash = "1";
-      el.textContent = `Limit of ${state.pickLimit} reached. Untick someone first.`;
-      setTimeout(() => { delete el.dataset.flash; renderSidebar(); }, 1800);
+    const f = ROSTER.find(x => x.id === id);
+    if (state.pickMax > 0 && pickedCount() >= state.pickMax) {
+      flashPick(`Max of ${state.pickMax} fighters reached. Untick someone first.`);
+      return;
+    }
+    if (state.pickCr > 0 && pickedRating() + f.rating > state.pickCr) {
+      flashPick(`${f.name} (${f.rating} Cr) would go over ${state.pickCr} Cr.`);
       return;
     }
     state.picks[id] = true;
@@ -1151,11 +1172,20 @@ function togglePick(id) {
   renderSidebar();
 }
 
-function setPickLimit(v) {
+function setPickMax(v) {
   const n = parseInt(v, 10);
   const next = isNaN(n) || n < 0 ? 0 : n;
-  if (next === state.pickLimit) return; // no-op blur must not rebuild the list mid-tap
-  state.pickLimit = next;
+  if (next === state.pickMax) return; // no-op blur must not rebuild the list mid-tap
+  state.pickMax = next;
+  saveState();
+  renderSidebar();
+}
+
+function setPickCr(v) {
+  const n = parseInt(v, 10);
+  const next = isNaN(n) || n < 0 ? 0 : n;
+  if (next === state.pickCr) return;
+  state.pickCr = next;
   saveState();
   renderSidebar();
 }
@@ -1224,11 +1254,12 @@ function renderSidebar() {
     return f.squad === state.filter;
   });
   const pickCountEl = document.getElementById("pickCount");
-  if (pickCountEl && !pickCountEl.dataset.flash) {
-    pickCountEl.textContent = `Picked ${pickedCount()}${state.pickLimit ? " / " + state.pickLimit : ""}`;
-  }
-  const limitInput = document.getElementById("pickLimit");
-  if (limitInput && document.activeElement !== limitInput) limitInput.value = state.pickLimit;
+  if (pickCountEl && !pickCountEl.dataset.flash) pickCountEl.textContent = pickSummary();
+  ["pickMax", "pickCr"].forEach(id => {
+    const el = document.getElementById(id);
+    const v = id === "pickMax" ? state.pickMax : state.pickCr;
+    if (el && document.activeElement !== el) el.value = v;
+  });
   if (!filtered.length && state.filter === "picked") {
     list.innerHTML = `<div class="nav-card"><div class="nav-info"><span class="nav-sub">No fighters picked yet. Tap + on a fighter.</span></div></div>`;
     return;
@@ -1237,7 +1268,6 @@ function renderSidebar() {
     const picked = !!state.picks[f.id];
     const st = state.statuses[f.id] || "ready";
     const meta = statusMeta(st);
-    const xp = typeof state.xp[f.id] === "number" ? state.xp[f.id] : f.defaultXp;
     const sqUrl = resolvedSquare[f.id];
     const initials = f.name.split(" ").map(w => w[0]).join("").slice(0, 2);
     const sqIcon = f.squad === "crown" ? "👑" : "🐍";
@@ -1249,14 +1279,13 @@ function renderSidebar() {
         <div class="nav-info">
           <div class="nav-name-row">
             <span class="nav-name">${sqIcon} ${f.name}</span>
-            <span class="nav-xp">⭐ ${xp}</span>
           </div>
           <div class="nav-sub">
             <span>${f.role.split("•")[0].trim()} • ${f.rating}</span>
             <span class="status-dot ${meta.cls}">${meta.label}</span>
           </div>
         </div>
-        <button class="pick-btn ${picked ? "on" : ""}" aria-pressed="${picked}" aria-label="${picked ? "Remove" : "Pick"} ${f.name}" onclick="event.stopPropagation(); togglePick('${f.id}')">${picked ? "✓" : "+"}</button>
+        <button class="pick-btn ${picked ? "on" : ""}" aria-pressed="${picked}" aria-label="${picked ? "Remove" : "Pick"} ${f.name}" onclick="event.stopPropagation(); togglePick('${f.id}')">+</button>
       </div>
     `;
   }).join("");
