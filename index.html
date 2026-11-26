@@ -727,19 +727,19 @@ const ROSTER = [
     name: "Her Majesty",
     squad: "crown",
     role: "Gang Queen • Leader",
-    rating: 245,
-    defaultXp: 4,
+    rating: 265,
+    defaultXp: 2,
     defaultStatus: "ready",
-    stats: { M:'5"', WS:'3+', BS:'3+', S:'3', T:'3', W:'2', I:'2+', A:'3', Ld:'5+', Cl:'5+', Wil:'6+', Int:'7+' },
+    stats: { M:"6\"", WS:"3+", BS:"3+", S:"3", T:"3", W:"2", I:"2+", A:"3", Ld:"5+", Cl:"5+", Wil:"6+", Int:"7+" },
     skills: ["Overseer"],
     weapons: [
-      { name: "Boltgun", rngS:'12"', rngL:'24"', accS:'+1', accL:'-', str:'4', ap:'-1', d:'2', am:'6+', traits:["Rapid Fire (1)"] },
-      { name: "Needle pistol", rngS:'4"', rngL:'9"', accS:'+2', accL:'-', str:'-', ap:'-1', d:'-', am:'6+', traits:["Scarce","Sidearm","Silent","Toxin"] }
+      { name: "Boltgun", rngS:"12\"", rngL:"24\"", accS:"+1", accL:"-", str:"4", ap:"-1", d:"2", am:"6+", traits:["Rapid Fire (1)"] },
+      { name: "Needle pistol", rngS:"4\"", rngL:"9\"", accS:"+2", accL:"-", str:"-", ap:"-1", d:"-", am:"6+", traits:["Scarce", "Sidearm", "Silent", "Toxin"] }
     ],
-    wargear: ["Armoured undersuit", "Mesh armour (4+ save)"],
+    wargear: ["Armoured undersuit", "Drop rig", "Mesh armour (4+ save)"],
     rules: ["Gang Leader", "Tools of the Trade", "Gang Hierarchy (Leader)", "Group Activation (2)"],
     injuries: ["Old Battle Wound"],
-    quote: "A throne is merely a chair until someone bleeds to keep you off it. Hold the line, darlings—and try not to get blood on the velvet.",
+    quote: "A throne is merely a chair until someone bleeds to keep you off it. Hold the line, darlings—and try not to get ash on my trim.",
     tactics: "Tempo Engine: Keep behind Tier 1/2 cover within 12\" of Black Widow or runners to trigger Group Activation (2) + Overseer slingshots."
   },
   {
@@ -747,19 +747,19 @@ const ROSTER = [
     name: "Black Widow",
     squad: "venom",
     role: "Death-Maiden • Champion",
-    rating: 295,
-    defaultXp: 4,
+    rating: 330,
+    defaultXp: 2,
     defaultStatus: "ready",
-    stats: { M:'6"', WS:'2+', BS:'3+', S:'3', T:'4', W:'2', I:'2+', A:'3', Ld:'8+', Cl:'4+', Wil:'7+', Int:'7+' },
+    stats: { M:"7\"", WS:"2+", BS:"3+", S:"3", T:"4", W:"2", I:"2+", A:"3", Ld:"8+", Cl:"4+", Wil:"7+", Int:"7+" },
     skills: ["Combat Virtuoso"],
     weapons: [
-      { name: "Stiletto sword", rngS:'-', rngL:'E (3" Virt.)', accS:'-', accL:'-', str:'-', ap:'-1', d:'-', am:'-', traits:["Melee","Parry","Toxin","Versatile 3\""] },
-      { name: "Needle pistol", rngS:'4"', rngL:'9"', accS:'+2', accL:'-', str:'-', ap:'-1', d:'-', am:'6+', traits:["Scarce","Sidearm","Silent","Toxin"] }
+      { name: "Stiletto sword", rngS:"-", rngL:"E", accS:"-", accL:"-", str:"-", ap:"-1", d:"-", am:"-", traits:["Melee", "Parry", "Toxin"] },
+      { name: "Needle pistol", rngS:"4\"", rngL:"9\"", accS:"+2", accL:"-", str:"-", ap:"-1", d:"-", am:"6+", traits:["Scarce", "Sidearm", "Silent", "Toxin"] }
     ],
-    wargear: ["Armoured undersuit", "Mesh armour (4+ save)", "Chem-synth", "Displacer field"],
+    wargear: ["Armoured undersuit", "Mesh armour (4+ save)", "Chem-synth", "Displacer field", "Grapnel launcher"],
     rules: ["Gang Hierarchy (Champion)", "Tools of the Trade", "Poison Blood"],
     injuries: ["Out Cold"],
-    quote: "I already died once in the dark. You won't enjoy how quickly I share the experience—nor what is waiting in Silence.",
+    quote: "I already died once in the dark. You won't enjoy how quickly I share the experience—nor what is waiting in Sister Polythene's cages.",
     tactics: "Trigger Chem-synth (Int 7+) before striking, then use Combat Virtuoso (3\" Versatile) across railings/gaps to deal Toxin with zero reaction attacks."
   },
   {
@@ -767,19 +767,19 @@ const ROSTER = [
     name: "Copperhead",
     squad: "crown",
     role: "Gang Matriarch • Champion",
-    rating: 335,
-    defaultXp: 7,
+    rating: 380,
+    defaultXp: 2,
     defaultStatus: "ready",
-    stats: { M:'5"', WS:'3+', BS:'3+', S:'3', T:'3', W:'2', I:'2+', A:'2', Ld:'6+', Cl:'6+', Wil:'6+', Int:'6+' },
+    stats: { M:"5\"", WS:"3+", BS:"2+", S:"3", T:"3", W:"2", I:"2+", A:"2", Ld:"6+", Cl:"6+", Wil:"6+", Int:"6+" },
     skills: ["Spring Up"],
     weapons: [
-      { name: "Heavy stubber (Susp.)", rngS:'20"', rngL:'40"', accS:'-', accL:'-1', str:'4', ap:'-1', d:'1', am:'4+', traits:["Rapid Fire (2)","Unwieldy (Suspensors)"] },
-      { name: "Lasgun", rngS:'18"', rngL:'24"', accS:'+1', accL:'-', str:'3', ap:'-', d:'1', am:'2+', traits:["Plentiful"] }
+      { name: "Heavy stubber (Susp.)", rngS:"20\"", rngL:"40\"", accS:"-", accL:"-1", str:"4", ap:"-1", d:"1", am:"4+", traits:["Rapid Fire (2)", "Unwieldy"] },
+      { name: "Lasgun", rngS:"18\"", rngL:"24\"", accS:"+1", accL:"-", str:"3", ap:"-", d:"1", am:"2+", traits:["Plentiful"] }
     ],
-    wargear: ["Armoured undersuit", "Mesh armour (4+ save)", "Suspensors"],
+    wargear: ["Armoured undersuit", "Grapnel launcher", "Mesh armour (4+ save)", "Suspensors"],
     rules: ["Gang Hierarchy (Champion)", "Tools of the Trade", "Group Activation (1)"],
     injuries: [],
-    quote: "Six hundred rounds a minute says this corridor belongs to Her Majesty. Any Goliath stupid enough to argue can count the brass.",
+    quote: "Six hundred rounds a minute says this corridor belongs to Her Majesty. Any Goliath stupid enough to argue can take it up with the brass.",
     tactics: "Claim Tier 2/3 high ground with cover. Spring Up stands her for free after pinning, and Suspensors let her move & fire Rapid Fire (2) every turn."
   },
   {
@@ -787,15 +787,16 @@ const ROSTER = [
     name: "Nightshade",
     squad: "venom",
     role: "Gang Sister • Specialist",
-    rating: 55,
-    defaultXp: 3,
+    rating: 115,
+    defaultXp: 5,
     defaultStatus: "ready",
-    stats: { M:'5"', WS:'4+', BS:'4+', S:'3', T:'3', W:'1', I:'3+', A:'1', Ld:'7+', Cl:'7+', Wil:'7+', Int:'7+' },
+    stats: { M:"5\"", WS:"4+", BS:"4+", S:"3", T:"3", W:"1", I:"3+", A:"1", Ld:"7+", Cl:"7+", Wil:"7+", Int:"7+" },
     skills: [],
     weapons: [
-      { name: "Lasgun", rngS:'18"', rngL:'24"', accS:'+1', accL:'-', str:'3', ap:'-', d:'1', am:'2+', traits:["Plentiful"] }
+      { name: "Lasgun", rngS:"18\"", rngL:"24\"", accS:"+1", accL:"-", str:"3", ap:"-", d:"1", am:"2+", traits:["Plentiful"] },
+      { name: "Needle rifle", rngS:"9\"", rngL:"18\"", accS:"+2", accL:"-", str:"-", ap:"-2", d:"-", am:"6+", traits:["Scarce", "Silent", "Toxin"] }
     ],
-    wargear: [],
+    wargear: ["Grapnel launcher"],
     rules: ["Gang Fighter (Specialist)", "Tools of the Trade"],
     injuries: [],
     quote: "Everyone stares at the shadows in the Deep Dome. They never notice the violet glow until the coils finish charging.",
@@ -807,12 +808,12 @@ const ROSTER = [
     squad: "venom",
     role: "Gang Sister • Ganger",
     rating: 55,
-    defaultXp: 2,
+    defaultXp: 5,
     defaultStatus: "ready",
-    stats: { M:'5"', WS:'4+', BS:'4+', S:'3', T:'3', W:'1', I:'3+', A:'1', Ld:'7+', Cl:'7+', Wil:'7+', Int:'7+' },
+    stats: { M:"5\"", WS:"4+", BS:"4+", S:"3", T:"3", W:"1", I:"3+", A:"1", Ld:"7+", Cl:"7+", Wil:"7+", Int:"7+" },
     skills: [],
     weapons: [
-      { name: "Lasgun", rngS:'18"', rngL:'24"', accS:'+1', accL:'-', str:'3', ap:'-', d:'1', am:'2+', traits:["Plentiful"] }
+      { name: "Lasgun", rngS:"18\"", rngL:"24\"", accS:"+1", accL:"-", str:"3", ap:"-", d:"1", am:"2+", traits:["Plentiful"] }
     ],
     wargear: [],
     rules: ["Gang Fighter (Ganger)", "Promotion (Escher Specialist)"],
@@ -825,18 +826,19 @@ const ROSTER = [
     name: "Scorpio",
     squad: "crown",
     role: "Gang Sister • Ganger",
-    rating: 55,
-    defaultXp: 3,
+    rating: 70,
+    defaultXp: 4,
     defaultStatus: "ready",
-    stats: { M:'5"', WS:'4+', BS:'4+', S:'3', T:'3', W:'1', I:'3+', A:'1', Ld:'7+', Cl:'7+', Wil:'7+', Int:'7+' },
+    stats: { M:"5\"", WS:"4+", BS:"4+", S:"3", T:"3", W:"1", I:"3+", A:"1", Ld:"7+", Cl:"7+", Wil:"7+", Int:"7+" },
     skills: [],
     weapons: [
-      { name: "Lasgun", rngS:'18"', rngL:'24"', accS:'+1', accL:'-', str:'3', ap:'-', d:'1', am:'2+', traits:["Plentiful"] }
+      { name: "Lasgun", rngS:"18\"", rngL:"24\"", accS:"+1", accL:"-", str:"3", ap:"-", d:"1", am:"2+", traits:["Plentiful"] },
+      { name: "Smoke grenades", rngS:"-", rngL:"Sx3", accS:"-", accL:"-", str:"-", ap:"-", d:"-", am:"4+", traits:["Blast (*)", "Grenade", "Smoke"] }
     ],
     wargear: [],
     rules: ["Gang Fighter (Ganger)", "Promotion (Escher Specialist)"],
     injuries: [],
-    quote: "Let the Guilders count their tallies in the Fort. Out here in the Deeps, territory belongs to whoever still holds the high gantries.",
+    quote: "Let the Guilders count their tallies in the Fort. Out here in the Deeps, territory belongs to whoever still has ammunition.",
     tactics: "Flank Overwatch: Cover secondary ladders so enemy climbers cannot flank Copperhead's perch."
   },
   {
@@ -845,12 +847,12 @@ const ROSTER = [
     squad: "crown",
     role: "Gang Sister • Ganger",
     rating: 75,
-    defaultXp: 2,
+    defaultXp: 4,
     defaultStatus: "ready",
-    stats: { M:'5"', WS:'4+', BS:'4+', S:'3', T:'3', W:'1', I:'3+', A:'1', Ld:'7+', Cl:'7+', Wil:'7+', Int:'7+' },
+    stats: { M:"5\"", WS:"4+", BS:"4+", S:"3", T:"3", W:"1", I:"3+", A:"1", Ld:"7+", Cl:"7+", Wil:"7+", Int:"7+" },
     skills: [],
     weapons: [
-      { name: "Shock whip", rngS:'E', rngL:'3"', accS:'-1', accL:'-', str:'S+1', ap:'-', d:'1', am:'-', traits:["Melee","Shock","Versatile 3\""] }
+      { name: "Shock whip", rngS:"E", rngL:"3\"", accS:"-1", accL:"-", str:"S+1", ap:"-", d:"1", am:"-", traits:["Melee", "Shock", "Versatile 3\""] }
     ],
     wargear: [],
     rules: ["Gang Fighter (Ganger)", "Promotion (Escher Specialist)"],
@@ -866,11 +868,11 @@ const ROSTER = [
     rating: 45,
     defaultXp: 1,
     defaultStatus: "ready",
-    stats: { M:'5"', WS:'4+', BS:'5+', S:'3', T:'3', W:'1', I:'3+', A:'1', Ld:'8+', Cl:'8+', Wil:'8+', Int:'8+' },
+    stats: { M:"5\"", WS:"4+", BS:"5+", S:"3", T:"3", W:"1", I:"3+", A:"1", Ld:"8+", Cl:"8+", Wil:"8+", Int:"8+" },
     skills: [],
     weapons: [
-      { name: "Stiletto knife", rngS:'-', rngL:'E', accS:'-', accL:'-', str:'-', ap:'-', d:'-', am:'-', traits:["Melee","Toxin"] },
-      { name: "Stub gun", rngS:'6"', rngL:'12"', accS:'+2', accL:'-', str:'3', ap:'-', d:'1', am:'4+', traits:["Plentiful","Sidearm"] }
+      { name: "Stiletto knife", rngS:"-", rngL:"E", accS:"-", accL:"-", str:"-", ap:"-", d:"-", am:"-", traits:["Melee", "Toxin"] },
+      { name: "Stub gun", rngS:"6\"", rngL:"12\"", accS:"+2", accL:"-", str:"3", ap:"-", d:"1", am:"4+", traits:["Plentiful", "Sidearm"] }
     ],
     wargear: [],
     rules: ["Gang Fighter (Juve)", "Promotion (Escher Specialist)", "Fast Learner"],
@@ -883,14 +885,15 @@ const ROSTER = [
     name: "Fang",
     squad: "venom",
     role: "Little Sister • Juve",
-    rating: 45,
+    rating: 60,
     defaultXp: 1,
     defaultStatus: "ready",
-    stats: { M:'5"', WS:'4+', BS:'5+', S:'3', T:'3', W:'1', I:'3+', A:'1', Ld:'8+', Cl:'8+', Wil:'8+', Int:'8+' },
+    stats: { M:"5\"", WS:"4+", BS:"5+", S:"3", T:"3", W:"1", I:"3+", A:"1", Ld:"8+", Cl:"8+", Wil:"8+", Int:"8+" },
     skills: [],
     weapons: [
-      { name: "Stiletto knife", rngS:'-', rngL:'E', accS:'-', accL:'-', str:'-', ap:'-', d:'-', am:'-', traits:["Melee","Toxin"] },
-      { name: "Stub gun", rngS:'6"', rngL:'12"', accS:'+2', accL:'-', str:'3', ap:'-', d:'1', am:'4+', traits:["Plentiful","Sidearm"] }
+      { name: "Smoke grenades", rngS:"-", rngL:"Sx3", accS:"-", accL:"-", str:"-", ap:"-", d:"-", am:"4+", traits:["Blast (*)", "Grenade", "Smoke"] },
+      { name: "Stiletto knife", rngS:"-", rngL:"E", accS:"-", accL:"-", str:"-", ap:"-", d:"-", am:"-", traits:["Melee", "Toxin"] },
+      { name: "Stub gun", rngS:"6\"", rngL:"12\"", accS:"+2", accL:"-", str:"3", ap:"-", d:"1", am:"4+", traits:["Plentiful", "Sidearm"] }
     ],
     wargear: [],
     rules: ["Gang Fighter (Juve)", "Promotion (Escher Specialist)", "Fast Learner"],
@@ -906,11 +909,11 @@ const ROSTER = [
     rating: 45,
     defaultXp: 1,
     defaultStatus: "ready",
-    stats: { M:'5"', WS:'4+', BS:'5+', S:'3', T:'3', W:'1', I:'3+', A:'1', Ld:'8+', Cl:'8+', Wil:'8+', Int:'8+' },
+    stats: { M:"5\"", WS:"4+", BS:"5+", S:"3", T:"3", W:"1", I:"3+", A:"1", Ld:"8+", Cl:"8+", Wil:"8+", Int:"8+" },
     skills: [],
     weapons: [
-      { name: "Stiletto knife", rngS:'-', rngL:'E', accS:'-', accL:'-', str:'-', ap:'-', d:'-', am:'-', traits:["Melee","Toxin"] },
-      { name: "Stub gun", rngS:'6"', rngL:'12"', accS:'+2', accL:'-', str:'3', ap:'-', d:'1', am:'4+', traits:["Plentiful","Sidearm"] }
+      { name: "Stiletto knife", rngS:"-", rngL:"E", accS:"-", accL:"-", str:"-", ap:"-", d:"-", am:"-", traits:["Melee", "Toxin"] },
+      { name: "Stub gun", rngS:"6\"", rngL:"12\"", accS:"+2", accL:"-", str:"3", ap:"-", d:"1", am:"4+", traits:["Plentiful", "Sidearm"] }
     ],
     wargear: [],
     rules: ["Gang Fighter (Juve)", "Promotion (Escher Specialist)", "Fast Learner"],
@@ -1121,7 +1124,7 @@ function renderMetrics() {
   document.getElementById("gangMetrics").innerHTML = `
     <div class="metric-pill"><span>Active Squad</span><strong>${activeCount} / ${ROSTER.length} Fighters</strong></div>
     <div class="metric-pill"><span>Deployed Rating</span><strong>${activeRating.toLocaleString()} Cr</strong></div>
-    <div class="metric-pill"><span>Gang Wealth / Stash</span><strong>1,400 / 150 Cr</strong></div>
+    <div class="metric-pill"><span>Gang Wealth / Stash</span><strong>1,447 / 7 Cr</strong></div>
     <div class="metric-pill"><span>Reputation</span><strong>5</strong></div>
     <div class="metric-pill"><span>Total Squad XP</span><strong>⭐ ${totalXp} XP</strong></div>
   `;
