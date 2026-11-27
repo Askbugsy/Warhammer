@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blades of the Crown — House Delaque</title>
+<style>
+  :root {
+    --bg: #09070c;
+    --panel: #130f19;
+    --panel2: #1b1524;
+    --plum: #3b1742;
+    --plum-bright: #6b2478;
+    --gold: #d4af37;
+    --gold-dim: #8f7322;
+    --crimson: #c93b4b;
+    --emerald: #34a875;
+    --cyan: #3da5d9;
+    --amber: #e08e36;
+    --text: #f0ebf5;
+    --muted: #a598b3;
+    --border: rgba(212, 175, 55, 0.24);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: radial-gradient(circle at top right, #211229 0%, var(--bg) 55%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.45;
+    min-height: 100vh;
+  }
+  a { text-decoration: none; color: inherit; }
+
+  /* Sticky Top Command Bar */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(9, 7, 12, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 18px;
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .crest {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1.5px solid var(--gold);
+    background: var(--plum);
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: var(--gold); font-size: 14px;
+  }
+  .crest img { width: 100%; height: 100%; object-fit: cover; }
+  .brand-title { font-size: 15px; font-weight: 800; letter-spacing: 0.6px; color: var(--gold); text-transform: uppercase; }
+  .brand-sub { font-size: 11px; color: var(--muted); }
+  .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    padding: 7px 12px; border-radius: 7px; font-size: 12px; font-weight: 700;
+    border: 1px solid var(--border); background: var(--panel2); color: var(--text);
+    cursor: pointer; transition: 0.15s;
+  }
+  .btn:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-active {
+    background: linear-gradient(135deg, var(--plum), #261430);
+    border-color: var(--gold); color: var(--gold);
+  }
+
+  /* Two-Column Split Deck Layout (Replicating index.html) */
+  .deck-shell {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 16px;
+    display: grid;
+    grid-template-columns: 310px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  @media (max-width: 860px) {
+    .deck-shell {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Left Sidebar: Teams Roster Selector */
+  .sidebar {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    position: sticky;
+    top: 68px;
+  }
+  @media (max-width: 860px) {
+    .sidebar { position: static; }
+  }
+  .sidebar-header {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--gold);
+    padding: 4px 6px 10px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .team-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .team-item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    width: 100%;
+    text-align: left;
+    background: var(--panel2);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 9px;
+    padding: 9px 11px;
+    cursor: pointer;
+    transition: 0.15s;
+    color: var(--text);
+  }
+  .team-item:hover {
+    border-color: var(--gold-dim);
+    background: #231b2e;
+  }
+  .team-item.selected {
+    background: linear-gradient(135deg, rgba(59, 23, 66, 0.9), rgba(27, 21, 36, 0.95));
+    border-color: var(--gold);
+    box-shadow: 0 0 14px rgba(212, 175, 55, 0.2);
+  }
+  .team-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    background: rgba(11, 9, 14, 0.85);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    flex-shrink: 0;
+  }
+  .team-item.selected .team-icon {
+    border-color: var(--gold);
+    background: rgba(212, 175, 55, 0.14);
+  }
+  .team-info { min-width: 0; flex: 1; }
+  .team-owner-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .team-owner {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--gold);
+  }
+  .team-badge {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: rgba(212, 175, 55, 0.16);
+    color: var(--gold);
+    border: 1px solid var(--gold-dim);
+  }
+  .team-name {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .team-sub {
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Centre Content Panel */
+  .centre-stage {
+    min-width: 0;
+  }
+  .stage-header {
+    background: linear-gradient(135deg, rgba(59, 23, 66, 0.78), rgba(19, 15, 25, 0.96));
+    border: 1px solid var(--gold);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+  .stage-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .stage-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .stage-big-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: rgba(11, 9, 14, 0.85);
+    border: 1.5px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  .stage-kicker {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--gold);
+  }
+  .stage-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+  }
+  .stage-meta {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .pill {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(11, 9, 14, 0.78);
+    border: 1px solid var(--border);
+    color: var(--gold);
+  }
+  .exploit-box {
+    background: rgba(52, 168, 117, 0.13);
+    border: 1px solid rgba(52, 168, 117, 0.38);
+    border-radius: 8px;
+    padding: 10px 13px;
+    font-size: 13px;
+    color: #d7f7e7;
+  }
+
+  /* Sub-tabs inside Centre Stage */
+  .sub-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .sub-btn {
+    padding: 8px 13px;
+    border-radius: 8px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.15s;
+  }
+  .sub-btn:hover { color: var(--text); border-color: var(--gold-dim); }
+  .sub-btn.active {
+    background: var(--plum);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* Cards & Hit-Lists */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 13px; margin-bottom: 14px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 13px; margin-bottom: 14px; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    padding: 14px 16px;
+  }
+  .card h2 { font-size: 15px; color: var(--gold); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .card h3 { font-size: 13.5px; color: #f3d678; margin: 8px 0 4px; }
+  .card p, .card li { font-size: 13px; color: #e0d8e8; margin-bottom: 6px; }
+  .card ul { padding-left: 18px; }
+  .callout {
+    background: rgba(59, 23, 66, 0.36);
+    border-left: 3px solid var(--gold);
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 12.5px;
+  }
+  .warn {
+    background: rgba(201, 59, 75, 0.14);
+    border-left: 3px solid var(--crimson);
+    padding: 8px 11px;
+    border-radius: 6px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #f7c6cc;
+  }
+
+  .target-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 11px;
+  }
+  .target-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .rank-badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    margin-right: 6px;
+  }
+  .r1 { background: rgba(201, 59, 75, 0.25); color: #ff8c99; border: 1px solid var(--crimson); }
+  .r2 { background: rgba(224, 142, 54, 0.22); color: #ffc078; border: 1px solid var(--amber); }
+  .r3 { background: rgba(212, 175, 55, 0.2); color: var(--gold); border: 1px solid var(--gold-dim); }
+  .r4 { background: rgba(61, 165, 217, 0.18); color: #8ad4f7; border: 1px solid var(--cyan); }
+  .r5 { background: rgba(52, 168, 117, 0.18); color: #87e6ba; border: 1px solid var(--emerald); }
+  .target-title { font-size: 15px; font-weight: 800; color: #fff; }
+  .target-gear { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .meta-strip { display: flex; flex-wrap: wrap; gap: 7px; }
+  .tag {
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 5px;
+    background: var(--panel2);
+    border: 1px solid var(--border);
+  }
+  .tag-posture { color: #ffd479; }
+  .tag-hunter { color: #82e8b8; }
+
+
+  .page-main { max-width: 980px; margin: 0 auto; padding: 16px; }
+  .camp-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+  .camp-card h2 { color: var(--gold); font-size: 18px; margin: 0 0 8px; }
+  .camp-card h3 { color: var(--gold); font-size: 16px; margin: 14px 0 6px; }
+  .camp-card h4 { color: var(--text); font-size: 14px; margin: 12px 0 4px; }
+  .camp-card p, .camp-card li { color: var(--text); font-size: 14px; line-height: 1.55; margin-bottom: 6px; }
+  .camp-card ul { padding-left: 18px; }
+  .camp-card table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0; }
+  .camp-card th, .camp-card td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+  .camp-card th { color: var(--gold); font-weight: 700; }
+  .camp-card .muted { color: var(--muted); font-size: 13px; }
+  .camp-card .chapter { color: var(--gold); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+</style>
+
+<style>
+  .ref h2 { color: var(--gold); font-size: 18px; border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-top: 26px; }
+  .ref h3 { color: var(--text); font-size: 15px; margin: 16px 0 6px; }
+  .ref p, .ref li { color: var(--text); font-size: 14px; line-height: 1.55; }
+  .ref .muted { color: var(--muted); font-size: 13px; }
+  .ref .flag { color: #e0a060; }
+  .ref .scroll { overflow-x: auto; }
+  .ref table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0 14px; }
+  .ref th, .ref td { text-align: left; padding: 6px 7px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+  .ref th { color: var(--gold); }
+  .ref td.num, .ref th.num { text-align: center; }
+  .ref .note { background: var(--panel2); border-left: 3px solid var(--gold); padding: 8px 12px; margin: 10px 0; font-size: 14px; }
+</style>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="crest" data-img="gangcrest">👑</div>
+    <div>
+      <div class="brand-title">Gang Reference</div>
+      <div class="brand-sub">Gangs of the Underhive and Outlands</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a class="btn" href="index.html">🏠 Gang Hub</a>
+    <a class="btn" href="campaigns.html">🗺️ Campaigns</a>
+    <a class="btn" href="n23.html">📘 N23 Rules</a>
+    <a class="btn" href="reference.html">📚 Reference</a>
+  </div>
+</div>
+
+<main class="page-main ref">
+<p style="margin:0 0 12px"><a class="btn" href="reference.html">← Back to gang list</a></p>
+<section class="camp-card">
+  <h1 style="color:var(--gold);font-size:24px;margin:0 0 4px">House Delaque</h1>
+  <p class="muted">Gangs of the Underhive, House Delaque gang list and equipment reference. Stat lines are copied from the book. Rule text is summarised in my own words.</p>
+
+  <h2>Gang special rules</h2>
+  <ul>
+    <li><strong>Psychoteric Choir:</strong> while a Delaque fighter is within 3″ of two or more other friendly Delaque fighters, its Leadership and Willpower are each improved by 1.</li>
+    <li><strong>Starting skills:</strong> when added to a roster, Delaque Leaders and Champions can pick one skill from one of their Primary skill sets.</li>
+  </ul>
+
+  <h2>Fighters</h2>
+  <div class="scroll"><table>
+    <tr><th>Fighter</th><th>Type</th><th class="num">Cr</th><th class="num">M</th><th class="num">WS</th><th class="num">BS</th><th class="num">S</th><th class="num">T</th><th class="num">W</th><th class="num">I</th><th class="num">A</th><th class="num">Sv</th><th class="num">Ld</th><th class="num">Cl</th><th class="num">Wil</th><th class="num">Int</th><th class="num">XP</th></tr>
+    <tr><td>Master of Shadow</td><td>Leader</td><td class=num>140</td><td class=num>5″</td><td class=num>3+</td><td class=num>3+</td><td class=num>3</td><td class=num>3</td><td class=num>3</td><td class=num>4</td><td class=num>3</td><td class=num>5+</td><td class=num>8</td><td class=num>8</td><td class=num>9</td><td class=num>8</td><td class=num>61</td></tr>
+    <tr><td>Phantom</td><td>Champion</td><td class=num>100</td><td class=num>5″</td><td class=num>3+</td><td class=num>3+</td><td class=num>3</td><td class=num>3</td><td class=num>2</td><td class=num>4</td><td class=num>2</td><td class=num>5+</td><td class=num>7</td><td class=num>7</td><td class=num>8</td><td class=num>7</td><td class=num>37</td></tr>
+    <tr><td>Nacht-Ghul</td><td>Champion, Loner</td><td class=num>120</td><td class=num>6″</td><td class=num>3+</td><td class=num>4+</td><td class=num>4</td><td class=num>3</td><td class=num>2</td><td class=num>5</td><td class=num>3</td><td class=num>5+</td><td class=num>6</td><td class=num>8</td><td class=num>8</td><td class=num>7</td><td class=num>49</td></tr>
+    <tr><td>Ghost</td><td>Ganger, Specialist</td><td class=num>45</td><td class=num>5″</td><td class=num>4+</td><td class=num>4+</td><td class=num>3</td><td class=num>3</td><td class=num>1</td><td class=num>4</td><td class=num>1</td><td class=num>6+</td><td class=num>6</td><td class=num>6</td><td class=num>7</td><td class=num>6</td><td class=num>13</td></tr>
+    <tr><td>Psy-Gheist</td><td>Prospect, Wyrd</td><td class=num>30</td><td class=num>6″</td><td class=num>5+</td><td class=num>5+</td><td class=num>3</td><td class=num>3</td><td class=num>1</td><td class=num>4</td><td class=num>1</td><td class=num>6+</td><td class=num>5</td><td class=num>6</td><td class=num>7</td><td class=num>5</td><td class=num>4</td></tr>
+    <tr><td>Shadow</td><td>Prospect</td><td class=num>25</td><td class=num>6″</td><td class=num>5+</td><td class=num>5+</td><td class=num>3</td><td class=num>3</td><td class=num>1</td><td class=num>4</td><td class=num>1</td><td class=num>6+</td><td class=num>5</td><td class=num>5</td><td class=num>6</td><td class=num>5</td><td class=num>1</td></tr>
+    <tr><td>Piscean Spektor</td><td>Beast, Brute, Flying, Wyrd</td><td class=num>250</td><td class=num>5″</td><td class=num>3+</td><td class=num>5+</td><td class=num>4</td><td class=num>4</td><td class=num>4</td><td class=num>4</td><td class=num>2</td><td class=num>5+</td><td class=num>6</td><td class=num>7</td><td class=num>7</td><td class=num>5</td><td class=num>25</td></tr>
+    <tr><td>Cephalopod Spektor</td><td>Beast, Flying, Pet</td><td class=num>75</td><td class=num>5″</td><td class=num>4+</td><td class=num>5+</td><td class=num>2</td><td class=num>3</td><td class=num>1</td><td class=num>4</td><td class=num>1</td><td class=num>6+</td><td class=num>6</td><td class=num>7</td><td class=num>7</td><td class=num>7</td><td class=num>13</td></tr>
+    <tr><td>Psychoteric Wyrm</td><td>Beast, Pet</td><td class=num>50</td><td class=num>6″</td><td class=num>4+</td><td class=num>6+</td><td class=num>2</td><td class=num>3</td><td class=num>1</td><td class=num>3</td><td class=num>1</td><td class=num>6+</td><td class=num>5</td><td class=num>6</td><td class=num>7</td><td class=num>5</td><td class=num>13</td></tr>
+    </table></div>
+
+  <h2>Fighter rules</h2>
+  <h3>Master of Shadow and Phantom</h3>
+  <p><strong>Master of Whispers:</strong> when added to a roster, the fighter may gain the Wyrd subtype and choose a Psychoteric Whispers Wyrd Power for +35 Cr.</p>
+  <h3>Nacht-Ghul</h3>
+  <p><strong>From the Shadows:</strong> instead of deploying normally, it can be placed to one side. From the start of a round after the first, its controlling player can set it up anywhere that isn't in line of sight of an enemy, and not within 9″ of any enemy fighter.</p>
+  <h3>Ghost, Psy-Gheist and Spektors</h3>
+  <p>The Ghost and Psy-Gheist use <strong>Whispers in the Dark</strong>: the Psy-Gheist selects a Psychoteric Whispers Wyrd Power when added. The Piscean Spektor does the same, and is armed with psychomantic claws only. It can't buy other weapons or wargear.</p>
+  <h3>Cephalopod Spektor</h3>
+  <p>Leash range 3″. <strong>Sensor Array:</strong> if it is within leash range of its owner when the owner must make an Intelligence check for any reason, roll an extra D6 and discard one of the dice. Armed with shock tendrils. It can't buy other weapons or wargear.</p>
+  <h3>Psychoteric Wyrm</h3>
+  <p>Leash range 12″. <strong>Psychoteric Node:</strong> when a Delaque Wyrd uses a Psychoteric Power, it can channel that power through an Active Psychoteric Wyrd within leash range, measuring range and line of sight from the Wyrm. <strong>Burrowing:</strong> it can move freely under impassable terrain, but can't end its move in impassable terrain. Armed with ferocious jaws. It can't buy other weapons or wargear.</p>
+
+  <h2>Psychoteric Whispers (Wyrd Powers)</h2>
+  <p class="muted">A Wyrd treats these as a Primary skill set. Summaries are in my own words.</p>
+  <ul>
+    <li><strong>Terrible Truths (Single):</strong> an enemy fighter within 6″ and in line of sight makes a Willpower check. On a failure it gains the Insanity condition.</li>
+    <li><strong>Psychotic Lure (Single):</strong> an enemy fighter with a Ready marker within 6″ and in line of sight is activated next by the opposing player. It can't perform Group Activation when next activated.</li>
+    <li><strong>Deceitful Thoughts (Double):</strong> an enemy fighter within 6″ and in line of sight makes a Willpower check. On a failure, the Wyrd's controlling player can move it up to its Movement in any direction, without moving it into harm.</li>
+    <li><strong>Cacophony of Silence (Single, Continuous):</strong> while maintained, enemy fighters within 6″ and in line of sight must re-roll successful Hit rolls for ranged attacks.</li>
+    <li><strong>A Perfect Void (Free, Continuous):</strong> while maintained, the Wyrd counts as always in cover, and as within a weapon's Long range to all enemy fighters within 10″.</li>
+    <li><strong>Eternal Slumber (Single):</strong> a Seriously Injured enemy fighter within 3″ and in line of sight of the Wyrd immediately goes Out of Action.</li>
+  </ul>
+
+  <h2>House Delaque equipment list</h2>
+  <p class="muted">Prices in credits as printed.</p>
+  <div class="scroll"><table>
+    <tr><th>Category</th><th>Item</th><th>Cr</th></tr>
+    <tr><td>Auto/stub</td><td>Autogun / Autopistol / Long rifle / Stub gun</td><td>20 / 10 / 55 / 5</td></tr>
+    <tr><td>Esoteric</td><td>Flechette pistol</td><td>35</td></tr>
+    <tr><td>Flamers</td><td>Flamer / Hand flamer / Heavy flamer</td><td>70 / 45 / 95</td></tr>
+    <tr><td>Grav</td><td>Grav gun / Grav pistol</td><td>50 / 40</td></tr>
+    <tr><td>Las</td><td>Lasgun / Laspistol</td><td>15 / 5</td></tr>
+    <tr><td>Melta</td><td>Meltagun</td><td>140</td></tr>
+    <tr><td>Plasma</td><td>Plasma gun / Plasma pistol</td><td>85 / 70</td></tr>
+    <tr><td>Primitive</td><td>Throwing knives</td><td>10</td></tr>
+    <tr><td>Shotguns</td><td>Shotgun with solid &amp; scatter ammo</td><td>35</td></tr>
+    <tr><td>Web</td><td>Web gun / Web pistol</td><td>65 / 50</td></tr>
+    <tr><td>Esoteric melee</td><td>Psychomantic claws (Psy-Gheist only) / Serpent's fangs (Nacht-Ghul only) / Shiver sword (Nacht-Ghul only)</td><td>65 / 70 / 50</td></tr>
+    <tr><td>Shock</td><td>Shock stave</td><td>25</td></tr>
+    <tr><td>Toxin</td><td>Stiletto knife</td><td>25</td></tr>
+    <tr><td>Web melee</td><td>Web gauntlet</td><td>10</td></tr>
+    <tr><td>Grenades</td><td>Smoke grenades</td><td>15</td></tr>
+    <tr><td>Armour</td><td>Mesh armour / Refractor field</td><td>40 / 50</td></tr>
+    <tr><td>Personal</td><td>Grapnel launcher / Medicae kit / Photo-goggles / Psychomancer's harness (Psy-Gheist only) / Respirator</td><td>25 / 20 / 35 / 35 / 15</td></tr>
+    <tr><td>Accessories</td><td>Telescopic sight</td><td>20</td></tr>
+    <tr><td>Mounts</td><td>Dirt bike</td><td>35</td></tr>
+    <tr><td>Pets</td><td>Cephalopod Spektor / Psychoteric Wyrm</td><td>75 / 50</td></tr>
+    </table></div>
+
+  <h2>Skill access</h2>
+  <p class="muted">Primary and Secondary skill sets each fighter can use.</p>
+  <div class="scroll"><table>
+    <tr><th>Fighter</th><th class=num>Agility</th><th class=num>Brawn</th><th class=num>Combat</th><th class=num>Cunning</th><th class=num>Savant</th><th class=num>Shooting</th></tr>
+    <tr><td>Master of Shadow</td><td class=num>Secondary</td><td class=num>-</td><td class=num>Secondary</td><td class=num>Primary</td><td class=num>Primary</td><td class=num>-</td></tr>
+    <tr><td>Phantom</td><td class=num>Secondary</td><td class=num>-</td><td class=num>-</td><td class=num>Primary</td><td class=num>Secondary</td><td class=num>Primary</td></tr>
+    <tr><td>Nacht-Ghul</td><td class=num>Primary</td><td class=num>-</td><td class=num>Primary</td><td class=num>Secondary</td><td class=num>-</td><td class=num>-</td></tr>
+    <tr><td>Ghost</td><td class=num>Secondary</td><td class=num>-</td><td class=num>-</td><td class=num>Primary</td><td class=num>-</td><td class=num>Secondary</td></tr>
+    <tr><td>Psy-Gheist</td><td class=num>Secondary</td><td class=num>-</td><td class=num>-</td><td class=num>Primary</td><td class=num>Secondary</td><td class=num>-</td></tr>
+    <tr><td>Shadow</td><td class=num>Primary</td><td class=num>-</td><td class=num>-</td><td class=num>Secondary</td><td class=num>-</td><td class=num>-</td></tr>
+    <tr><td>Piscean Spektor</td><td class=num>Primary</td><td class=num>Secondary</td><td class=num>Primary</td><td class=num>-</td><td class=num>-</td><td class=num>-</td></tr>
+    <tr><td>Cephalopod Spektor</td><td class=num>Primary</td><td class=num>-</td><td class=num>-</td><td class=num>Secondary</td><td class=num>-</td><td class=num>-</td></tr>
+    <tr><td>Psychoteric Wyrm</td><td class=num>Primary</td><td class=num>-</td><td class=num>-</td><td class=num>Secondary</td><td class=num>-</td><td class=num>-</td></tr>
+    </table></div>
+
+  <h2>Weapon profiles (selected)</h2>
+  <div class="scroll"><table>
+    <tr><th>Weapon</th><th class="num">SR</th><th class="num">LR</th><th class="num">Str</th><th class="num">AP</th><th class="num">L</th><th>Traits</th></tr>
+    <tr><td>Flechette pistol</td><td class=num>4″</td><td class=num>12″</td><td class=num>-</td><td class=num>-</td><td class=num>1</td><td>Light, Rapid Fire (1), Toxin (3+)</td></tr>
+    <tr><td>Psychomantic claws</td><td class=num>E</td><td class=num>-</td><td class=num>S+1</td><td class=num>-3</td><td class=num>1</td><td>Melee, Paired (2)</td></tr>
+    <tr><td>Serpent's fangs</td><td class=num>E</td><td class=num>-</td><td class=num>-</td><td class=num>-3</td><td class=num>1</td><td>Melee, Paired (2), Toxin (3+)</td></tr>
+    <tr><td>Shiver sword</td><td class=num>E</td><td class=num>-</td><td class=num>S+1</td><td class=num>-1</td><td class=num>2</td><td>Melee, Parry</td></tr>
+    <tr><td>Ferocious jaws</td><td class=num>E</td><td class=num>-</td><td class=num>S+1</td><td class=num>-1</td><td class=num>1</td><td>Melee, Rending (6+)</td></tr>
+    <tr><td>Shock tendrils</td><td class=num>E</td><td class=num>-</td><td class=num>S+1</td><td class=num>-</td><td class=num>1</td><td>Melee, Shock (6+)</td></tr>
+    <tr><td>Web gauntlet</td><td class=num>E</td><td class=num>-</td><td class=num>3</td><td class=num>-</td><td class=num>-</td><td>Backstab, Melee, Web</td></tr>
+    </table></div>
+</section>
+</main>
+</body>
+</html>
