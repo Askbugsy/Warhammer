@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blades of the Crown — Ironhead Squats</title>
+<style>
+  :root {
+    --bg: #09070c;
+    --panel: #130f19;
+    --panel2: #1b1524;
+    --plum: #3b1742;
+    --plum-bright: #6b2478;
+    --gold: #d4af37;
+    --gold-dim: #8f7322;
+    --crimson: #c93b4b;
+    --emerald: #34a875;
+    --cyan: #3da5d9;
+    --amber: #e08e36;
+    --text: #f0ebf5;
+    --muted: #a598b3;
+    --border: rgba(212, 175, 55, 0.24);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: radial-gradient(circle at top right, #211229 0%, var(--bg) 55%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.45;
+    min-height: 100vh;
+  }
+  a { text-decoration: none; color: inherit; }
+
+  /* Sticky Top Command Bar */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(9, 7, 12, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 18px;
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .crest {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1.5px solid var(--gold);
+    background: var(--plum);
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: var(--gold); font-size: 14px;
+  }
+  .crest img { width: 100%; height: 100%; object-fit: cover; }
+  .brand-title { font-size: 15px; font-weight: 800; letter-spacing: 0.6px; color: var(--gold); text-transform: uppercase; }
+  .brand-sub { font-size: 11px; color: var(--muted); }
+  .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    padding: 7px 12px; border-radius: 7px; font-size: 12px; font-weight: 700;
+    border: 1px solid var(--border); background: var(--panel2); color: var(--text);
+    cursor: pointer; transition: 0.15s;
+  }
+  .btn:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-active {
+    background: linear-gradient(135deg, var(--plum), #261430);
+    border-color: var(--gold); color: var(--gold);
+  }
+
+  /* Two-Column Split Deck Layout (Replicating index.html) */
+  .deck-shell {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 16px;
+    display: grid;
+    grid-template-columns: 310px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  @media (max-width: 860px) {
+    .deck-shell {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Left Sidebar: Teams Roster Selector */
+  .sidebar {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    position: sticky;
+    top: 68px;
+  }
+  @media (max-width: 860px) {
+    .sidebar { position: static; }
+  }
+  .sidebar-header {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--gold);
+    padding: 4px 6px 10px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .team-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .team-item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    width: 100%;
+    text-align: left;
+    background: var(--panel2);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 9px;
+    padding: 9px 11px;
+    cursor: pointer;
+    transition: 0.15s;
+    color: var(--text);
+  }
+  .team-item:hover {
+    border-color: var(--gold-dim);
+    background: #231b2e;
+  }
+  .team-item.selected {
+    background: linear-gradient(135deg, rgba(59, 23, 66, 0.9), rgba(27, 21, 36, 0.95));
+    border-color: var(--gold);
+    box-shadow: 0 0 14px rgba(212, 175, 55, 0.2);
+  }
+  .team-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    background: rgba(11, 9, 14, 0.85);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    flex-shrink: 0;
+  }
+  .team-item.selected .team-icon {
+    border-color: var(--gold);
+    background: rgba(212, 175, 55, 0.14);
+  }
+  .team-info { min-width: 0; flex: 1; }
+  .team-owner-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .team-owner {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--gold);
+  }
+  .team-badge {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: rgba(212, 175, 55, 0.16);
+    color: var(--gold);
+    border: 1px solid var(--gold-dim);
+  }
+  .team-name {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .team-sub {
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Centre Content Panel */
+  .centre-stage {
+    min-width: 0;
+  }
+  .stage-header {
+    background: linear-gradient(135deg, rgba(59, 23, 66, 0.78), rgba(19, 15, 25, 0.96));
+    border: 1px solid var(--gold);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+  .stage-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .stage-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .stage-big-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: rgba(11, 9, 14, 0.85);
+    border: 1.5px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  .stage-kicker {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--gold);
+  }
+  .stage-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+  }
+  .stage-meta {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .pill {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(11, 9, 14, 0.78);
+    border: 1px solid var(--border);
+    color: var(--gold);
+  }
+  .exploit-box {
+    background: rgba(52, 168, 117, 0.13);
+    border: 1px solid rgba(52, 168, 117, 0.38);
+    border-radius: 8px;
+    padding: 10px 13px;
+    font-size: 13px;
+    color: #d7f7e7;
+  }
+
+  /* Sub-tabs inside Centre Stage */
+  .sub-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .sub-btn {
+    padding: 8px 13px;
+    border-radius: 8px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.15s;
+  }
+  .sub-btn:hover { color: var(--text); border-color: var(--gold-dim); }
+  .sub-btn.active {
+    background: var(--plum);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* Cards & Hit-Lists */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 13px; margin-bottom: 14px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 13px; margin-bottom: 14px; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    padding: 14px 16px;
+  }
+  .card h2 { font-size: 15px; color: var(--gold); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .card h3 { font-size: 13.5px; color: #f3d678; margin: 8px 0 4px; }
+  .card p, .card li { font-size: 13px; color: #e0d8e8; margin-bottom: 6px; }
+  .card ul { padding-left: 18px; }
+  .callout {
+    background: rgba(59, 23, 66, 0.36);
+    border-left: 3px solid var(--gold);
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 12.5px;
+  }
+  .warn {
+    background: rgba(201, 59, 75, 0.14);
+    border-left: 3px solid var(--crimson);
+    padding: 8px 11px;
+    border-radius: 6px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #f7c6cc;
+  }
+
+  .target-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 11px;
+  }
+  .target-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .rank-badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    margin-right: 6px;
+  }
+  .r1 { background: rgba(201, 59, 75, 0.25); color: #ff8c99; border: 1px solid var(--crimson); }
+  .r2 { background: rgba(224, 142, 54, 0.22); color: #ffc078; border: 1px solid var(--amber); }
+  .r3 { background: rgba(212, 175, 55, 0.2); color: var(--gold); border: 1px solid var(--gold-dim); }
+  .r4 { background: rgba(61, 165, 217, 0.18); color: #8ad4f7; border: 1px solid var(--cyan); }
+  .r5 { background: rgba(52, 168, 117, 0.18); color: #87e6ba; border: 1px solid var(--emerald); }
+  .target-title { font-size: 15px; font-weight: 800; color: #fff; }
+  .target-gear { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .meta-strip { display: flex; flex-wrap: wrap; gap: 7px; }
+  .tag {
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 5px;
+    background: var(--panel2);
+    border: 1px solid var(--border);
+  }
+  .tag-posture { color: #ffd479; }
+  .tag-hunter { color: #82e8b8; }
+
+
+  .page-main { max-width: 980px; margin: 0 auto; padding: 16px; }
+  .camp-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+  .camp-card h2 { color: var(--gold); font-size: 18px; margin: 0 0 8px; }
+  .camp-card h3 { color: var(--gold); font-size: 16px; margin: 14px 0 6px; }
+  .camp-card h4 { color: var(--text); font-size: 14px; margin: 12px 0 4px; }
+  .camp-card p, .camp-card li { color: var(--text); font-size: 14px; line-height: 1.55; margin-bottom: 6px; }
+  .camp-card ul { padding-left: 18px; }
+  .camp-card table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0; }
+  .camp-card th, .camp-card td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+  .camp-card th { color: var(--gold); font-weight: 700; }
+  .camp-card .muted { color: var(--muted); font-size: 13px; }
+  .camp-card .chapter { color: var(--gold); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+</style>
+
+<style>
+  .ref h2 { color: var(--gold); font-size: 18px; border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-top: 26px; }
+  .ref h3 { color: var(--text); font-size: 15px; margin: 16px 0 6px; }
+  .ref p, .ref li { color: var(--text); font-size: 14px; line-height: 1.55; }
+  .ref .muted { color: var(--muted); font-size: 13px; }
+  .ref .flag { color: #e0a060; }
+  .ref .scroll { overflow-x: auto; }
+  .ref table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0 14px; }
+  .ref th, .ref td { text-align: left; padding: 6px 7px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+  .ref th { color: var(--gold); }
+  .ref td.num, .ref th.num { text-align: center; }
+  .ref .note { background: var(--panel2); border-left: 3px solid var(--gold); padding: 8px 12px; margin: 10px 0; font-size: 14px; }
+</style>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="crest" data-img="gangcrest">👑</div>
+    <div>
+      <div class="brand-title">Gang Reference</div>
+      <div class="brand-sub">Gangs of the Underhive and Outlands</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a class="btn" href="index.html">⚔️ Tactical Deck</a>
+    <a class="btn" href="bible.html">📖 Character Bible</a>
+    <a class="btn" href="campaign.html">🛡️ My Team</a>
+    <a class="btn" href="campaigns.html">🗺️ Campaigns</a>
+    <a class="btn" href="n23.html">📘 N23 Rules</a>
+    <a class="btn btn-active" href="reference.html">📚 Reference</a>
+  </div>
+</div>
+
+<main class="page-main ref">
+<p style="margin:0 0 12px"><a class="btn" href="reference.html">← Back to gang list</a></p>
+<section class="camp-card">
+  <h1 style="color:var(--gold);font-size:24px;margin:0 0 4px">Ironhead Squat Prospectors</h1>
+  <p class="muted">Gangs of the Outlands, Ironhead Squat prospectors list. Stat lines are copied from the book. Rule text is summarised in my own words. Items marked <span class="flag">check</span> were hard to read in the scan. Weapon profiles aren't on this page yet.</p>
+
+  <h2>Gang special rules</h2>
+  <ul>
+    <li><strong>Dauntless:</strong> Ironhead Squats don't need to take Nerve checks when a friendly fighter goes Out of Action within 3″.</li>
+    <li><strong>Starting skills:</strong> when added to a roster, Leaders and Champions can pick one skill from one of their Primary skill sets.</li>
+  </ul>
+
+  <h2>Fighters</h2>
+  <div class="scroll"><table>
+    <tr><th>Fighter</th><th>Type</th><th class="num">Cr</th><th class="num">M</th><th class="num">WS</th><th class="num">BS</th><th class="num">S</th><th class="num">T</th><th class="num">W</th><th class="num">I</th><th class="num">A</th><th class="num">Sv</th><th class="num">Ld</th><th class="num">Cl</th><th class="num">Wil</th><th class="num">Int</th><th class="num">XP</th></tr>
+    <tr><td>Charter Master</td><td>Leader</td><td class="num">130</td><td class="num">4″</td><td class="num">3+</td><td class="num">3+</td><td class="num">3</td><td class="num">4</td><td class="num">3</td><td class="num">2</td><td class="num">3</td><td class="num">5+</td><td class="num">8</td><td class="num">8</td><td class="num">8</td><td class="num">7</td><td class="num">61</td></tr>
+    <tr><td>Drill Master</td><td>Champion</td><td class="num">90</td><td class="num">4″</td><td class="num">4+</td><td class="num">3+</td><td class="num">3</td><td class="num">4</td><td class="num">2</td><td class="num">2</td><td class="num">2</td><td class="num">5+</td><td class="num">7</td><td class="num">7</td><td class="num">7</td><td class="num">6</td><td class="num">37</td></tr>
+    <tr><td>Exo Master</td><td>Champion (exo-suit)</td><td class="num">105</td><td class="num">4″</td><td class="num">3+</td><td class="num">4+</td><td class="num">3</td><td class="num">4</td><td class="num">2</td><td class="num">2</td><td class="num">2</td><td class="num">4+</td><td class="num">8</td><td class="num">7</td><td class="num">7</td><td class="num">7</td><td class="num">49</td></tr>
+    <tr><td>Drill-Kyn</td><td>Ganger, Specialist</td><td class="num">45</td><td class="num">4″</td><td class="num">4+</td><td class="num">4+</td><td class="num">3</td><td class="num">4</td><td class="num">1</td><td class="num">2</td><td class="num">1</td><td class="num">6+</td><td class="num">6</td><td class="num">7</td><td class="num">7</td><td class="num">6</td><td class="num">13</td></tr>
+    <tr><td>Exo-Kyn</td><td>Prospect (exo-suit)</td><td class="num">40</td><td class="num">4″</td><td class="num">5+</td><td class="num">5+</td><td class="num">3</td><td class="num">4</td><td class="num">1</td><td class="num">3</td><td class="num">1</td><td class="num">5+</td><td class="num">5</td><td class="num">6</td><td class="num">5</td><td class="num">5</td><td class="num">4</td></tr>
+    <tr><td>Digger</td><td>Prospect</td><td class="num">30</td><td class="num">5″</td><td class="num">5+</td><td class="num">5+</td><td class="num">3</td><td class="num">4</td><td class="num">1</td><td class="num">3</td><td class="num">1</td><td class="num">6+</td><td class="num">5</td><td class="num">6</td><td class="num">5</td><td class="num">5</td><td class="num">1</td></tr>
+    <tr><td>Vartijan Exo-Driller</td><td>Brute</td><td class="num">280</td><td class="num">4″</td><td class="num">4+</td><td class="num">3+</td><td class="num">4</td><td class="num">5</td><td class="num">3</td><td class="num">3</td><td class="num">2</td><td class="num">4+</td><td class="num">7</td><td class="num">7</td><td class="num">6</td><td class="num">6</td><td class="num">25</td></tr>
+    <tr><td>Techmite Exovator</td><td>Beast, Pet</td><td class="num">45</td><td class="num">4″</td><td class="num">4+</td><td class="num">4+</td><td class="num">2</td><td class="num">3</td><td class="num">1</td><td class="num">3</td><td class="num">1</td><td class="num">6+</td><td class="num">6</td><td class="num">7</td><td class="num">6</td><td class="num">5</td><td class="num">13</td></tr>
+    <tr><td>Techmite Oculi</td><td>Beast, Flying, Pet</td><td class="num">50</td><td class="num">7″</td><td class="num">5+</td><td class="num">5+</td><td class="num">2</td><td class="num">3</td><td class="num">1</td><td class="num">3</td><td class="num">1</td><td class="num">6+</td><td class="num">6</td><td class="num">7</td><td class="num">6</td><td class="num">5</td><td class="num">13</td></tr>
+    <tr><td>Skalvian Explorator</td><td>Vehicle (Tracked)</td><td class="num">560</td><td class="num">6″</td><td class="num">5+</td><td class="num">4+</td><td class="num">7</td><td class="num">8</td><td class="num">5</td><td class="num">3</td><td class="num">3</td><td class="num">3+</td><td class="num">7</td><td class="num">7</td><td class="num">7</td><td class="num">7</td><td class="num">13</td></tr>
+    
+  </table></div>
+
+  <h2>Fighter rules</h2>
+  <h3>Charter Master, Drill Master, Exo Master</h3>
+  <p>Equipment is taken from the Ironhead Squat list. The Charter Master can't pick Exo weapons. The Drill Master can't pick Exo weapons either. The Exo Master comes with an exo-suit included in the cost, and can only pick from the Exo Weapons and Power Pack sections, plus the Trading Post.</p>
+  <h3>Drill-Kyn, Digger</h3>
+  <p>The Drill-Kyn can't pick Exo weapons. The Digger can't pick Exo weapons.</p>
+  <h3>Exo-Kyn</h3>
+  <p>Starts with the Nerves of Steel skill and comes with an exo-suit included in the cost. Weapons come only from the Power Pack and Exo Weapons sections, plus the Trading Post.</p>
+  <h3>Vartijan Exo-Driller</h3>
+  <p><strong>Sensor Suite:</strong> it treats the Visibility (X″) rule as 3″ higher than it is. Starts with the Bulging Biceps skill. Armed with a power fist, heavy flamer and seismic crusher. It can swap the heavy flamer for a heavy bolter (+10 Cr). It can't buy other weapons or wargear.</p>
+  <h3>Techmite Exovator</h3>
+  <p>Leash range 3″. Can carry a maximum of two weapons (bi-arm). Weapons come from the Power Pack section and the Trading Post.</p>
+  <h3>Techmite Oculi</h3>
+  <p>Leash range 12″. <strong>Target Paint:</strong> while at least one Oculi is within 6″ of an enemy fighter, its owner counts as firing at short range for cover bonuses. Armed with pincers. It can't buy other weapons or wargear.</p>
+  <h3>Skalvian Explorator</h3>
+  <p>A tracked vehicle armed with a Skalvian flamer, a Skalvian heavy stubber, an Ironhead claw and a Skalvian hull. It can't buy additional weapons or wargear.</p>
+
+  <h2>Skill access</h2>
+  <p class="muted">Primary and Secondary skill sets each fighter can use. Rows marked <span class="flag">check</span> were hard to read in the scan.</p>
+  <div class="scroll"><table>
+    <tr><th>Fighter</th><th>Agility</th><th>Brawn</th><th>Combat</th><th>Cunning</th><th>Savant</th><th>Shooting</th></tr>
+    <tr><td>Charter Master</td><td>-</td><td>Secondary</td><td>Secondary</td><td>-</td><td>Primary</td><td>Primary</td></tr>
+    <tr><td>Drill Master</td><td>-</td><td>Primary</td><td>-</td><td>-</td><td>Secondary</td><td>Primary</td></tr>
+    <tr><td>Exo Master</td><td>-</td><td>Primary</td><td>Primary</td><td>-</td><td>Secondary</td><td>-</td></tr>
+    <tr><td>Drill-Kyn</td><td>-</td><td>Secondary</td><td>Secondary</td><td>-</td><td>-</td><td>Primary</td></tr>
+    <tr><td>Exo-Kyn</td><td>-</td><td>Primary</td><td>Secondary</td><td>-</td><td>-</td><td>Primary</td></tr>
+    <tr><td>Digger</td><td>-</td><td>Secondary</td><td>-</td><td>-</td><td>-</td><td>Secondary</td></tr>
+    <tr><td>Vartijan Exo-Driller <span class="flag">check</span></td><td>-</td><td>Primary</td><td>Primary</td><td>-</td><td>-</td><td>Primary</td></tr>
+    <tr><td>Techmite Exovator <span class="flag">check</span></td><td>-</td><td>-</td><td>-</td><td>Primary</td><td>-</td><td>-</td></tr>
+    <tr><td>Techmite Oculi <span class="flag">check</span></td><td>Secondary</td><td>-</td><td>-</td><td>Secondary</td><td>-</td><td>Secondary</td></tr>
+    <tr><td>Skalvian Explorator</td><td>-</td><td>Primary</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+  </table></div>
+
+  <h2>Ironhead Squat equipment list</h2>
+  <p class="muted">Prices in credits as printed.</p>
+  <div class="scroll"><table>
+    <tr><th>Category</th><th>Item</th><th class="num">Cr</th></tr>
+    <tr><td>Auto/stub</td><td>Ironhead autogun / autopistol / heavy stubber / stub gun</td><td class="num">30 / 20 / 80 / 15</td></tr>
+    <tr><td>Bolt</td><td>Ironhead boltgun / bolt pistol</td><td class="num">65 / 55</td></tr>
+    <tr><td>Exo weapons (ranged)</td><td>Heavy melta / combat shotgun / storm welder</td><td class="num">160 / 50 / 60</td></tr>
+    <tr><td>Flamers</td><td>Ironhead flamer / hand flamer / heavy flamer</td><td class="num">80 / 55 / 105</td></tr>
+    <tr><td>Grenade launchers</td><td>Launcher with seismic grenades</td><td class="num">45</td></tr>
+    <tr><td>Melta</td><td>Ironhead inferno pistol / meltagun</td><td class="num">120 / 150</td></tr>
+    <tr><td>Power pack</td><td>Bolt spitter / stone burner</td><td class="num">45 / 75</td></tr>
+    <tr><td>Repurposed tools</td><td>Mining laser</td><td class="num">125</td></tr>
+    <tr><td>Chain</td><td>Two-handed chainaxe</td><td class="num">70</td></tr>
+    <tr><td>Exo weapons (melee)</td><td>Excavator hammer / heavy drill / hydraulic drill / power fist / rock saw</td><td class="num">65 / 40 / 15 / 105 / 30</td></tr>
+    <tr><td>Power pack (melee)</td><td>Circular stone saw / drill / gene extractor / Ironhead arc welder</td><td class="num">40 / 40 / 25 / 30</td></tr>
+    <tr><td>Power weapons</td><td>Power fist / power hammer / two-handed power axe / two-handed power pick</td><td class="num">105 / 105 / 40 / 65 / 60</td></tr>
+    <tr><td>Primitive</td><td>Axe / Fighting knife</td><td class="num">15 / 5</td></tr>
+    <tr><td>Grenades</td><td>Blasting charges / Frag / Krak / Smoke</td><td class="num">60 / 30 / 45 / 15</td></tr>
+    <tr><td>Armour</td><td>Carapace armour (light) / Mesh armour / Refractor field</td><td class="num">100 / 40 / 50</td></tr>
+    <tr><td>Personal</td><td>Bio-booster / Drop rig / Grav chute / Medicae kit / Photo-goggles / Photo-lumens / Respirator</td><td class="num">25 / 10 / 30 / 20 / 35 / 15 / 15</td></tr>
+    <tr><td>Accessories</td><td>Infra-sight / Mono-sight</td><td class="num">10 / 20</td></tr>
+    <tr><td>Mounts</td><td>Dirt bike / Svenotar Scout Trike</td><td class="num">35 / 80</td></tr>
+    <tr><td>Pets</td><td>Techmite Exovator / Techmite Oculi</td><td class="num">45 / 50</td></tr>
+  </table></div>
+</section>
+</main>
+</body>
+</html>
