@@ -707,6 +707,71 @@
   .tick-panel > * { margin: 5px 9px; }
   .tick-group > * { margin: 0 3px; }
   .tick-boxes > * { margin: 0 2px; }
+
+  /* My Team tactics (moved from Tactics page) */
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: rgba(11, 9, 14, 0.78);
+      border: 1px solid var(--border);
+      color: var(--gold);
+    }
+    .exploit-box {
+      background: rgba(52, 168, 117, 0.13);
+      border: 1px solid rgba(52, 168, 117, 0.38);
+      border-radius: 8px;
+      padding: 10px 13px;
+      font-size: 13px;
+      color: #d7f7e7;
+    }
+    .sub-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .sub-btn {
+      padding: 8px 13px;
+      border-radius: 8px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    .sub-btn:hover { color: var(--text); border-color: var(--gold-dim); }
+    .sub-btn.active {
+      background: var(--plum);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 13px; margin-bottom: 14px; }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 14px 16px;
+    }
+    .card h2 { font-size: 15px; color: var(--gold); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .card h3 { font-size: 13.5px; color: #f3d678; margin: 8px 0 4px; }
+    .card p, .card li { font-size: 13px; color: #e0d8e8; margin-bottom: 6px; }
+    .card ul { padding-left: 18px; }
+    .target-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 11px;
+    }
 </style>
 </head>
 <body>
@@ -770,6 +835,7 @@
   </div>
 </div>
 
+<section id="myTeamTactics" style="max-width:1100px;margin:14px auto;padding:0 14px"></section>
 <script>
 const ROSTER = [
   {
@@ -1470,6 +1536,132 @@ function renderAll() {
 loadState();
 renderAll();
 initPortraits();
+
+let activeHomeSubTab = 'doctrine';
+function renderHomeDoctrine() {
+  return `
+    <div class="grid-2">
+      <div class="card">
+        <h2>🎯 Core Battle Plan &amp; Crossfire Protocol</h2>
+        <ul>
+          <li><strong>Anchor High Ground Early:</strong> Claim Tier 2/3 cover with <strong>Copperhead</strong> (Heavy Stubber + Suspensors + Spring Up) to suppress heavy guns and shred 1-Wound troops.</li>
+          <li><strong>3-Way Crossfire Discipline:</strong> Never rush the central killing floor Turn 1. Let heavy-armoured rivals burn ammo and wounds on each other while you hold elevated flanks.</li>
+          <li><strong>Template &amp; Flare Spacing:</strong> Keep fighters spaced <strong>&gt;3" apart</strong> (and &gt;5" vs Mark’s Goliath Incendiary Charges) so one Blast or Photon Flash Flare never pins multiple sisters.</li>
+          <li><strong>Pin to Strip Overwatch:</strong> Charging a Pinned enemy stands them up into engagement. Always shoot dangerous gunners with <strong>+1 Short Acc Lasguns</strong> first to cancel Overwatch while <strong>Black Widow</strong> advances.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>🚀 The 3-Step Overseer Slingshot</h2>
+        <div class="callout">
+          <strong>1. Group Activate:</strong> Activate <strong>Her Majesty</strong> using <em>Group Activation (2)</em> alongside <strong>Black Widow</strong> (and one bodyguard/runner within 3").<br><br>
+          <strong>2. Double-Action Launch:</strong> Spend Her Majesty’s <strong>Overseer (Double)</strong> action to grant Black Widow two immediate Move actions up a blind ladder or across a gantry gap.<br><br>
+          <strong>3. Zero-Reaction Strike:</strong> Take Black Widow’s normal activation immediately, trigger <strong>Chem-synth</strong>, and strike from <strong>3" Versatile range</strong> (<em>Combat Virtuoso</em>) with zero enemy reaction attacks.
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:13px;">
+      <h2>⏱️ Phase-by-Phase Execution</h2>
+      <div class="grid-3" style="margin-top:6px; margin-bottom:0;">
+        <div>
+          <h3>Phase 1 — Deployment &amp; Turn 1</h3>
+          <p>Perch <strong>Copperhead</strong> on Tier 2/3 cover away from unrailed edges. Hide <strong>Her Majesty</strong> and <strong>Black Widow</strong> behind solid bulkheads within 12" of each other. Split Lasgunners and Little Sisters across two climb routes.</p>
+        </div>
+        <div>
+          <h3>Phase 2 — Turns 2–3 (Pin &amp; Slingshot)</h3>
+          <p>Pin enemy heavy weapons with Lasguns and Heavy Stubber bursts. Zone narrow catwalks with <strong>Miss Whips’ 3" Shock Whip</strong>, then execute the Overseer Slingshot onto isolated Champions or Leaders.</p>
+        </div>
+        <div>
+          <h3>Phase 3 — Endgame &amp; Capture</h3>
+          <p>Use <strong>Black Widow’s 3" Toxin</strong> + Chem-synth to send multi-wound elites straight to <em>Seriously Injured</em> for scenario captures, while <em>Fast Learner</em> Little Sisters lock down upper objectives.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🏗️ Terrain Adaptation Matrix</h2>
+      <div class="grid-3" style="margin-top:6px; margin-bottom:0;">
+        <div>
+          <h3>Vertical Sector Mechanicus</h3>
+          <p>Exploit Escher’s <strong>2+/3+ Initiative</strong> on climbs and gap jumps (especially vs Mark’s 4" Move Goliaths and Nate’s 5+ Init Squats). Keep fighters 2"+ back from unrailed ledges against Knockback guns.</p>
+        </div>
+        <div>
+          <h3>Zone Mortalis Tunnels</h3>
+          <p>Choke points make <strong>Miss Whips’ 3" Versatile Shock Whip</strong> and <strong>Black Widow’s 3" Stiletto Sword</strong> untouchable around corners. Use door terminals to split enemy Group Activations.</p>
+        </div>
+        <div>
+          <h3>Open Ash Wastes / Scatter Ruins</h3>
+          <p>Hug heavy scatter cover Turn 1 so Rav’s Lascannon, Aaron’s Autocannon, and Ryan’s Bolters cannot pick off unarmoured Gangers. Rely on 24" Lasgun pinning until Black Widow closes within 12".</p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderHomeRoles() {
+  return `
+    <div class="grid-2">
+      <div class="card">
+        <h2>👑 Her Majesty — Gang Queen (245 Cr)</h2>
+        <p><strong>Loadout:</strong> Boltgun, Needle pistol (Silent, Toxin), Mesh + Undersuit | <em>Overseer, Group Activation (2)</em></p>
+        <p><strong>Job:</strong> Tempo Engine. Stay behind solid cover within 12" of your strike team to slingshot Black Widow or objective runners.</p>
+        <div class="warn"><strong>Watchout:</strong> Carries <em>Old Battle Wound</em>—keep out of long-range heavy fire early.</div>
+      </div>
+
+      <div class="card">
+        <h2>🕷️ Black Widow — Death-Maiden (295 Cr)</h2>
+        <p><strong>Loadout:</strong> Stiletto sword (3" Versatile via <em>Combat Virtuoso</em>, Toxin), Needle pistol, Chem-synth, Displacer field, Mesh + Undersuit</p>
+        <p><strong>Job:</strong> Primary Assassin &amp; Capturer. Slingshot into 3" range across gaps/railings to bypass Toughness and Armour with zero reaction swings.</p>
+        <div class="warn"><strong>Watchout:</strong> Carries <em>Out Cold</em>—activate Chem-synth before striking when unpinned.</div>
+      </div>
+
+      <div class="card">
+        <h2>🐍 Copperhead — Gang Matriarch (335 Cr)</h2>
+        <p><strong>Loadout:</strong> Heavy stubber (Rapid Fire 2) + Suspensors, Lasgun, Mesh + Undersuit | <em>Spring Up, Group Activation (1)</em></p>
+        <p><strong>Job:</strong> Elevated Fire Base. Claim Tier 2/3 cover early to pin enemy heavies and shred 1-Wound troops.</p>
+        <div class="warn"><strong>Watchout:</strong> Stay away from unguarded edges against Knockback weapons.</div>
+      </div>
+
+      <div class="card">
+        <h2>⚡ Miss Whips — Gang Sister (75 Cr)</h2>
+        <p><strong>Loadout:</strong> Shock whip (3" Versatile, Shock, Melee)</p>
+        <p><strong>Job:</strong> Gantry Bodyguard. Guard catwalk landings and screen Her Majesty, hitting rushers at 3" without allowing reaction attacks.</p>
+        <div class="warn"><strong>Watchout:</strong> Carries <em>Critical Injury</em> (1W, unarmoured)—keep out of open sightlines.</div>
+      </div>
+
+      <div class="card">
+        <h2>🎯 Nightshade, Mamba &amp; Scorpio — Gang Sisters (55 Cr ea)</h2>
+        <p><strong>Loadout:</strong> Lasgun (18"/24", +1 Short Acc, Plentiful) | Nightshade: <em>Specialist</em></p>
+        <p><strong>Job:</strong> Pinning Core &amp; Flank Overwatch. Pair up in mid-level cover to strip enemy Overwatch via pinning before Black Widow closes in.</p>
+      </div>
+
+      <div class="card">
+        <h2>🗡️ Vixen, Fang &amp; Talon — Little Sisters (45 Cr ea)</h2>
+        <p><strong>Loadout:</strong> Stiletto knife (Toxin), Stub gun (+2 Short Acc, Plentiful, Sidearm) | <em>Fast Learner</em></p>
+        <p><strong>Job:</strong> Objective Runners &amp; Armour-Piercing Finishers. Sprint up secondary ladders, grab objectives, and finish pinned targets for Fast Learner XP.</p>
+      </div>
+    </div>
+  `;
+}
+
+function setHomeSubTab(sub) {
+  activeHomeSubTab = sub;
+  renderMyTeam();
+}
+
+function renderMyTeam() {
+  const el = document.getElementById('myTeamTactics');
+  if (!el) return;
+  el.innerHTML = `
+    <div class="sub-tabs">
+      <button class="sub-btn ${activeHomeSubTab === 'doctrine' ? 'active' : ''}" onclick="setHomeSubTab('doctrine')">⚡ Battle Plan &amp; Terrain</button>
+      <button class="sub-btn ${activeHomeSubTab === 'roles' ? 'active' : ''}" onclick="setHomeSubTab('roles')">🗡️ Escher Fighter Roles (10)</button>
+    </div>
+    ${activeHomeSubTab === 'doctrine' ? renderHomeDoctrine() : renderHomeRoles()}
+  `;
+}
+renderMyTeam();
 </script>
 </body>
 </html>

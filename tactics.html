@@ -384,10 +384,10 @@
 </div>
 
 <div class="deck-shell">
-  <!-- LEFT SIDEBAR: TEAMS LISTED WITH YOUR TEAM AT TOP, THEN ALPHABETICALLY BY PLAYER NAME -->
+  <!-- LEFT SIDEBAR: OPPONENT TEAMS, ALPHABETICALLY BY PLAYER NAME -->
   <aside class="sidebar">
     <div class="sidebar-header">
-      <span>Campaign Teams (8)</span>
+      <span>Campaign Teams (7)</span>
       <span>A → Z</span>
     </div>
     <div class="team-list" id="teamList"></div>
@@ -399,17 +399,6 @@
 
 <script>
 const TEAMS = [
-  {
-    id: 'you',
-    owner: 'You (Your Gang)',
-    badge: 'HOME',
-    icon: '👑',
-    gang: 'Blades of the Crown',
-    faction: 'House Escher • 1,250 Cr • 10 Fighters',
-    pills: ['Rating: 1,250 Cr', '10 Fighters', 'Core: Overseer + 3" Toxin', 'Pinning: +1 Short Acc Lasguns'],
-    summary: '<strong>Core Doctrine:</strong> Anchor Tier 2/3 cover early with <strong>Copperhead</strong>, strip enemy Overwatch with +1 Short Acc Lasguns, zone narrow gantries with <strong>Miss Whips’ 3" Shock Whip</strong>, and launch <strong>Black Widow</strong> via Her Majesty’s <strong>Overseer Slingshot</strong> for 3" Versatile Toxin strikes with zero reaction attacks.',
-    isHome: true
-  },
   {
     id: 'aaron',
     owner: 'Aaron',
@@ -683,8 +672,7 @@ const TEAMS = [
   }
 ];
 
-let activeTeamId = 'you';
-let activeHomeSubTab = 'doctrine';
+let activeTeamId = 'aaron';
 
 function renderSidebar() {
   const list = document.getElementById('teamList');
@@ -726,15 +714,7 @@ function renderCentre() {
     </div>
   `;
 
-  if (team.isHome) {
-    stage.innerHTML = headerHtml + `
-      <div class="sub-tabs">
-        <button class="sub-btn ${activeHomeSubTab === 'doctrine' ? 'active' : ''}" onclick="setHomeSubTab('doctrine')">⚡ Battle Plan &amp; Terrain</button>
-        <button class="sub-btn ${activeHomeSubTab === 'roles' ? 'active' : ''}" onclick="setHomeSubTab('roles')">🗡️ Escher Fighter Roles (10)</button>
-      </div>
-      ${activeHomeSubTab === 'doctrine' ? renderHomeDoctrine() : renderHomeRoles()}
-    `;
-  } else {
+  {
     stage.innerHTML = headerHtml + `
       <div class="card" style="margin-bottom: 13px; border-color: rgba(212,175,55,0.35);">
         <h2>🏗️ Terrain &amp; Board Control Note vs ${team.owner}</h2>
@@ -760,123 +740,12 @@ function renderCentre() {
   }
 }
 
-function renderHomeDoctrine() {
-  return `
-    <div class="grid-2">
-      <div class="card">
-        <h2>🎯 Core Battle Plan &amp; Crossfire Protocol</h2>
-        <ul>
-          <li><strong>Anchor High Ground Early:</strong> Claim Tier 2/3 cover with <strong>Copperhead</strong> (Heavy Stubber + Suspensors + Spring Up) to suppress heavy guns and shred 1-Wound troops.</li>
-          <li><strong>3-Way Crossfire Discipline:</strong> Never rush the central killing floor Turn 1. Let heavy-armoured rivals burn ammo and wounds on each other while you hold elevated flanks.</li>
-          <li><strong>Template &amp; Flare Spacing:</strong> Keep fighters spaced <strong>&gt;3" apart</strong> (and &gt;5" vs Mark’s Goliath Incendiary Charges) so one Blast or Photon Flash Flare never pins multiple sisters.</li>
-          <li><strong>Pin to Strip Overwatch:</strong> Charging a Pinned enemy stands them up into engagement. Always shoot dangerous gunners with <strong>+1 Short Acc Lasguns</strong> first to cancel Overwatch while <strong>Black Widow</strong> advances.</li>
-        </ul>
-      </div>
-
-      <div class="card">
-        <h2>🚀 The 3-Step Overseer Slingshot</h2>
-        <div class="callout">
-          <strong>1. Group Activate:</strong> Activate <strong>Her Majesty</strong> using <em>Group Activation (2)</em> alongside <strong>Black Widow</strong> (and one bodyguard/runner within 3").<br><br>
-          <strong>2. Double-Action Launch:</strong> Spend Her Majesty’s <strong>Overseer (Double)</strong> action to grant Black Widow two immediate Move actions up a blind ladder or across a gantry gap.<br><br>
-          <strong>3. Zero-Reaction Strike:</strong> Take Black Widow’s normal activation immediately, trigger <strong>Chem-synth</strong>, and strike from <strong>3" Versatile range</strong> (<em>Combat Virtuoso</em>) with zero enemy reaction attacks.
-        </div>
-      </div>
-    </div>
-
-    <div class="card" style="margin-bottom:13px;">
-      <h2>⏱️ Phase-by-Phase Execution</h2>
-      <div class="grid-3" style="margin-top:6px; margin-bottom:0;">
-        <div>
-          <h3>Phase 1 — Deployment &amp; Turn 1</h3>
-          <p>Perch <strong>Copperhead</strong> on Tier 2/3 cover away from unrailed edges. Hide <strong>Her Majesty</strong> and <strong>Black Widow</strong> behind solid bulkheads within 12" of each other. Split Lasgunners and Little Sisters across two climb routes.</p>
-        </div>
-        <div>
-          <h3>Phase 2 — Turns 2–3 (Pin &amp; Slingshot)</h3>
-          <p>Pin enemy heavy weapons with Lasguns and Heavy Stubber bursts. Zone narrow catwalks with <strong>Miss Whips’ 3" Shock Whip</strong>, then execute the Overseer Slingshot onto isolated Champions or Leaders.</p>
-        </div>
-        <div>
-          <h3>Phase 3 — Endgame &amp; Capture</h3>
-          <p>Use <strong>Black Widow’s 3" Toxin</strong> + Chem-synth to send multi-wound elites straight to <em>Seriously Injured</em> for scenario captures, while <em>Fast Learner</em> Little Sisters lock down upper objectives.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>🏗️ Terrain Adaptation Matrix</h2>
-      <div class="grid-3" style="margin-top:6px; margin-bottom:0;">
-        <div>
-          <h3>Vertical Sector Mechanicus</h3>
-          <p>Exploit Escher’s <strong>2+/3+ Initiative</strong> on climbs and gap jumps (especially vs Mark’s 4" Move Goliaths and Nate’s 5+ Init Squats). Keep fighters 2"+ back from unrailed ledges against Knockback guns.</p>
-        </div>
-        <div>
-          <h3>Zone Mortalis Tunnels</h3>
-          <p>Choke points make <strong>Miss Whips’ 3" Versatile Shock Whip</strong> and <strong>Black Widow’s 3" Stiletto Sword</strong> untouchable around corners. Use door terminals to split enemy Group Activations.</p>
-        </div>
-        <div>
-          <h3>Open Ash Wastes / Scatter Ruins</h3>
-          <p>Hug heavy scatter cover Turn 1 so Rav’s Lascannon, Aaron’s Autocannon, and Ryan’s Bolters cannot pick off unarmoured Gangers. Rely on 24" Lasgun pinning until Black Widow closes within 12".</p>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-function renderHomeRoles() {
-  return `
-    <div class="grid-2">
-      <div class="card">
-        <h2>👑 Her Majesty — Gang Queen (245 Cr)</h2>
-        <p><strong>Loadout:</strong> Boltgun, Needle pistol (Silent, Toxin), Mesh + Undersuit | <em>Overseer, Group Activation (2)</em></p>
-        <p><strong>Job:</strong> Tempo Engine. Stay behind solid cover within 12" of your strike team to slingshot Black Widow or objective runners.</p>
-        <div class="warn"><strong>Watchout:</strong> Carries <em>Old Battle Wound</em>—keep out of long-range heavy fire early.</div>
-      </div>
-
-      <div class="card">
-        <h2>🕷️ Black Widow — Death-Maiden (295 Cr)</h2>
-        <p><strong>Loadout:</strong> Stiletto sword (3" Versatile via <em>Combat Virtuoso</em>, Toxin), Needle pistol, Chem-synth, Displacer field, Mesh + Undersuit</p>
-        <p><strong>Job:</strong> Primary Assassin &amp; Capturer. Slingshot into 3" range across gaps/railings to bypass Toughness and Armour with zero reaction swings.</p>
-        <div class="warn"><strong>Watchout:</strong> Carries <em>Out Cold</em>—activate Chem-synth before striking when unpinned.</div>
-      </div>
-
-      <div class="card">
-        <h2>🐍 Copperhead — Gang Matriarch (335 Cr)</h2>
-        <p><strong>Loadout:</strong> Heavy stubber (Rapid Fire 2) + Suspensors, Lasgun, Mesh + Undersuit | <em>Spring Up, Group Activation (1)</em></p>
-        <p><strong>Job:</strong> Elevated Fire Base. Claim Tier 2/3 cover early to pin enemy heavies and shred 1-Wound troops.</p>
-        <div class="warn"><strong>Watchout:</strong> Stay away from unguarded edges against Knockback weapons.</div>
-      </div>
-
-      <div class="card">
-        <h2>⚡ Miss Whips — Gang Sister (75 Cr)</h2>
-        <p><strong>Loadout:</strong> Shock whip (3" Versatile, Shock, Melee)</p>
-        <p><strong>Job:</strong> Gantry Bodyguard. Guard catwalk landings and screen Her Majesty, hitting rushers at 3" without allowing reaction attacks.</p>
-        <div class="warn"><strong>Watchout:</strong> Carries <em>Critical Injury</em> (1W, unarmoured)—keep out of open sightlines.</div>
-      </div>
-
-      <div class="card">
-        <h2>🎯 Nightshade, Mamba &amp; Scorpio — Gang Sisters (55 Cr ea)</h2>
-        <p><strong>Loadout:</strong> Lasgun (18"/24", +1 Short Acc, Plentiful) | Nightshade: <em>Specialist</em></p>
-        <p><strong>Job:</strong> Pinning Core &amp; Flank Overwatch. Pair up in mid-level cover to strip enemy Overwatch via pinning before Black Widow closes in.</p>
-      </div>
-
-      <div class="card">
-        <h2>🗡️ Vixen, Fang &amp; Talon — Little Sisters (45 Cr ea)</h2>
-        <p><strong>Loadout:</strong> Stiletto knife (Toxin), Stub gun (+2 Short Acc, Plentiful, Sidearm) | <em>Fast Learner</em></p>
-        <p><strong>Job:</strong> Objective Runners &amp; Armour-Piercing Finishers. Sprint up secondary ladders, grab objectives, and finish pinned targets for Fast Learner XP.</p>
-      </div>
-    </div>
-  `;
-}
-
 function selectTeam(id) {
   activeTeamId = id;
   renderSidebar();
   renderCentre();
 }
 
-function setHomeSubTab(sub) {
-  activeHomeSubTab = sub;
-  renderCentre();
-}
 
 // Initial render
 renderSidebar();
