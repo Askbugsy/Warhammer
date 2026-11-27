@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blades of the Crown — Outcasts</title>
+<style>
+  :root {
+    --bg: #09070c;
+    --panel: #130f19;
+    --panel2: #1b1524;
+    --plum: #3b1742;
+    --plum-bright: #6b2478;
+    --gold: #d4af37;
+    --gold-dim: #8f7322;
+    --crimson: #c93b4b;
+    --emerald: #34a875;
+    --cyan: #3da5d9;
+    --amber: #e08e36;
+    --text: #f0ebf5;
+    --muted: #a598b3;
+    --border: rgba(212, 175, 55, 0.24);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: radial-gradient(circle at top right, #211229 0%, var(--bg) 55%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.45;
+    min-height: 100vh;
+  }
+  a { text-decoration: none; color: inherit; }
+
+  /* Sticky Top Command Bar */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(9, 7, 12, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 18px;
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .crest {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1.5px solid var(--gold);
+    background: var(--plum);
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: var(--gold); font-size: 14px;
+  }
+  .crest img { width: 100%; height: 100%; object-fit: cover; }
+  .brand-title { font-size: 15px; font-weight: 800; letter-spacing: 0.6px; color: var(--gold); text-transform: uppercase; }
+  .brand-sub { font-size: 11px; color: var(--muted); }
+  .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    padding: 7px 12px; border-radius: 7px; font-size: 12px; font-weight: 700;
+    border: 1px solid var(--border); background: var(--panel2); color: var(--text);
+    cursor: pointer; transition: 0.15s;
+  }
+  .btn:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-active {
+    background: linear-gradient(135deg, var(--plum), #261430);
+    border-color: var(--gold); color: var(--gold);
+  }
+
+  /* Two-Column Split Deck Layout (Replicating index.html) */
+  .deck-shell {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 16px;
+    display: grid;
+    grid-template-columns: 310px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  @media (max-width: 860px) {
+    .deck-shell {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Left Sidebar: Teams Roster Selector */
+  .sidebar {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    position: sticky;
+    top: 68px;
+  }
+  @media (max-width: 860px) {
+    .sidebar { position: static; }
+  }
+  .sidebar-header {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--gold);
+    padding: 4px 6px 10px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .team-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .team-item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    width: 100%;
+    text-align: left;
+    background: var(--panel2);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 9px;
+    padding: 9px 11px;
+    cursor: pointer;
+    transition: 0.15s;
+    color: var(--text);
+  }
+  .team-item:hover {
+    border-color: var(--gold-dim);
+    background: #231b2e;
+  }
+  .team-item.selected {
+    background: linear-gradient(135deg, rgba(59, 23, 66, 0.9), rgba(27, 21, 36, 0.95));
+    border-color: var(--gold);
+    box-shadow: 0 0 14px rgba(212, 175, 55, 0.2);
+  }
+  .team-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    background: rgba(11, 9, 14, 0.85);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    flex-shrink: 0;
+  }
+  .team-item.selected .team-icon {
+    border-color: var(--gold);
+    background: rgba(212, 175, 55, 0.14);
+  }
+  .team-info { min-width: 0; flex: 1; }
+  .team-owner-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .team-owner {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--gold);
+  }
+  .team-badge {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: rgba(212, 175, 55, 0.16);
+    color: var(--gold);
+    border: 1px solid var(--gold-dim);
+  }
+  .team-name {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .team-sub {
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Centre Content Panel */
+  .centre-stage {
+    min-width: 0;
+  }
+  .stage-header {
+    background: linear-gradient(135deg, rgba(59, 23, 66, 0.78), rgba(19, 15, 25, 0.96));
+    border: 1px solid var(--gold);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+  .stage-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .stage-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .stage-big-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: rgba(11, 9, 14, 0.85);
+    border: 1.5px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  .stage-kicker {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--gold);
+  }
+  .stage-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+  }
+  .stage-meta {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .pill {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(11, 9, 14, 0.78);
+    border: 1px solid var(--border);
+    color: var(--gold);
+  }
+  .exploit-box {
+    background: rgba(52, 168, 117, 0.13);
+    border: 1px solid rgba(52, 168, 117, 0.38);
+    border-radius: 8px;
+    padding: 10px 13px;
+    font-size: 13px;
+    color: #d7f7e7;
+  }
+
+  /* Sub-tabs inside Centre Stage */
+  .sub-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .sub-btn {
+    padding: 8px 13px;
+    border-radius: 8px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.15s;
+  }
+  .sub-btn:hover { color: var(--text); border-color: var(--gold-dim); }
+  .sub-btn.active {
+    background: var(--plum);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* Cards & Hit-Lists */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 13px; margin-bottom: 14px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 13px; margin-bottom: 14px; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    padding: 14px 16px;
+  }
+  .card h2 { font-size: 15px; color: var(--gold); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .card h3 { font-size: 13.5px; color: #f3d678; margin: 8px 0 4px; }
+  .card p, .card li { font-size: 13px; color: #e0d8e8; margin-bottom: 6px; }
+  .card ul { padding-left: 18px; }
+  .callout {
+    background: rgba(59, 23, 66, 0.36);
+    border-left: 3px solid var(--gold);
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 12.5px;
+  }
+  .warn {
+    background: rgba(201, 59, 75, 0.14);
+    border-left: 3px solid var(--crimson);
+    padding: 8px 11px;
+    border-radius: 6px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #f7c6cc;
+  }
+
+  .target-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 11px;
+  }
+  .target-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .rank-badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    margin-right: 6px;
+  }
+  .r1 { background: rgba(201, 59, 75, 0.25); color: #ff8c99; border: 1px solid var(--crimson); }
+  .r2 { background: rgba(224, 142, 54, 0.22); color: #ffc078; border: 1px solid var(--amber); }
+  .r3 { background: rgba(212, 175, 55, 0.2); color: var(--gold); border: 1px solid var(--gold-dim); }
+  .r4 { background: rgba(61, 165, 217, 0.18); color: #8ad4f7; border: 1px solid var(--cyan); }
+  .r5 { background: rgba(52, 168, 117, 0.18); color: #87e6ba; border: 1px solid var(--emerald); }
+  .target-title { font-size: 15px; font-weight: 800; color: #fff; }
+  .target-gear { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .meta-strip { display: flex; flex-wrap: wrap; gap: 7px; }
+  .tag {
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 5px;
+    background: var(--panel2);
+    border: 1px solid var(--border);
+  }
+  .tag-posture { color: #ffd479; }
+  .tag-hunter { color: #82e8b8; }
+
+
+  .page-main { max-width: 980px; margin: 0 auto; padding: 16px; }
+  .camp-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+  .camp-card h2 { color: var(--gold); font-size: 18px; margin: 0 0 8px; }
+  .camp-card h3 { color: var(--gold); font-size: 16px; margin: 14px 0 6px; }
+  .camp-card h4 { color: var(--text); font-size: 14px; margin: 12px 0 4px; }
+  .camp-card p, .camp-card li { color: var(--text); font-size: 14px; line-height: 1.55; margin-bottom: 6px; }
+  .camp-card ul { padding-left: 18px; }
+  .camp-card table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0; }
+  .camp-card th, .camp-card td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+  .camp-card th { color: var(--gold); font-weight: 700; }
+  .camp-card .muted { color: var(--muted); font-size: 13px; }
+  .camp-card .chapter { color: var(--gold); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+</style>
+
+<style>
+  .ref h2 { color: var(--gold); font-size: 18px; border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-top: 26px; }
+  .ref h3 { color: var(--text); font-size: 15px; margin: 16px 0 6px; }
+  .ref p, .ref li { color: var(--text); font-size: 14px; line-height: 1.55; }
+  .ref .muted { color: var(--muted); font-size: 13px; }
+  .ref .flag { color: #e0a060; }
+  .ref .scroll { overflow-x: auto; }
+  .ref table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0 14px; }
+  .ref th, .ref td { text-align: left; padding: 6px 7px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+  .ref th { color: var(--gold); }
+  .ref td.num, .ref th.num { text-align: center; }
+  .ref .note { background: var(--panel2); border-left: 3px solid var(--gold); padding: 8px 12px; margin: 10px 0; font-size: 14px; }
+</style>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="crest" data-img="gangcrest">👑</div>
+    <div>
+      <div class="brand-title">Gang Reference</div>
+      <div class="brand-sub">Gangs of the Underhive and Outlands</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a class="btn" href="index.html">⚔️ Tactical Deck</a>
+    <a class="btn" href="bible.html">📖 Character Bible</a>
+    <a class="btn" href="campaign.html">🛡️ My Team</a>
+    <a class="btn" href="campaigns.html">🗺️ Campaigns</a>
+    <a class="btn" href="n23.html">📘 N23 Rules</a>
+    <a class="btn btn-active" href="reference.html">📚 Reference</a>
+  </div>
+</div>
+
+<main class="page-main ref">
+<section class="camp-card">
+  <h1 style="color:var(--gold);font-size:24px;margin:0 0 4px">Outcasts</h1>
+  <p class="muted">Gangs of the Outlands, Outcast gang list. Stat lines are copied from the book. Rule text is summarised in my own words. Items marked <span class="flag">check</span> were hard to read in the scan.</p>
+
+  <h2>How an Outcast gang is built</h2>
+  <p>An Outcast gang has no fixed fighter list. The Leader can be any profile you choose, and each gang picks an <strong>Affiliation</strong> (where the Leader came from) and an <strong>Archetype</strong> (how they lead). Both are fixed once chosen.</p>
+  <ul>
+    <li><strong>Gang special rules:</strong> <em>Cult of Personality</em>: Outcast fighters within 6″ of the Leader automatically pass Nerve checks and ignore the Fearsome condition. <em>Lead the Masses</em>: each Outcast Champion needs at least three Hive Scum in the gang. If not, Champions are removed from the roster until it's fixed.</li>
+    <li><strong>Starting skills:</strong> when added to a roster, Leaders and Champions can pick one skill from one of their Primary skill sets.</li>
+    <li><strong>Designer's note:</strong> any fighter from another gang list can be promoted to Leader, keeping its skills and equipment, and taking an Affiliation and Archetype. The arbitrator makes the final call.</li>
+  </ul>
+
+  <h2>Affiliations</h2>
+  <ul>
+    <li><strong>Clanless:</strong> each Leader and Champion gets an extra 1 TP to spend on Trading Post weapons and wargear at creation. The first Visit Trading Post action in each post-cycle sequence earns an extra 1 TP.</li>
+    <li><strong>Clan House:</strong> choose Cawdor, Delaque, Escher, Goliath, Van Saar or Orlock. Leaders and Champions can buy weapons and wargear normally restricted to that house's list, including pets, at creation and in each post-cycle sequence.</li>
+    <li><strong>Aranthian:</strong> Leaders and Champions can buy from the Aranthian equipment list at creation and in each post-cycle sequence.</li>
+    <li><strong>Mutant:</strong> fighters can buy mutations from the list below. Leaders and Champions can have up to two, and gangers only one.</li>
+  </ul>
+
+  <h2>Leader profiles</h2>
+  <p class="muted">Pick one of these four profiles for the Leader. All cost 135 Cr and start with 61 XP.</p>
+  <div class="scroll">
+  <table>
+    <tr><th>Profile</th><th class="num">M</th><th class="num">WS</th><th class="num">BS</th><th class="num">S</th><th class="num">T</th><th class="num">W</th><th class="num">I</th><th class="num">A</th><th class="num">Sv</th><th class="num">Ld</th><th class="num">Cl</th><th class="num">Wil</th><th class="num">Int</th></tr>
+    <tr><td>Profile 1</td><td class="num">7″</td><td class="num">4+</td><td class="num">3+</td><td class="num">3</td><td class="num">3</td><td class="num">3</td><td class="num">4</td><td class="num">2</td><td class="num">5+</td><td class="num">9</td><td class="num">9</td><td class="num">8</td><td class="num">9</td></tr>
+    <tr><td>Profile 2</td><td class="num">6″</td><td class="num">3+</td><td class="num">3+</td><td class="num">3</td><td class="num">3</td><td class="num">3</td><td class="num">4</td><td class="num">3</td><td class="num">5+</td><td class="num">8</td><td class="num">7</td><td class="num">7</td><td class="num">7</td></tr>
+    <tr><td>Profile 3</td><td class="num">5″</td><td class="num">3+</td><td class="num">4+</td><td class="num">4</td><td class="num">3</td><td class="num">3</td><td class="num">3</td><td class="num">3</td><td class="num">5+</td><td class="num">8</td><td class="num">8</td><td class="num">9</td><td class="num">9</td></tr>
+    <tr><td>Profile 4</td><td class="num">4″</td><td class="num">3+</td><td class="num">4+</td><td class="num">3</td><td class="num">4</td><td class="num">3</td><td class="num">2</td><td class="num">2</td><td class="num">4+</td><td class="num">8</td><td class="num">9</td><td class="num">8</td><td class="num">8</td></tr>
+  </table>
+  </div>
+  <p class="muted"><span class="flag">Check:</span> the profile rows were read from a slanted photo of the page. Confirm the numbers against the book before relying on them.</p>
+
+  <h2>Fighters</h2>
+  <div class="scroll">
+  <table>
+    <tr><th>Fighter</th><th>Type</th><th class="num">Cr</th><th class="num">M</th><th class="num">WS</th><th class="num">BS</th><th class="num">S</th><th class="num">T</th><th class="num">W</th><th class="num">I</th><th class="num">A</th><th class="num">Sv</th><th class="num">Ld</th><th class="num">Cl</th><th class="num">Wil</th><th class="num">Int</th><th class="num">XP</th></tr>
+    <tr><td>Outcast Champion</td><td>Champion</td><td class="num">95</td><td class="num">5″</td><td class="num">3+</td><td class="num">3+</td><td class="num">3</td><td class="num">3</td><td class="num">2</td><td class="num">3</td><td class="num">2</td><td class="num">5+</td><td class="num">7</td><td class="num">6</td><td class="num">7</td><td class="num">7</td><td class="num">37</td></tr>
+    <tr><td>Outcast Hive Scum</td><td>Ganger, Specialist</td><td class="num">30</td><td class="num">5″</td><td class="num">4+</td><td class="num">4+</td><td class="num">3</td><td class="num">3</td><td class="num">1</td><td class="num">3</td><td class="num">1</td><td class="num">6+</td><td class="num">6</td><td class="num">6</td><td class="num">6</td><td class="num">6</td><td class="num">13</td></tr>
+  </table>
+  </div>
+  <p>Champions must pick an Archetype. Equipment comes from the Leader's Affiliation list, the Outcast equipment list, and the Trading Post, within the TP limit for each rank (4 for a Leader, 3 for a Champion).</p>
+
+  <h2>Archetypes and skill access</h2>
+  <p class="muted">Each Archetype sets which skill sets the gang can use. Champions can take a different Archetype from their Leader. Rows marked <span class="flag">check</span> were hard to read in the scan.</p>
+  <h3>Brawler</h3>
+  <div class="scroll"><table>
+    <tr><th>Fighter</th><th>Agility</th><th>Brawn</th><th>Combat</th><th>Cunning</th><th>Savant</th><th>Shooting</th></tr>
+    <tr><td>Leader</td><td>-</td><td>Secondary</td><td>Primary</td><td>Secondary</td><td>Primary</td><td>-</td></tr>
+    <tr><td>Champion</td><td>-</td><td>Primary</td><td>Primary</td><td>-</td><td>Secondary</td><td>-</td></tr>
+    <tr><td>Hive Scum</td><td>-</td><td>Secondary</td><td>Primary</td><td>Secondary</td><td>-</td><td>-</td></tr>
+  </table></div>
+  <h3>Gunslinger</h3>
+  <div class="scroll"><table>
+    <tr><th>Fighter</th><th>Agility</th><th>Brawn</th><th>Combat</th><th>Cunning</th><th>Savant</th><th>Shooting</th></tr>
+    <tr><td>Leader</td><td>Secondary</td><td>-</td><td>-</td><td>Secondary</td><td>Primary</td><td>Primary</td></tr>
+    <tr><td>Champion</td><td>Primary</td><td>-</td><td>-</td><td>-</td><td>Secondary</td><td>Primary</td></tr>
+    <tr><td>Hive Scum</td><td>Secondary</td><td>-</td><td>-</td><td>Secondary</td><td>-</td><td>Primary</td></tr>
+  </table></div>
+  <h3>Mastermind</h3>
+  <div class="scroll"><table>
+    <tr><th>Fighter</th><th>Agility</th><th>Brawn</th><th>Combat</th><th>Cunning</th><th>Savant</th><th>Shooting</th></tr>
+    <tr><td>Leader</td><td>Primary</td><td>-</td><td>Secondary</td><td>Secondary</td><td>Primary</td><td>-</td></tr>
+    <tr><td>Champion</td><td>Primary</td><td>-</td><td>Primary</td><td>-</td><td>Secondary</td><td>-</td></tr>
+    <tr><td>Hive Scum</td><td>Primary</td><td>Secondary</td><td>Secondary</td><td>-</td><td>-</td><td>-</td></tr>
+  </table></div>
+  <h3>Survivor</h3>
+  <div class="scroll"><table>
+    <tr><th>Fighter</th><th>Agility</th><th>Brawn</th><th>Combat</th><th>Cunning</th><th>Savant</th><th>Shooting</th></tr>
+    <tr><td>Leader</td><td>Secondary</td><td>-</td><td>-</td><td>Primary</td><td>Primary</td><td>Secondary</td></tr>
+    <tr><td>Champion</td><td>Primary</td><td>-</td><td>-</td><td>Primary</td><td>Secondary</td><td>-</td></tr>
+    <tr><td>Hive Scum</td><td>Secondary</td><td>-</td><td>-</td><td>Primary</td><td>-</td><td>Secondary</td></tr>
+  </table></div>
+  <h3>Wyrd <span class="flag">check</span></h3>
+  <p class="muted">Wyrds treat Wyrd Powers as a Primary skill set and gain the Wyrd subtype.</p>
+  <div class="scroll"><table>
+    <tr><th>Fighter</th><th>Agility</th><th>Brawn</th><th>Combat</th><th>Cunning</th><th>Savant</th><th>Shooting</th></tr>
+    <tr><td>Leader</td><td>Secondary</td><td>-</td><td>-</td><td>Secondary</td><td>Primary</td><td>-</td></tr>
+    <tr><td>Champion</td><td>-</td><td>-</td><td>-</td><td>Secondary</td><td>Primary</td><td>-</td></tr>
+    <tr><td>Hive Scum</td><td>Secondary</td><td>-</td><td>-</td><td>Primary</td><td>Secondary</td><td>-</td></tr>
+  </table></div>
+
+  <h2>Outcast equipment list</h2>
+  <p class="muted">Prices in credits as printed. The auto/stub prices are flagged for checking.</p>
+  <div class="scroll"><table>
+    <tr><th>Category</th><th>Item</th><th class="num">Cr</th></tr>
+    <tr><td class="flag">Auto/stub (check)</td><td>Autogun / Autopistol / Stub gun</td><td class="num">10 / 10 / 5</td></tr>
+    <tr><td>Flamers</td><td>Flamer / Hand flamer</td><td class="num">70 / 45</td></tr>
+    <tr><td>Grenade launchers</td><td>Launcher with frag &amp; krak grenades</td><td class="num">80</td></tr>
+    <tr><td>Las</td><td>Lasgun / Laspistol</td><td class="num">15 / 5</td></tr>
+    <tr><td>Primitive ranged</td><td>Throwing knives</td><td class="num">10</td></tr>
+    <tr><td>Shotguns</td><td>Combat shotgun (salvo &amp; shredder) / Sawn-off (solid &amp; scatter) / Solid &amp; scatter ammo</td><td class="num">35 / 30 / 35</td></tr>
+    <tr><td>Chain</td><td>Chainaxe / Chainsword</td><td class="num">20 / 20</td></tr>
+    <tr><td>Primitive melee</td><td>Axe / Fighting knife / Flail / Maul / Two-handed axe / Two-handed hammer</td><td class="num">15 / 5 / 10 / 20 / 40 / 40</td></tr>
+    <tr><td>Grenades</td><td>Blasting charges / Frag / Krak / Smoke</td><td class="num">60 / 30 / 45 / 15</td></tr>
+    <tr><td>Armour</td><td>Hazard suit / Mesh armour</td><td class="num">10 / 40</td></tr>
+    <tr><td>Personal</td><td>Drop rig / Medicae kit / Photo-goggles / Respirator</td><td class="num">10 / 20 / 35 / 15</td></tr>
+    <tr><td>Accessories</td><td>Telescopic sight</td><td class="num">20</td></tr>
+  </table></div>
+
+  <h2>Aranthian equipment list</h2>
+  <div class="scroll"><table>
+    <tr><th>Category</th><th>Item</th><th class="num">Cr</th></tr>
+    <tr><td>Ranged</td><td>Aranthian-pattern meltagun / plasma pistol</td><td class="num">145 / 85</td></tr>
+    <tr><td>Close combat</td><td>Aranthian-pattern power fist / power greatsword</td><td class="num">115 / 60</td></tr>
+    <tr><td>Armour</td><td>Seven-pointed breastplate</td><td class="num">120</td></tr>
+    <tr><td>Personal</td><td>Conduit of Ozostium / Gloves of Ozostium / Seven-pointed talisman</td><td class="num">35 / 35 / 20</td></tr>
+  </table></div>
+  <div class="scroll"><table>
+    <tr><th>Weapon</th><th class="num">SR</th><th class="num">LR</th><th class="num">Str</th><th class="num">AP</th><th class="num">L</th><th>Traits</th></tr>
+    <tr><td>Aranthian-pattern meltagun</td><td class="num">6″</td><td class="num">12″</td><td class="num">8</td><td class="num">-4</td><td class="num">3</td><td>Ammo (5+), Damage (3)</td></tr>
+    <tr><td>Aranthian-pattern plasma pistol</td><td class="num">6″</td><td class="num">12″</td><td class="num">6</td><td class="num">-2</td><td class="num">2</td><td>Ammo (5+), Damage (2), Light, Unstable</td></tr>
+    <tr><td>Aranthian-pattern power fist</td><td class="num">E</td><td class="num">-</td><td class="num">S+3</td><td class="num">-3</td><td class="num">3</td><td>Breaching (5+), Concussive (5+), Damage (2), Melee, Unwieldy</td></tr>
+    <tr><td>Power greatsword</td><td class="num">E</td><td class="num">-</td><td class="num">S+1</td><td class="num">-2</td><td class="num">2</td><td>Breaching (6+), Heavy, Melee, Parry</td></tr>
+    <tr><td>Massive claws (Mutant)</td><td class="num">E</td><td class="num">-</td><td class="num">S+1</td><td class="num">-1</td><td class="num">1</td><td>Breaching (6+), Melee</td></tr>
+  </table></div>
+
+  <h2>Mutations (Mutant gangs)</h2>
+  <div class="scroll"><table>
+    <tr><th>Mutation</th><th class="num">Cr</th><th>Effect (summary)</th></tr>
+    <tr><td>Void Soul</td><td class="num">15</td><td>Can't be targeted by Wyrd Powers. Indirect damage from them can still hurt.</td></tr>
+    <tr><td>Extra Appendage</td><td class="num">20</td><td>+1 Attacks. Can carry four weapons instead of three.</td></tr>
+    <tr><td>Horrific Appearance</td><td class="num">15</td><td>Subject to the Fearsome condition.</td></tr>
+    <tr><td>Massive Claws</td><td class="num">35</td><td>Gives an extra weapon that doesn't count against the weapon limit (see weapon table).</td></tr>
+    <tr><td>Needle Spines</td><td class="num">15</td><td>Can't wear armour unless combined with other armour. +1 Strength against close combat hits. Once per battle, Fire Spines (Single): models within 3″ take a Toxin (3+) hit.</td></tr>
+    <tr><td>Tentacles</td><td class="num">10</td><td>Can re-roll failed Agility tests.</td></tr>
+    <tr><td>Toxic Blood</td><td class="num">15</td><td>After an unsaved Wound, models within 1″ make an Agility test, and those who fail take a Toxin (3+) hit.</td></tr>
+    <tr><td>Wing Membranes</td><td class="num">20</td><td>Automatically passes Agility tests to leap, and can leap further.</td></tr>
+  </table></div>
+  <p class="muted"><span class="flag">Check:</span> the mutation summaries are my own short paraphrases of the book's text. Confirm the exact wording before relying on them.</p>
+</section>
+</main>
+</body>
+</html>
