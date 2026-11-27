@@ -1008,6 +1008,7 @@ function openImport() {
 }
 
 function showPlay() {
+  updateRefBtn();
   document.getElementById("importPanel").classList.add("hidden");
   document.getElementById("controls").classList.remove("hidden");
   document.getElementById("gangMetrics").classList.remove("hidden");
@@ -1033,6 +1034,7 @@ document.getElementById("pdfInput").addEventListener("change", async (e) => {
     ensureDefaults();
     saveAll();
     showPlay();
+    openGangRef();
   } catch (err) {
     status.classList.add("error");
     status.textContent = "Could not read this PDF: " + err.message;
