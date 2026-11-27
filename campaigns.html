@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blades of the Crown — Campaigns</title>
+<style>
+  :root {
+    --bg: #09070c;
+    --panel: #130f19;
+    --panel2: #1b1524;
+    --plum: #3b1742;
+    --plum-bright: #6b2478;
+    --gold: #d4af37;
+    --gold-dim: #8f7322;
+    --crimson: #c93b4b;
+    --emerald: #34a875;
+    --cyan: #3da5d9;
+    --amber: #e08e36;
+    --text: #f0ebf5;
+    --muted: #a598b3;
+    --border: rgba(212, 175, 55, 0.24);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: radial-gradient(circle at top right, #211229 0%, var(--bg) 55%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.45;
+    min-height: 100vh;
+  }
+  a { text-decoration: none; color: inherit; }
+
+  /* Sticky Top Command Bar */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(9, 7, 12, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 18px;
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .crest {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1.5px solid var(--gold);
+    background: var(--plum);
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: var(--gold); font-size: 14px;
+  }
+  .crest img { width: 100%; height: 100%; object-fit: cover; }
+  .brand-title { font-size: 15px; font-weight: 800; letter-spacing: 0.6px; color: var(--gold); text-transform: uppercase; }
+  .brand-sub { font-size: 11px; color: var(--muted); }
+  .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    padding: 7px 12px; border-radius: 7px; font-size: 12px; font-weight: 700;
+    border: 1px solid var(--border); background: var(--panel2); color: var(--text);
+    cursor: pointer; transition: 0.15s;
+  }
+  .btn:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-active {
+    background: linear-gradient(135deg, var(--plum), #261430);
+    border-color: var(--gold); color: var(--gold);
+  }
+
+  /* Two-Column Split Deck Layout (Replicating index.html) */
+  .deck-shell {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 16px;
+    display: grid;
+    grid-template-columns: 310px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  @media (max-width: 860px) {
+    .deck-shell {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Left Sidebar: Teams Roster Selector */
+  .sidebar {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    position: sticky;
+    top: 68px;
+  }
+  @media (max-width: 860px) {
+    .sidebar { position: static; }
+  }
+  .sidebar-header {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--gold);
+    padding: 4px 6px 10px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .team-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .team-item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    width: 100%;
+    text-align: left;
+    background: var(--panel2);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 9px;
+    padding: 9px 11px;
+    cursor: pointer;
+    transition: 0.15s;
+    color: var(--text);
+  }
+  .team-item:hover {
+    border-color: var(--gold-dim);
+    background: #231b2e;
+  }
+  .team-item.selected {
+    background: linear-gradient(135deg, rgba(59, 23, 66, 0.9), rgba(27, 21, 36, 0.95));
+    border-color: var(--gold);
+    box-shadow: 0 0 14px rgba(212, 175, 55, 0.2);
+  }
+  .team-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    background: rgba(11, 9, 14, 0.85);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    flex-shrink: 0;
+  }
+  .team-item.selected .team-icon {
+    border-color: var(--gold);
+    background: rgba(212, 175, 55, 0.14);
+  }
+  .team-info { min-width: 0; flex: 1; }
+  .team-owner-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .team-owner {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--gold);
+  }
+  .team-badge {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: rgba(212, 175, 55, 0.16);
+    color: var(--gold);
+    border: 1px solid var(--gold-dim);
+  }
+  .team-name {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .team-sub {
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Centre Content Panel */
+  .centre-stage {
+    min-width: 0;
+  }
+  .stage-header {
+    background: linear-gradient(135deg, rgba(59, 23, 66, 0.78), rgba(19, 15, 25, 0.96));
+    border: 1px solid var(--gold);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+  .stage-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .stage-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .stage-big-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: rgba(11, 9, 14, 0.85);
+    border: 1.5px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  .stage-kicker {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--gold);
+  }
+  .stage-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+  }
+  .stage-meta {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .pill {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(11, 9, 14, 0.78);
+    border: 1px solid var(--border);
+    color: var(--gold);
+  }
+  .exploit-box {
+    background: rgba(52, 168, 117, 0.13);
+    border: 1px solid rgba(52, 168, 117, 0.38);
+    border-radius: 8px;
+    padding: 10px 13px;
+    font-size: 13px;
+    color: #d7f7e7;
+  }
+
+  /* Sub-tabs inside Centre Stage */
+  .sub-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .sub-btn {
+    padding: 8px 13px;
+    border-radius: 8px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.15s;
+  }
+  .sub-btn:hover { color: var(--text); border-color: var(--gold-dim); }
+  .sub-btn.active {
+    background: var(--plum);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* Cards & Hit-Lists */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 13px; margin-bottom: 14px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 13px; margin-bottom: 14px; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    padding: 14px 16px;
+  }
+  .card h2 { font-size: 15px; color: var(--gold); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .card h3 { font-size: 13.5px; color: #f3d678; margin: 8px 0 4px; }
+  .card p, .card li { font-size: 13px; color: #e0d8e8; margin-bottom: 6px; }
+  .card ul { padding-left: 18px; }
+  .callout {
+    background: rgba(59, 23, 66, 0.36);
+    border-left: 3px solid var(--gold);
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 12.5px;
+  }
+  .warn {
+    background: rgba(201, 59, 75, 0.14);
+    border-left: 3px solid var(--crimson);
+    padding: 8px 11px;
+    border-radius: 6px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #f7c6cc;
+  }
+
+  .target-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 11px;
+  }
+  .target-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .rank-badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    margin-right: 6px;
+  }
+  .r1 { background: rgba(201, 59, 75, 0.25); color: #ff8c99; border: 1px solid var(--crimson); }
+  .r2 { background: rgba(224, 142, 54, 0.22); color: #ffc078; border: 1px solid var(--amber); }
+  .r3 { background: rgba(212, 175, 55, 0.2); color: var(--gold); border: 1px solid var(--gold-dim); }
+  .r4 { background: rgba(61, 165, 217, 0.18); color: #8ad4f7; border: 1px solid var(--cyan); }
+  .r5 { background: rgba(52, 168, 117, 0.18); color: #87e6ba; border: 1px solid var(--emerald); }
+  .target-title { font-size: 15px; font-weight: 800; color: #fff; }
+  .target-gear { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .meta-strip { display: flex; flex-wrap: wrap; gap: 7px; }
+  .tag {
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 5px;
+    background: var(--panel2);
+    border: 1px solid var(--border);
+  }
+  .tag-posture { color: #ffd479; }
+  .tag-hunter { color: #82e8b8; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="crest" data-img="gangcrest">👑</div>
+    <div>
+      <div class="brand-title">Campaigns</div>
+      <div class="brand-sub">Campaigns • The Lost Dome (Enter Primus)</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a class="btn" href="index.html">⚔️ Tactical Deck</a>
+    <a class="btn" href="bible.html">📖 Character Bible</a>
+    <a class="btn" href="campaign.html">🛡️ My Team</a>
+    <a class="btn btn-active" href="campaigns.html">🗺️ Campaigns</a>
+  </div>
+</div>
+
+<main class="page-main">
+  <section class="camp-card">
+    <h2>🌫️ The Lost Dome (Enter Primus)</h2>
+    <p><strong>Gang:</strong> Blades of the Crown (House Escher • Law Abiding) • <strong>Owner:</strong> Askbugsy</p>
+    <p><strong>Current:</strong> Round 4 — Occupation (Staking Claims)</p>
+    <p><strong>Gang status:</strong> Rating 1,440 • Stash 7 Cr • Wealth 1,447 • Reputation 5 • Gang size 10</p>
+    <p><strong>Territories:</strong> Settlement, Settlement, Wastes</p>
+  </section>
+
+  <section class="camp-card">
+    <h3>Round 1</h3>
+    <p class="todo">Summary to add: scenario, result and what changed for the gang.</p>
+  </section>
+
+  <section class="camp-card">
+    <h3>Round 2</h3>
+    <p class="todo">Summary to add: scenario, result and what changed for the gang.</p>
+  </section>
+
+  <section class="camp-card">
+    <h3>Round 3</h3>
+    <p class="todo">Summary to add: scenario, result and what changed for the gang.</p>
+  </section>
+
+  <section class="camp-card">
+    <h3>Round 4 — Occupation (Staking Claims)</h3>
+    <ul>
+      <li><strong>Setup:</strong> 3′ × 3′ Upper Dome table, Custom (10) crew, two Beacons 6″ in from opposite edges, diagonal 6″ × 6″ corner deployment, reserves D3 per End phase from Round 2.</li>
+      <li><strong>Victory:</strong> control a Beacon by having the most non-Seriously Injured fighters within 1″ at the End phase; holding both scores 1 VP. First to 2 VP wins.</li>
+      <li><strong>Pre-battle step:</strong> roll for Her Majesty's Old Battle Wound.</li>
+      <li><strong>Post-battle:</strong> +1 XP for each participating fighter; income is the 7 Cr stash plus Settlement income and the Occupation payout.</li>
+    </ul>
+    <p class="todo">The Round 4 rules above come from a Gemini summary and are not yet checked against the N23 rulebook. Verify before relying on them.</p>
+  </section>
+
+  <section class="camp-card">
+    <h2>📘 N23 Rules</h2>
+    <p class="todo">To add: turn sequence, shooting, hand-to-hand, injuries, Overseer and group activation rules, and the campaign economy, taken from your N23 rulebook.</p>
+  </section>
+</main>
+
+<style>
+  .page-main { max-width: 960px; margin: 0 auto; padding: 16px; }
+  .camp-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+  .camp-card h2 { color: var(--gold); font-size: 18px; margin-bottom: 8px; }
+  .camp-card h3 { color: var(--gold); font-size: 16px; margin-bottom: 6px; }
+  .camp-card p, .camp-card li { color: var(--text); font-size: 14px; line-height: 1.55; margin-bottom: 6px; }
+  .camp-card ul { padding-left: 18px; }
+  .camp-card .todo { color: var(--muted); font-style: italic; }
+</style>
+</body>
+</html>
