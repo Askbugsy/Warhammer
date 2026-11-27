@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blades of the Crown — House Cawdor</title>
+<style>
+  :root {
+    --bg: #09070c;
+    --panel: #130f19;
+    --panel2: #1b1524;
+    --plum: #3b1742;
+    --plum-bright: #6b2478;
+    --gold: #d4af37;
+    --gold-dim: #8f7322;
+    --crimson: #c93b4b;
+    --emerald: #34a875;
+    --cyan: #3da5d9;
+    --amber: #e08e36;
+    --text: #f0ebf5;
+    --muted: #a598b3;
+    --border: rgba(212, 175, 55, 0.24);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: radial-gradient(circle at top right, #211229 0%, var(--bg) 55%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.45;
+    min-height: 100vh;
+  }
+  a { text-decoration: none; color: inherit; }
+
+  /* Sticky Top Command Bar */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(9, 7, 12, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 18px;
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .crest {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1.5px solid var(--gold);
+    background: var(--plum);
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: var(--gold); font-size: 14px;
+  }
+  .crest img { width: 100%; height: 100%; object-fit: cover; }
+  .brand-title { font-size: 15px; font-weight: 800; letter-spacing: 0.6px; color: var(--gold); text-transform: uppercase; }
+  .brand-sub { font-size: 11px; color: var(--muted); }
+  .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    padding: 7px 12px; border-radius: 7px; font-size: 12px; font-weight: 700;
+    border: 1px solid var(--border); background: var(--panel2); color: var(--text);
+    cursor: pointer; transition: 0.15s;
+  }
+  .btn:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-active {
+    background: linear-gradient(135deg, var(--plum), #261430);
+    border-color: var(--gold); color: var(--gold);
+  }
+
+  /* Two-Column Split Deck Layout (Replicating index.html) */
+  .deck-shell {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 16px;
+    display: grid;
+    grid-template-columns: 310px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  @media (max-width: 860px) {
+    .deck-shell {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Left Sidebar: Teams Roster Selector */
+  .sidebar {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    position: sticky;
+    top: 68px;
+  }
+  @media (max-width: 860px) {
+    .sidebar { position: static; }
+  }
+  .sidebar-header {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--gold);
+    padding: 4px 6px 10px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .team-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .team-item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    width: 100%;
+    text-align: left;
+    background: var(--panel2);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 9px;
+    padding: 9px 11px;
+    cursor: pointer;
+    transition: 0.15s;
+    color: var(--text);
+  }
+  .team-item:hover {
+    border-color: var(--gold-dim);
+    background: #231b2e;
+  }
+  .team-item.selected {
+    background: linear-gradient(135deg, rgba(59, 23, 66, 0.9), rgba(27, 21, 36, 0.95));
+    border-color: var(--gold);
+    box-shadow: 0 0 14px rgba(212, 175, 55, 0.2);
+  }
+  .team-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    background: rgba(11, 9, 14, 0.85);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    flex-shrink: 0;
+  }
+  .team-item.selected .team-icon {
+    border-color: var(--gold);
+    background: rgba(212, 175, 55, 0.14);
+  }
+  .team-info { min-width: 0; flex: 1; }
+  .team-owner-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .team-owner {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--gold);
+  }
+  .team-badge {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: rgba(212, 175, 55, 0.16);
+    color: var(--gold);
+    border: 1px solid var(--gold-dim);
+  }
+  .team-name {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .team-sub {
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Centre Content Panel */
+  .centre-stage {
+    min-width: 0;
+  }
+  .stage-header {
+    background: linear-gradient(135deg, rgba(59, 23, 66, 0.78), rgba(19, 15, 25, 0.96));
+    border: 1px solid var(--gold);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+  .stage-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .stage-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .stage-big-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: rgba(11, 9, 14, 0.85);
+    border: 1.5px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  .stage-kicker {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--gold);
+  }
+  .stage-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+  }
+  .stage-meta {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .pill {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(11, 9, 14, 0.78);
+    border: 1px solid var(--border);
+    color: var(--gold);
+  }
+  .exploit-box {
+    background: rgba(52, 168, 117, 0.13);
+    border: 1px solid rgba(52, 168, 117, 0.38);
+    border-radius: 8px;
+    padding: 10px 13px;
+    font-size: 13px;
+    color: #d7f7e7;
+  }
+
+  /* Sub-tabs inside Centre Stage */
+  .sub-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .sub-btn {
+    padding: 8px 13px;
+    border-radius: 8px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.15s;
+  }
+  .sub-btn:hover { color: var(--text); border-color: var(--gold-dim); }
+  .sub-btn.active {
+    background: var(--plum);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* Cards & Hit-Lists */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 13px; margin-bottom: 14px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 13px; margin-bottom: 14px; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    padding: 14px 16px;
+  }
+  .card h2 { font-size: 15px; color: var(--gold); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .card h3 { font-size: 13.5px; color: #f3d678; margin: 8px 0 4px; }
+  .card p, .card li { font-size: 13px; color: #e0d8e8; margin-bottom: 6px; }
+  .card ul { padding-left: 18px; }
+  .callout {
+    background: rgba(59, 23, 66, 0.36);
+    border-left: 3px solid var(--gold);
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 12.5px;
+  }
+  .warn {
+    background: rgba(201, 59, 75, 0.14);
+    border-left: 3px solid var(--crimson);
+    padding: 8px 11px;
+    border-radius: 6px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #f7c6cc;
+  }
+
+  .target-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 11px;
+  }
+  .target-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .rank-badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    margin-right: 6px;
+  }
+  .r1 { background: rgba(201, 59, 75, 0.25); color: #ff8c99; border: 1px solid var(--crimson); }
+  .r2 { background: rgba(224, 142, 54, 0.22); color: #ffc078; border: 1px solid var(--amber); }
+  .r3 { background: rgba(212, 175, 55, 0.2); color: var(--gold); border: 1px solid var(--gold-dim); }
+  .r4 { background: rgba(61, 165, 217, 0.18); color: #8ad4f7; border: 1px solid var(--cyan); }
+  .r5 { background: rgba(52, 168, 117, 0.18); color: #87e6ba; border: 1px solid var(--emerald); }
+  .target-title { font-size: 15px; font-weight: 800; color: #fff; }
+  .target-gear { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .meta-strip { display: flex; flex-wrap: wrap; gap: 7px; }
+  .tag {
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 5px;
+    background: var(--panel2);
+    border: 1px solid var(--border);
+  }
+  .tag-posture { color: #ffd479; }
+  .tag-hunter { color: #82e8b8; }
+
+
+  .page-main { max-width: 980px; margin: 0 auto; padding: 16px; }
+  .camp-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+  .camp-card h2 { color: var(--gold); font-size: 18px; margin: 0 0 8px; }
+  .camp-card h3 { color: var(--gold); font-size: 16px; margin: 14px 0 6px; }
+  .camp-card h4 { color: var(--text); font-size: 14px; margin: 12px 0 4px; }
+  .camp-card p, .camp-card li { color: var(--text); font-size: 14px; line-height: 1.55; margin-bottom: 6px; }
+  .camp-card ul { padding-left: 18px; }
+  .camp-card table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0; }
+  .camp-card th, .camp-card td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+  .camp-card th { color: var(--gold); font-weight: 700; }
+  .camp-card .muted { color: var(--muted); font-size: 13px; }
+  .camp-card .chapter { color: var(--gold); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+</style>
+
+<style>
+  .ref h2 { color: var(--gold); font-size: 18px; border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-top: 26px; }
+  .ref h3 { color: var(--text); font-size: 15px; margin: 16px 0 6px; }
+  .ref p, .ref li { color: var(--text); font-size: 14px; line-height: 1.55; }
+  .ref .muted { color: var(--muted); font-size: 13px; }
+  .ref .flag { color: #e0a060; }
+  .ref .scroll { overflow-x: auto; }
+  .ref table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0 14px; }
+  .ref th, .ref td { text-align: left; padding: 6px 7px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+  .ref th { color: var(--gold); }
+  .ref td.num, .ref th.num { text-align: center; }
+  .ref .note { background: var(--panel2); border-left: 3px solid var(--gold); padding: 8px 12px; margin: 10px 0; font-size: 14px; }
+</style>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="crest" data-img="gangcrest">👑</div>
+    <div>
+      <div class="brand-title">Gang Reference</div>
+      <div class="brand-sub">Gangs of the Underhive and Outlands</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a class="btn" href="index.html">⚔️ Tactical Deck</a>
+    <a class="btn" href="bible.html">📖 Character Bible</a>
+    <a class="btn" href="campaign.html">🛡️ My Team</a>
+    <a class="btn" href="campaigns.html">🗺️ Campaigns</a>
+    <a class="btn" href="n23.html">📘 N23 Rules</a>
+    <a class="btn btn-active" href="reference.html">📚 Reference</a>
+  </div>
+</div>
+
+<main class="page-main ref">
+<p style="margin:0 0 12px"><a class="btn" href="reference.html">← Back to gang list</a></p>
+<section class="camp-card">
+  <h1 style="color:var(--gold);font-size:24px;margin:0 0 4px">House Cawdor</h1>
+  <p class="muted">Gangs of the Underhive, House Cawdor gang list and equipment reference. Stat lines are copied from the book. Rule text is summarised in my own words. Items marked <span class="flag">check</span> were hard to read in the scan.</p>
+
+  <h2>Gang special rules</h2>
+  <ul>
+    <li><strong>A House Divided:</strong> when a Cawdor gang is founded, it follows either the Path of the Pious or the Path of the Fanatic.</li>
+    <li><strong>Path of the Pious:</strong> the leader must have the Pious subtype. If the leader dies, a Fanatic fighter can't replace them. A Fanatic can't be added if it would take the Fanatic count above the Pious count. <em>Without Number:</em> at the end of the Choose Crews step, the starting crew can include one extra Prospect.</li>
+    <li><strong>Path of the Fanatic:</strong> the leader must have the Fanatic subtype. If the leader dies, a Pious fighter can't replace them. A Pious can't be added if it would take the Pious count above the Fanatic count. <em>Fanatical:</em> re-roll Bottle checks of a natural 11 or 12.</li>
+    <li><strong>Starting skills:</strong> when added to a roster, Leaders and Champions can pick one skill from one of their Primary skill sets.</li>
+  </ul>
+
+  <h2>Fighters</h2>
+  <div class="scroll"><table>
+    <tr><th>Fighter</th><th>Type</th><th class="num">Cr</th><th class="num">M</th><th class="num">WS</th><th class="num">BS</th><th class="num">S</th><th class="num">T</th><th class="num">W</th><th class="num">I</th><th class="num">A</th><th class="num">Sv</th><th class="num">Ld</th><th class="num">Cl</th><th class="num">Wil</th><th class="num">Int</th><th class="num">XP</th></tr>
+    <tr><td>Word-Keeper</td><td>Leader, Pious</td><td class="num">115</td><td class="num">5″</td><td class="num">3+</td><td class="num">3+</td><td class="num">3</td><td class="num">3</td><td class="num">3</td><td class="num">3</td><td class="num">2</td><td class="num">5+</td><td class="num">8</td><td class="num">8</td><td class="num">8</td><td class="num">7</td><td class="num">61</td></tr>
+    <tr><td>Firebrand</td><td>Champion, Pious</td><td class="num">95</td><td class="num">5″</td><td class="num">3+</td><td class="num">3+</td><td class="num">3</td><td class="num">3</td><td class="num">2</td><td class="num">3</td><td class="num">2</td><td class="num">5+</td><td class="num">7</td><td class="num">7</td><td class="num">6</td><td class="num">7</td><td class="num">37</td></tr>
+    <tr><td>Brethren</td><td>Ganger, Pious, Specialist</td><td class="num">40</td><td class="num">5″</td><td class="num">4+</td><td class="num">4+</td><td class="num">3</td><td class="num">3</td><td class="num">1</td><td class="num">3</td><td class="num">1</td><td class="num">6+</td><td class="num">6</td><td class="num">6</td><td class="num">6</td><td class="num">6</td><td class="num">13</td></tr>
+    <tr><td>Way-Brethren</td><td>Prospect, Pious</td><td class="num">65</td><td class="num">6″</td><td class="num">5+</td><td class="num">5+</td><td class="num">3</td><td class="num">3</td><td class="num">1</td><td class="num">4</td><td class="num">1</td><td class="num">6+</td><td class="num">5</td><td class="num">6</td><td class="num">6</td><td class="num">5</td><td class="num">4</td></tr>
+    <tr><td>Bonepicker</td><td>Prospect, Pious</td><td class="num">20</td><td class="num">6″</td><td class="num">5+</td><td class="num">5+</td><td class="num">3</td><td class="num">3</td><td class="num">1</td><td class="num">4</td><td class="num">1</td><td class="num">6+</td><td class="num">5</td><td class="num">5</td><td class="num">5</td><td class="num">5</td><td class="num">1</td></tr>
+    <tr><td>Stig-Shambler</td><td>Brute, Loner, Pious</td><td class="num">240</td><td class="num">4″</td><td class="num">4+</td><td class="num">4+</td><td class="num">5</td><td class="num">4</td><td class="num">4</td><td class="num">3</td><td class="num">2</td><td class="num">6+</td><td class="num">6</td><td class="num">6</td><td class="num">6</td><td class="num">5</td><td class="num">25</td></tr>
+    <tr><td>Redemptionist Priest</td><td>Leader, Fanatic</td><td class="num">130</td><td class="num">5″</td><td class="num">3+</td><td class="num">3+</td><td class="num">3</td><td class="num">3</td><td class="num">3</td><td class="num">3</td><td class="num">3</td><td class="num">5+</td><td class="num">8</td><td class="num">7</td><td class="num">9</td><td class="num">7</td><td class="num">61</td></tr>
+    <tr><td>Redemptionist Deacon</td><td>Champion, Fanatic</td><td class="num">130</td><td class="num">5″</td><td class="num">3+</td><td class="num">3+</td><td class="num">3</td><td class="num">3</td><td class="num">2</td><td class="num">3</td><td class="num">2</td><td class="num">5+</td><td class="num">7</td><td class="num">7</td><td class="num">8</td><td class="num">6</td><td class="num">37</td></tr>
+    <tr><td>Redemptionist Brethren</td><td>Ganger, Fanatic, Specialist</td><td class="num">40</td><td class="num">5″</td><td class="num">4+</td><td class="num">4+</td><td class="num">3</td><td class="num">3</td><td class="num">1</td><td class="num">3</td><td class="num">1</td><td class="num">6+</td><td class="num">6</td><td class="num">7</td><td class="num">7</td><td class="num">5</td><td class="num">13</td></tr>
+    <tr><td>Redemptionist Zealot</td><td>Prospect, Fanatic</td><td class="num">35</td><td class="num">6″</td><td class="num">5+</td><td class="num">5+</td><td class="num">3</td><td class="num">3</td><td class="num">1</td><td class="num">4</td><td class="num">2</td><td class="num">6+</td><td class="num">5</td><td class="num">6</td><td class="num">5</td><td class="num">5</td><td class="num">1</td></tr>
+    <tr><td>Sheen Bird</td><td>Beast, Flying, Pet</td><td class="num">75</td><td class="num">7″</td><td class="num">3+</td><td class="num">6+</td><td class="num">2</td><td class="num">3</td><td class="num">1</td><td class="num">5</td><td class="num">2</td><td class="num">6+</td><td class="num">6</td><td class="num">6</td><td class="num">6</td><td class="num">4</td><td class="num">13</td></tr>
+    
+  </table></div>
+
+  <h2>Fighter rules</h2>
+  <h3>Cawdor Way-Brethren</h3>
+  <p>Starts with the Dodge skill. Comes with a Ridge Walker included in the starting cost. Weapons and wargear come from the House Cawdor list.</p>
+  <h3>Cawdor Stig-Shambler</h3>
+  <p>Starts with the Bulging Biceps skill. Armed with a heavy club and a heavy flamer. It can swap the heavy flamer for a twin-linked heavy stubber (+10 Cr). It can't buy other weapons or wargear.</p>
+  <h3>Sheen Bird</h3>
+  <p>Leash range 6″. Subject to the Frenzy condition. Armed with beak and talons. It can't buy other weapons or wargear.</p>
+  <h3>Redemptionist fighters</h3>
+  <p>Priest, Deacon, Brethren and Zealot take their equipment from the Redemptionist list, with the same campaign extras.</p>
+
+  <h2>House Cawdor equipment list</h2>
+  <p class="muted">Prices in credits as printed.</p>
+  <div class="scroll"><table>
+    <tr><th>Category</th><th>Item</th><th class="num">Cr</th></tr>
+    <tr><td>Auto/stub</td><td>Autogun / Autopistol / Heavy stubber / Long rifle / Stub gun</td><td class="num">20 / 10 / 70 / 55 / 5</td></tr>
+    <tr><td>Combi-weapons</td><td>Combi-weapon (autogun / flamer)</td><td class="num">75</td></tr>
+    <tr><td>Flamers</td><td>Flamer / Hand flamer / Heavy flamer</td><td class="num">70 / 45 / 95</td></tr>
+    <tr><td>Primitive ranged</td><td>Cawdor heavy crossbow with frag &amp; krak shells</td><td class="num">110</td></tr>
+    <tr><td>Shotguns</td><td>Sawn-off shotgun with solid &amp; scatter shot</td><td class="num">30</td></tr>
+    <tr><td>Polearms</td><td>Cawdor polearm / autogun / polearm / blunderbuss (grape &amp; purgation rounds) / polearm / flamer</td><td class="num">30 / 80 / 85</td></tr>
+    <tr><td>Chain</td><td>Chain glaive</td><td class="num">50</td></tr>
+    <tr><td>Lances</td><td>Frag lance / Krak lance / Stun lance</td><td class="num">35 / 50 / 30</td></tr>
+    <tr><td>Primitive melee</td><td>Axe / Cleaver / Fighting knife / Flail / Maul / Two-handed axe / Two-handed hammer</td><td class="num">15 / 25 / 5 / 10 / 20 / 40 / 40</td></tr>
+    <tr><td>Grenades</td><td>Blasting charges / Frag / Incendiary charges / Krak</td><td class="num">60 / 30 / 40 / 45</td></tr>
+    <tr><td>Armour</td><td>Mesh armour / Refractor field</td><td class="num">40 / 50</td></tr>
+    <tr><td>Personal</td><td>Bomb delivery rats / Cult icon / Drop rig / Medicae kit / Photo-goggles / Respirator</td><td class="num">30 / 40 / 10 / 20 / 35 / 15</td></tr>
+    <tr><td>Accessories</td><td>Mono-sight</td><td class="num">20</td></tr>
+    <tr><td>Mounts</td><td>Dirt bike / Ridge Walker</td><td class="num">35 / 40</td></tr>
+    <tr><td>Pets</td><td>Sheen Bird</td><td class="num">75</td></tr>
+  </table></div>
+
+  <h2>Redemptionist equipment list</h2>
+  <div class="scroll"><table>
+    <tr><th>Category</th><th>Item</th><th class="num">Cr</th></tr>
+    <tr><td>Auto/stub</td><td>Autogun / Autopistol / Stub gun</td><td class="num">20 / 10 / 5</td></tr>
+    <tr><td>Auxiliary</td><td>Exterminator (autogun, shotgun, chainaxe and eviscerator only)</td><td class="num">+35</td></tr>
+    <tr><td>Flamers</td><td>Fire pike / Hand flamer / Heavy flamer</td><td class="num">80 / 45 / 95</td></tr>
+    <tr><td>Grenade launchers</td><td>Launcher with frag &amp; krak grenades / smoke grenades (+15)</td><td class="num">80 / +15</td></tr>
+    <tr><td>Shotguns</td><td>Shotgun with solid &amp; scatter ammo / executioner ammo (+45) / retributor ammo (+25)</td><td class="num">35 / +45 / +25</td></tr>
+    <tr><td>Chain</td><td>Chainaxe / Chainsword / Eviscerator</td><td class="num">20 / 20 / 65</td></tr>
+    <tr><td>Primitive</td><td>Fighting knife</td><td class="num">5</td></tr>
+    <tr><td>Grenades</td><td>Blasting charges / Frag / Incendiary / Krak / Smoke</td><td class="num">60 / 30 / 40 / 45 / 15</td></tr>
+    <tr><td>Armour</td><td>Mesh armour / Refractor field</td><td class="num">40 / 50</td></tr>
+    <tr><td>Personal</td><td>Book of the Redemption / Drop rig / Medicae kit / Photo-goggles / Pyromantic mantle / Respirator</td><td class="num">50 / 10 / 20 / 35 / 30 / 15</td></tr>
+    <tr><td>Accessories</td><td>Infra-sight / Mono-sight</td><td class="num">10 / 20</td></tr>
+    <tr><td>Mounts</td><td>Dirt bike / Ridge Walker</td><td class="num">35 / 45</td></tr>
+  </table></div>
+
+  <h2>Weapon profiles (selected)</h2>
+  <div class="scroll"><table>
+    <tr><th>Weapon</th><th class="num">SR</th><th class="num">LR</th><th class="num">Str</th><th class="num">AP</th><th class="num">L</th><th>Traits</th></tr>
+    <tr><td>Twin-linked heavy stubber</td><td class="num">20″</td><td class="num">40″</td><td class="num">4</td><td class="num">-1</td><td class="num">1</td><td>Heavy, Rapid Fire (2), Twin-linked</td></tr>
+    <tr><td>Combi-autogun</td><td class="num">8″</td><td class="num">24″</td><td class="num">3</td><td class="num">-</td><td class="num">1</td><td>Combi, Rapid Fire (1)</td></tr>
+    <tr><td>Combi-flamer</td><td class="num">T</td><td class="num">-</td><td class="num">4</td><td class="num">-1</td><td class="num">1</td><td>Ammo (6+), Blaze (5+), Combi, Template</td></tr>
+    <tr><td>Fire pike</td><td class="num">T</td><td class="num">-</td><td class="num">4</td><td class="num">-2</td><td class="num">1</td><td>Ammo (6+), Blaze (5+), Breaching (5+), Template</td></tr>
+    <tr><td>Cawdor heavy crossbow (frag shells)</td><td class="num">15″</td><td class="num">30″</td><td class="num">4</td><td class="num">-</td><td class="num">1</td><td>Ammo (3+), Blast (5″), Heavy, Knockback (6+)</td></tr>
+    <tr><td>Cawdor heavy crossbow (krak shells)</td><td class="num">15″</td><td class="num">30″</td><td class="num">6</td><td class="num">-2</td><td class="num">1</td><td>Ammo (4+), Heavy</td></tr>
+    <tr><td>Shotgun (executioner ammo)</td><td class="num">4″</td><td class="num">16″</td><td class="num">4</td><td class="num">-2</td><td class="num">2</td><td>Ammo (5+), Knockback (5+)</td></tr>
+    <tr><td>Shotgun (retributor ammo)</td><td class="num">4″</td><td class="num">8″</td><td class="num">4</td><td class="num">-</td><td class="num">1</td><td>Blaze (5+), Rapid Fire (2)</td></tr>
+    <tr><td>Exterminator</td><td class="num">T</td><td class="num">-</td><td class="num">4</td><td class="num">-1</td><td class="num">1</td><td>Auxiliary, Blaze (5+), Single Shot, Template</td></tr>
+  </table></div>
+  <p class="muted">The skill-access table isn't on this page because I couldn't read its rows reliably from the scan. Confirm it against the book before adding it. Melee profiles and the remaining weapons aren't included yet.</p>
+</section>
+</main>
+</body>
+</html>
