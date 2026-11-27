@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blades of the Crown — Campaigns</title>
+<style>
+  :root {
+    --bg: #09070c;
+    --panel: #130f19;
+    --panel2: #1b1524;
+    --plum: #3b1742;
+    --plum-bright: #6b2478;
+    --gold: #d4af37;
+    --gold-dim: #8f7322;
+    --crimson: #c93b4b;
+    --emerald: #34a875;
+    --cyan: #3da5d9;
+    --amber: #e08e36;
+    --text: #f0ebf5;
+    --muted: #a598b3;
+    --border: rgba(212, 175, 55, 0.24);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: radial-gradient(circle at top right, #211229 0%, var(--bg) 55%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.45;
+    min-height: 100vh;
+  }
+  a { text-decoration: none; color: inherit; }
+
+  /* Sticky Top Command Bar */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(9, 7, 12, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 18px;
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .crest {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1.5px solid var(--gold);
+    background: var(--plum);
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: var(--gold); font-size: 14px;
+  }
+  .crest img { width: 100%; height: 100%; object-fit: cover; }
+  .brand-title { font-size: 15px; font-weight: 800; letter-spacing: 0.6px; color: var(--gold); text-transform: uppercase; }
+  .brand-sub { font-size: 11px; color: var(--muted); }
+  .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    padding: 7px 12px; border-radius: 7px; font-size: 12px; font-weight: 700;
+    border: 1px solid var(--border); background: var(--panel2); color: var(--text);
+    cursor: pointer; transition: 0.15s;
+  }
+  .btn:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-active {
+    background: linear-gradient(135deg, var(--plum), #261430);
+    border-color: var(--gold); color: var(--gold);
+  }
+
+  /* Two-Column Split Deck Layout (Replicating index.html) */
+  .deck-shell {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 16px;
+    display: grid;
+    grid-template-columns: 310px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  @media (max-width: 860px) {
+    .deck-shell {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Left Sidebar: Teams Roster Selector */
+  .sidebar {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    position: sticky;
+    top: 68px;
+  }
+  @media (max-width: 860px) {
+    .sidebar { position: static; }
+  }
+  .sidebar-header {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--gold);
+    padding: 4px 6px 10px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .team-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .team-item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    width: 100%;
+    text-align: left;
+    background: var(--panel2);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 9px;
+    padding: 9px 11px;
+    cursor: pointer;
+    transition: 0.15s;
+    color: var(--text);
+  }
+  .team-item:hover {
+    border-color: var(--gold-dim);
+    background: #231b2e;
+  }
+  .team-item.selected {
+    background: linear-gradient(135deg, rgba(59, 23, 66, 0.9), rgba(27, 21, 36, 0.95));
+    border-color: var(--gold);
+    box-shadow: 0 0 14px rgba(212, 175, 55, 0.2);
+  }
+  .team-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    background: rgba(11, 9, 14, 0.85);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    flex-shrink: 0;
+  }
+  .team-item.selected .team-icon {
+    border-color: var(--gold);
+    background: rgba(212, 175, 55, 0.14);
+  }
+  .team-info { min-width: 0; flex: 1; }
+  .team-owner-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .team-owner {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--gold);
+  }
+  .team-badge {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: rgba(212, 175, 55, 0.16);
+    color: var(--gold);
+    border: 1px solid var(--gold-dim);
+  }
+  .team-name {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .team-sub {
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Centre Content Panel */
+  .centre-stage {
+    min-width: 0;
+  }
+  .stage-header {
+    background: linear-gradient(135deg, rgba(59, 23, 66, 0.78), rgba(19, 15, 25, 0.96));
+    border: 1px solid var(--gold);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+  .stage-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .stage-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .stage-big-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: rgba(11, 9, 14, 0.85);
+    border: 1.5px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  .stage-kicker {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--gold);
+  }
+  .stage-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+  }
+  .stage-meta {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .pill {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(11, 9, 14, 0.78);
+    border: 1px solid var(--border);
+    color: var(--gold);
+  }
+  .exploit-box {
+    background: rgba(52, 168, 117, 0.13);
+    border: 1px solid rgba(52, 168, 117, 0.38);
+    border-radius: 8px;
+    padding: 10px 13px;
+    font-size: 13px;
+    color: #d7f7e7;
+  }
+
+  /* Sub-tabs inside Centre Stage */
+  .sub-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .sub-btn {
+    padding: 8px 13px;
+    border-radius: 8px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.15s;
+  }
+  .sub-btn:hover { color: var(--text); border-color: var(--gold-dim); }
+  .sub-btn.active {
+    background: var(--plum);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* Cards & Hit-Lists */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 13px; margin-bottom: 14px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 13px; margin-bottom: 14px; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    padding: 14px 16px;
+  }
+  .card h2 { font-size: 15px; color: var(--gold); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .card h3 { font-size: 13.5px; color: #f3d678; margin: 8px 0 4px; }
+  .card p, .card li { font-size: 13px; color: #e0d8e8; margin-bottom: 6px; }
+  .card ul { padding-left: 18px; }
+  .callout {
+    background: rgba(59, 23, 66, 0.36);
+    border-left: 3px solid var(--gold);
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 12.5px;
+  }
+  .warn {
+    background: rgba(201, 59, 75, 0.14);
+    border-left: 3px solid var(--crimson);
+    padding: 8px 11px;
+    border-radius: 6px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #f7c6cc;
+  }
+
+  .target-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 11px;
+  }
+  .target-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .rank-badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    margin-right: 6px;
+  }
+  .r1 { background: rgba(201, 59, 75, 0.25); color: #ff8c99; border: 1px solid var(--crimson); }
+  .r2 { background: rgba(224, 142, 54, 0.22); color: #ffc078; border: 1px solid var(--amber); }
+  .r3 { background: rgba(212, 175, 55, 0.2); color: var(--gold); border: 1px solid var(--gold-dim); }
+  .r4 { background: rgba(61, 165, 217, 0.18); color: #8ad4f7; border: 1px solid var(--cyan); }
+  .r5 { background: rgba(52, 168, 117, 0.18); color: #87e6ba; border: 1px solid var(--emerald); }
+  .target-title { font-size: 15px; font-weight: 800; color: #fff; }
+  .target-gear { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .meta-strip { display: flex; flex-wrap: wrap; gap: 7px; }
+  .tag {
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 5px;
+    background: var(--panel2);
+    border: 1px solid var(--border);
+  }
+  .tag-posture { color: #ffd479; }
+  .tag-hunter { color: #82e8b8; }
+
+
+  .page-main { max-width: 980px; margin: 0 auto; padding: 16px; }
+  .camp-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+  .camp-card h2 { color: var(--gold); font-size: 18px; margin: 0 0 8px; }
+  .camp-card h3 { color: var(--gold); font-size: 16px; margin: 14px 0 6px; }
+  .camp-card h4 { color: var(--text); font-size: 14px; margin: 12px 0 4px; }
+  .camp-card p, .camp-card li { color: var(--text); font-size: 14px; line-height: 1.55; margin-bottom: 6px; }
+  .camp-card ul { padding-left: 18px; }
+  .camp-card table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0; }
+  .camp-card th, .camp-card td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+  .camp-card th { color: var(--gold); font-weight: 700; }
+  .camp-card .muted { color: var(--muted); font-size: 13px; }
+  .camp-card .chapter { color: var(--gold); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="crest" data-img="gangcrest">👑</div>
+    <div>
+      <div class="brand-title">Campaigns</div>
+      <div class="brand-sub">Campaigns • The Lost Dome (Enter Primus)</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a class="btn" href="index.html">⚔️ Game Card</a>
+    <a class="btn btn-active" href="campaigns.html">🗺️ Campaigns</a>
+    <a class="btn" href="n23.html">📘 N23 Rules</a>
+    <a class="btn" href="reference.html">📚 Reference</a>
+  </div>
+</div>
+
+<main class="page-main">
+
+<section class="camp-card">
+  <h2>🌫️ The Lost Dome (Enter Primus)</h2>
+  <p>A Groxbourne campaign for Necromunda using the N23 rules and the Dominion campaign. Ten games and four one-offs, running October 2026 to March 2027.</p>
+  <p><strong>Gang:</strong> Blades of the Crown (House Escher • Law Abiding) • <strong>Owner:</strong> Askbugsy</p>
+  <p><strong>Gang status (v5 printout):</strong> Rating 1,440 • Stash 7 Cr • Wealth 1,447 • Reputation 5 • Gang size 10</p>
+  <p><strong>Territories:</strong> Settlement, Settlement, Wastes</p>
+  <p class="muted">Campaign pack: Arbitrator's Advice and Gang Selection are on the pack's sections 3 and 4. Fighters can't be taken above 12 at founding.</p>
+</section>
+
+<section class="camp-card">
+  <h2>📅 Schedule</h2>
+  <table>
+    <tr><th>Round</th><th>When</th><th>Phase</th><th>Scenario</th></tr>
+    <tr><td>1</td><td>Sat 31 Oct 2026</td><td>Occupation</td><td>Bar Brawl (kick-off day)</td></tr>
+    <tr><td>2</td><td>Sat 31 Oct 2026</td><td>Occupation</td><td>The Hatch</td></tr>
+    <tr><td>3</td><td>Sat 14 Nov 2026</td><td>Occupation</td><td>Below the Hatch (Warhammer World)</td></tr>
+    <tr><td>4</td><td>Sat 14 Nov 2026</td><td>Occupation</td><td>Staking Claims (Warhammer World), then Downtime</td></tr>
+    <tr><td>5</td><td>16 to 29 Nov</td><td>Takeover</td><td>The Spoil Train</td></tr>
+    <tr><td>6</td><td>30 Nov to 13 Dec</td><td>Takeover</td><td>Something in the Dark</td></tr>
+    <tr><td>7</td><td>4 to 17 Jan 2027</td><td>Takeover</td><td>The Missing (every gang gains a fighter)</td></tr>
+    <tr><td>8</td><td>1 to 14 Feb 2027</td><td>Takeover</td><td>Witness</td></tr>
+    <tr><td>9</td><td>15 to 28 Feb 2027</td><td>Takeover</td><td>The Faithful</td></tr>
+    <tr><td>10</td><td>1 to 14 Mar 2027</td><td>Takeover</td><td>Bring It Down (the finale)</td></tr>
+  </table>
+  <p class="muted">One-offs sit between the chapters: The Ring Road Run (14 Nov), Sanguinala at the Fort (14 Dec to 3 Jan), Crossfire (18 to 31 Jan) and The Climb (20 Mar 2027). They have no post-battle sequence and nothing carries over from them.</p>
+</section>
+
+<section class="camp-card">
+  <h2>⚔️ Occupation: Rounds 1 to 4</h2>
+  <p class="muted">Win an Occupation game and you claim a new territory. In Round 1 it's a Drinking Hole in the Fort. In Rounds 2 to 4, roll on the D66 territory table.</p>
+
+  <h3>Round 1: Bar Brawl (Kick-off day)</h3>
+  <p class="chapter">Battlefield and crew</p>
+  <ul>
+    <li>3′ × 3′ table laid out as a bar, with tables, a counter and a door or two. Each table is a drinking hole (F1 to F4 on the map).</li>
+    <li>Two to four players per table, drawn at random. Crew is random (7). Skip the dome tables; it's indoors.</li>
+    <li>Deploy by roll-off, within 12″ of the centre and at least 1″ from any fighter already placed.</li>
+  </ul>
+  <p class="chapter">How it plays</p>
+  <ul>
+    <li><strong>Drinking phase:</strong> each fighter, Seriously Injured ones included, either takes an Intoxicated token or staggers D6″.</li>
+    <li><strong>Fighting phase:</strong> each fighter takes a single Basic, Simple or Double action. A Charge moves D6″ in total.</li>
+    <li>Each Intoxicated token gives +1 Toughness and -1 WS and -1 BS.</li>
+    <li><strong>End phase:</strong> Engaged standing fighters are pulled apart by ½″ and take an Initiative test (-1 per token), going Prone and Pinned on a fail. Then Bottle tests and Seriously Injured resolution as normal.</li>
+    <li>Weapons stay at the door. Everyone fights with bar items (Sx3, S-1, D1, Am 5+).</li>
+    <li>Last Orders: after 90 minutes the battle ends and the gang with the most fighters Standing wins. A tie means nobody does.</li>
+  </ul>
+  <p class="chapter">Rewards</p>
+  <ul>
+    <li>Everyone who took part: +1 XP. Each Standing fighter: +1 XP per Intoxicated token.</li>
+    <li>The winner: +D3 Reputation and a Drinking Hole territory.</li>
+    <li>Black and Blue: some Lasting Injuries count as Convalescence instead, and one re-roll of a Lasting Injury is allowed.</li>
+  </ul>
+
+  <h3>Round 2: The Hatch</h3>
+  <p class="chapter">Battlefield and crew</p>
+  <ul>
+    <li>3′ × 3′ table with a marker or terrain piece in the centre for the hatch. The hatch can be stood on but not passed through.</li>
+    <li>Crew is custom (12). Fighters in Recovery from Round 1 sit this one out.</li>
+    <li>Winner picks a table edge and the loser takes the opposite one. Deploy within 6″ of your edge.</li>
+    <li>Upper Dome tables from the pack's section 8.</li>
+  </ul>
+  <p class="chapter">Objective</p>
+  <ul>
+    <li>From the End phase of Round 3, a gang with fighters within 8″ of the hatch, and the other gang with none, wins. Seriously Injured fighters don't count. A gang also wins if it's the only one with fighters left.</li>
+    <li>Dome Breathes: after two hours the hatch vents and the gang with the most fighters within 8″ of it wins. A tie is a draw.</li>
+  </ul>
+  <p class="chapter">Rewards</p>
+  <ul>
+    <li>Everyone who took part: +1 XP. The winner: +D3 Reputation and a new territory. A gang that bottles out: -1 Reputation.</li>
+  </ul>
+
+  <h3>Round 3: Below the Hatch</h3>
+  <p class="chapter">Battlefield and crew</p>
+  <ul>
+    <li>A Zone Mortalis board if you have one, otherwise a 3′ × 3′ table packed with line-of-sight blockers and no long firing lanes. Warhammer World.</li>
+    <li>Crew is custom (8). Upper Dome tables from section 8.</li>
+    <li>Place five Cache tokens: one in the centre, then the others at least 8″ from any edge and 6″ from each other.</li>
+    <li>Winner picks a corner, loser takes the opposite one. Deploy within 8″ of your corner.</li>
+  </ul>
+  <p class="chapter">Searching and banking</p>
+  <ul>
+    <li>A Standing fighter in base contact with a cache can make a Search (Basic) action: D6 of 1 is a booby trap (Strength 4, AP -1, Damage 1 hit, cache removed), 2 to 5 is salvage, and 6 is a Coalition crate, worth double.</li>
+    <li>A fighter carries one cache. One that goes Seriously Injured, Out of Action or Broken drops it where they stand.</li>
+    <li>A cache is banked when its carrier is in their own deployment zone at the end of an End phase.</li>
+    <li>The battle ends when all caches are banked or removed, or when a gang bottles out or runs out of fighters. Most banked caches wins (a Coalition crate counts as two). Lights Out after two hours: caches being carried count as banked.</li>
+  </ul>
+  <p class="chapter">Rewards</p>
+  <ul>
+    <li>Everyone who took part: +1 XP. Each fighter who banks a cache: +1 XP more.</li>
+    <li>Each banked cache: D6×10 credits. Each Coalition crate: 2D6×10 credits.</li>
+    <li>The winner: +D3 Reputation and a new territory. A gang that bottles out: -1 Reputation.</li>
+  </ul>
+
+  <h3>Round 4: Staking Claims</h3>
+  <p class="chapter">Battlefield and crew</p>
+  <ul>
+    <li>3′ × 3′ table, Upper Dome tables from section 8. Warhammer World.</li>
+    <li>Crew is custom (10). Everyone else waits in Reserve.</li>
+    <li>Two Beacon objectives, each in the centre of a table edge and 6″ in, facing each other across the table.</li>
+    <li>Mark a 6″ × 6″ zone in each corner. Winner of the roll-off picks a diagonal pair of corners, and the loser takes the other pair. Winner deploys first.</li>
+    <li>Reserves: from the End phase of Round 2, at the end of each End phase each player can bring on D3 fighters from Reserve, touching a table edge inside one of their zones.</li>
+  </ul>
+  <p class="chapter">Objective</p>
+  <ul>
+    <li>A gang controls a Beacon with the most fighters within 1″ of it at the end of an End phase. Seriously Injured fighters don't count.</li>
+    <li>Controlling both Beacons at the end of an End phase scores 1 VP. First to 2 VP wins. A gang also wins if it's the only one with fighters left.</li>
+    <li>Shift's End: after two hours the most VP wins, and a tie is a draw.</li>
+  </ul>
+  <p class="chapter">Rewards and Downtime</p>
+  <ul>
+    <li>Everyone who took part: +1 XP. The winner: D6×10 credits, +D3 Reputation and a new territory.</li>
+    <li>A gang that bottles out: -1 Reputation.</li>
+    <li><strong>Downtime:</strong> after your post-battle sequence, every gang gets 250 credits to spend before Round 5. This is the only Downtime in the campaign.</li>
+    <li><strong>The Helm:</strong> beat the gang holding the Helm and it's yours. Bring it to Round 5.</li>
+  </ul>
+</section>
+
+<section class="camp-card">
+  <h2>🏛️ Takeover: Rounds 5 to 10</h2>
+  <p>From Round 5 territories can change hands. Win and you take one territory of your choice from the gang you beat. Settlements can't be taken. If the beaten gang holds nothing else, roll a new territory instead. Losing costs you one territory and nothing else. Draws change nothing.</p>
+  <p class="muted">Scenario sheets for Rounds 5 to 10 go out one round ahead.</p>
+</section>
+
+<section class="camp-card">
+  <h2>🧭 Campaign rules (Dominion)</h2>
+  <h3>Pairings and odd numbers</h3>
+  <ul>
+    <li>Everyone plays the same scenario each round. Pairings are drawn at random by someone other than the arbitrator, avoiding rematches where possible.</li>
+    <li>With an odd number of gangs, one game each round is a three-player game, drawn at random. Nobody plays a second three-player game until everyone has played one.</li>
+  </ul>
+  <h3>Tactics Cards</h3>
+  <ul>
+    <li>Build a deck of 10 before the kick-off. You can use one per campaign game, and each card works once per campaign.</li>
+    <li>Underdog bonus: for every full 100 Gang Rating you're behind, choose one extra card for that game only.</li>
+    <li>Banned: Dangerous Footing, History of Violence, Effigy of the Damned, every Underdog card, and any card that brings in a Dramatis Personae.</li>
+  </ul>
+  <h3>Post-battle sequence</h3>
+  <ul>
+    <li>Post-battle actions can happen in any order or together.</li>
+    <li>A fighter in Recovery misses the gang's next campaign game. Captured fighters follow the rulebook; a rescue is an extra game and doesn't count as your round game.</li>
+    <li>No House Agents, House Favours, Alliances or sub-plots.</li>
+  </ul>
+  <h3>Trading Post and gang rules</h3>
+  <ul>
+    <li>Only the Trading Post in the N23 rulebook is used. From your first post-battle sequence you can buy from it.</li>
+    <li>Gangs start with 1,000 credits and a Settlement, which can never be taken. Maximum 12 fighters at founding.</li>
+    <li>Basic, Special, Heavy, Unwieldy and Paired weapons must be modelled on the fighter (WYSIWYG).</li>
+    <li>No more than one fighter with the same skill at founding. Brutes can't become Outcast Leaders.</li>
+    <li>Hired Guns: no more than one Bounty Hunter at a time. Hive Scum have no limit.</li>
+  </ul>
+  <h3>Table rules</h3>
+  <ul>
+    <li>Pre-measuring is allowed. Once a model has moved, it can't be moved back.</li>
+    <li>Fighters can leave the table by moving off their own starting edge. They count as Out of Action for Bottle tests.</li>
+    <li>All rolls are made in front of your opponent.</li>
+    <li>Rapid Fire hits can be spread across several fighters.</li>
+    <li>On a 2′ × 2′ table, cut every deployment and objective distance by a third (rounding up) and play any Custom crew two fighters smaller.</li>
+  </ul>
+  <h3>Arguments</h3>
+  <ul>
+    <li>Settle rules disputes with your opponent first. If you're stuck, roll off and keep playing. Questions that matter beyond the game go to the arbitrator afterwards.</li>
+  </ul>
+</section>
+
+<section class="camp-card">
+  <h2>🗺️ Territories, Pillar Track and the Helm</h2>
+  <h3>Territories</h3>
+  <ul>
+    <li>Roll a D66 on the territory table when you win an Occupation game in Rounds 2 to 4, and in Takeover when the beaten gang holds only a Settlement. Every territory is available to every gang, and house territories give an extra boon to the matching house.</li>
+    <li>New territories go in a free Shelf or Deeps sector next to one you already hold (the Rim counts). The Deeps open from Round 3. When a territory changes hands, it stays where it is and changes owner.</li>
+    <li>Territory summaries and their boons are in the pack, section 7. Five have been amended for this campaign, and those amendments replace the rulebook.</li>
+  </ul>
+  <h3>Dome Environment</h3>
+  <ul>
+    <li>Before deployment, one player rolls on the Visibility table and the other on the Hazard table. Rounds 1 to 4 use the Upper Dome tables and Rounds 5 to 10 use the Deep Dome tables (pack, section 8).</li>
+    <li>Scenarios that set their own visibility skip the roll, and the one-offs skip both.</li>
+  </ul>
+  <h3>Pillar Track</h3>
+  <ul>
+    <li>Four pillars hold the dome up, with twelve boxes on the map. From Round 5, some scenarios produce a Pillar mark. At the end of each round from 5 to 9, if at least half the games produced a mark, one box is ticked. The finale ticks boxes directly.</li>
+  </ul>
+  <h3>The Helm</h3>
+  <ul>
+    <li>After the kick-off day, the gang holding the most territories takes the Helm. Ties go to Reputation, then a roll-off.</li>
+    <li>From then on, beat the holder in a campaign game and the Helm is yours. It does nothing; everyone can see it.</li>
+    <li>Whoever holds it after Round 10 keeps it until the next campaign.</li>
+  </ul>
+  <h3>Awards (after the Climb, 20 March 2027)</h3>
+  <ul>
+    <li>The Butcher's Bill: most enemy fighters taken Out of Action.</li>
+    <li>Fat Purse: most credits in the stash after Round 10.</li>
+    <li>Landlord: most territories after Round 10.</li>
+    <li>Top Dog: most campaign games won.</li>
+    <li>Big Name: highest Gang Rating after Round 10.</li>
+    <li>Best Painted: voted by the group.</li>
+  </ul>
+</section>
+
+</main>
+</body>
+</html>

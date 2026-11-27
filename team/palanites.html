@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blades of the Crown — Palanite Enforcers</title>
+<style>
+  :root {
+    --bg: #09070c;
+    --panel: #130f19;
+    --panel2: #1b1524;
+    --plum: #3b1742;
+    --plum-bright: #6b2478;
+    --gold: #d4af37;
+    --gold-dim: #8f7322;
+    --crimson: #c93b4b;
+    --emerald: #34a875;
+    --cyan: #3da5d9;
+    --amber: #e08e36;
+    --text: #f0ebf5;
+    --muted: #a598b3;
+    --border: rgba(212, 175, 55, 0.24);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: radial-gradient(circle at top right, #211229 0%, var(--bg) 55%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.45;
+    min-height: 100vh;
+  }
+  a { text-decoration: none; color: inherit; }
+
+  /* Sticky Top Command Bar */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(9, 7, 12, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 18px;
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .crest {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1.5px solid var(--gold);
+    background: var(--plum);
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: var(--gold); font-size: 14px;
+  }
+  .crest img { width: 100%; height: 100%; object-fit: cover; }
+  .brand-title { font-size: 15px; font-weight: 800; letter-spacing: 0.6px; color: var(--gold); text-transform: uppercase; }
+  .brand-sub { font-size: 11px; color: var(--muted); }
+  .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    padding: 7px 12px; border-radius: 7px; font-size: 12px; font-weight: 700;
+    border: 1px solid var(--border); background: var(--panel2); color: var(--text);
+    cursor: pointer; transition: 0.15s;
+  }
+  .btn:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-active {
+    background: linear-gradient(135deg, var(--plum), #261430);
+    border-color: var(--gold); color: var(--gold);
+  }
+
+  /* Two-Column Split Deck Layout (Replicating index.html) */
+  .deck-shell {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 16px;
+    display: grid;
+    grid-template-columns: 310px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  @media (max-width: 860px) {
+    .deck-shell {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Left Sidebar: Teams Roster Selector */
+  .sidebar {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    position: sticky;
+    top: 68px;
+  }
+  @media (max-width: 860px) {
+    .sidebar { position: static; }
+  }
+  .sidebar-header {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--gold);
+    padding: 4px 6px 10px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .team-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .team-item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    width: 100%;
+    text-align: left;
+    background: var(--panel2);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 9px;
+    padding: 9px 11px;
+    cursor: pointer;
+    transition: 0.15s;
+    color: var(--text);
+  }
+  .team-item:hover {
+    border-color: var(--gold-dim);
+    background: #231b2e;
+  }
+  .team-item.selected {
+    background: linear-gradient(135deg, rgba(59, 23, 66, 0.9), rgba(27, 21, 36, 0.95));
+    border-color: var(--gold);
+    box-shadow: 0 0 14px rgba(212, 175, 55, 0.2);
+  }
+  .team-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    background: rgba(11, 9, 14, 0.85);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    flex-shrink: 0;
+  }
+  .team-item.selected .team-icon {
+    border-color: var(--gold);
+    background: rgba(212, 175, 55, 0.14);
+  }
+  .team-info { min-width: 0; flex: 1; }
+  .team-owner-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .team-owner {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--gold);
+  }
+  .team-badge {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: rgba(212, 175, 55, 0.16);
+    color: var(--gold);
+    border: 1px solid var(--gold-dim);
+  }
+  .team-name {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .team-sub {
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Centre Content Panel */
+  .centre-stage {
+    min-width: 0;
+  }
+  .stage-header {
+    background: linear-gradient(135deg, rgba(59, 23, 66, 0.78), rgba(19, 15, 25, 0.96));
+    border: 1px solid var(--gold);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+  .stage-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .stage-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .stage-big-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: rgba(11, 9, 14, 0.85);
+    border: 1.5px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  .stage-kicker {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--gold);
+  }
+  .stage-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+  }
+  .stage-meta {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .pill {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(11, 9, 14, 0.78);
+    border: 1px solid var(--border);
+    color: var(--gold);
+  }
+  .exploit-box {
+    background: rgba(52, 168, 117, 0.13);
+    border: 1px solid rgba(52, 168, 117, 0.38);
+    border-radius: 8px;
+    padding: 10px 13px;
+    font-size: 13px;
+    color: #d7f7e7;
+  }
+
+  /* Sub-tabs inside Centre Stage */
+  .sub-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .sub-btn {
+    padding: 8px 13px;
+    border-radius: 8px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.15s;
+  }
+  .sub-btn:hover { color: var(--text); border-color: var(--gold-dim); }
+  .sub-btn.active {
+    background: var(--plum);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* Cards & Hit-Lists */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 13px; margin-bottom: 14px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 13px; margin-bottom: 14px; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    padding: 14px 16px;
+  }
+  .card h2 { font-size: 15px; color: var(--gold); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .card h3 { font-size: 13.5px; color: #f3d678; margin: 8px 0 4px; }
+  .card p, .card li { font-size: 13px; color: #e0d8e8; margin-bottom: 6px; }
+  .card ul { padding-left: 18px; }
+  .callout {
+    background: rgba(59, 23, 66, 0.36);
+    border-left: 3px solid var(--gold);
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 12.5px;
+  }
+  .warn {
+    background: rgba(201, 59, 75, 0.14);
+    border-left: 3px solid var(--crimson);
+    padding: 8px 11px;
+    border-radius: 6px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #f7c6cc;
+  }
+
+  .target-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 11px;
+  }
+  .target-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .rank-badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    margin-right: 6px;
+  }
+  .r1 { background: rgba(201, 59, 75, 0.25); color: #ff8c99; border: 1px solid var(--crimson); }
+  .r2 { background: rgba(224, 142, 54, 0.22); color: #ffc078; border: 1px solid var(--amber); }
+  .r3 { background: rgba(212, 175, 55, 0.2); color: var(--gold); border: 1px solid var(--gold-dim); }
+  .r4 { background: rgba(61, 165, 217, 0.18); color: #8ad4f7; border: 1px solid var(--cyan); }
+  .r5 { background: rgba(52, 168, 117, 0.18); color: #87e6ba; border: 1px solid var(--emerald); }
+  .target-title { font-size: 15px; font-weight: 800; color: #fff; }
+  .target-gear { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .meta-strip { display: flex; flex-wrap: wrap; gap: 7px; }
+  .tag {
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 5px;
+    background: var(--panel2);
+    border: 1px solid var(--border);
+  }
+  .tag-posture { color: #ffd479; }
+  .tag-hunter { color: #82e8b8; }
+
+
+  .page-main { max-width: 980px; margin: 0 auto; padding: 16px; }
+  .camp-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+  .camp-card h2 { color: var(--gold); font-size: 18px; margin: 0 0 8px; }
+  .camp-card h3 { color: var(--gold); font-size: 16px; margin: 14px 0 6px; }
+  .camp-card h4 { color: var(--text); font-size: 14px; margin: 12px 0 4px; }
+  .camp-card p, .camp-card li { color: var(--text); font-size: 14px; line-height: 1.55; margin-bottom: 6px; }
+  .camp-card ul { padding-left: 18px; }
+  .camp-card table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0; }
+  .camp-card th, .camp-card td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+  .camp-card th { color: var(--gold); font-weight: 700; }
+  .camp-card .muted { color: var(--muted); font-size: 13px; }
+  .camp-card .chapter { color: var(--gold); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+</style>
+
+<style>
+  .ref h2 { color: var(--gold); font-size: 18px; border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-top: 26px; }
+  .ref h3 { color: var(--text); font-size: 15px; margin: 16px 0 6px; }
+  .ref p, .ref li { color: var(--text); font-size: 14px; line-height: 1.55; }
+  .ref .muted { color: var(--muted); font-size: 13px; }
+  .ref .flag { color: #e0a060; }
+  .ref .scroll { overflow-x: auto; }
+  .ref table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0 14px; }
+  .ref th, .ref td { text-align: left; padding: 6px 7px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+  .ref th { color: var(--gold); }
+  .ref td.num, .ref th.num { text-align: center; }
+  .ref .note { background: var(--panel2); border-left: 3px solid var(--gold); padding: 8px 12px; margin: 10px 0; font-size: 14px; }
+</style>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="crest" data-img="gangcrest">👑</div>
+    <div>
+      <div class="brand-title">Gang Reference</div>
+      <div class="brand-sub">Gangs of the Underhive and Outlands</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a class="btn" href="index.html">⚔️ Game Card</a>
+    <a class="btn" href="campaigns.html">🗺️ Campaigns</a>
+    <a class="btn" href="n23.html">📘 N23 Rules</a>
+    <a class="btn" href="reference.html">📚 Reference</a>
+  </div>
+</div>
+
+<main class="page-main ref">
+<p style="margin:0 0 12px"><a class="btn" href="reference.html">← Back to gang list</a></p>
+<section class="camp-card">
+  <h1 style="color:var(--gold);font-size:24px;margin:0 0 4px">Palanite Enforcers</h1>
+  <p class="muted">Gangs of the Underhive, Palanite Enforcer patrol list. Stat lines are copied from the book. Rule text is summarised in my own words.</p>
+
+  <h2>Gang special rules</h2>
+  <ul>
+    <li><strong>Well Drilled:</strong> all active Palanite Enforcers can perform the Group Activation action as a Free action.</li>
+    <li><strong>Starting skills:</strong> when added to a roster, Leaders and Champions can pick one skill from one of their Primary skill sets.</li>
+  </ul>
+
+  <h2>Fighters</h2>
+  <div class="scroll"><table>
+    <tr><th>Fighter</th><th>Type</th><th class="num">Cr</th><th class="num">M</th><th class="num">WS</th><th class="num">BS</th><th class="num">S</th><th class="num">T</th><th class="num">W</th><th class="num">I</th><th class="num">A</th><th class="num">Sv</th><th class="num">Ld</th><th class="num">Cl</th><th class="num">Wil</th><th class="num">Int</th><th class="num">XP</th></tr>
+    <tr><td>Enforcer Captain</td><td>Leader</td><td class="num">130</td><td class="num">5″</td><td class="num">3+</td><td class="num">3+</td><td class="num">3</td><td class="num">3</td><td class="num">3</td><td class="num">4</td><td class="num">3</td><td class="num">5+</td><td class="num">9</td><td class="num">7</td><td class="num">8</td><td class="num">7</td><td class="num">61</td></tr>
+    <tr><td>Enforcer Sergeant</td><td>Champion</td><td class="num">90</td><td class="num">5″</td><td class="num">4+</td><td class="num">3+</td><td class="num">3</td><td class="num">3</td><td class="num">2</td><td class="num">4</td><td class="num">2</td><td class="num">5+</td><td class="num">8</td><td class="num">7</td><td class="num">7</td><td class="num">6</td><td class="num">37</td></tr>
+    <tr><td>Subjugator Sergeant</td><td>Champion</td><td class="num">95</td><td class="num">5″</td><td class="num">3+</td><td class="num">4+</td><td class="num">3</td><td class="num">3</td><td class="num">2</td><td class="num">3</td><td class="num">2</td><td class="num">4+</td><td class="num">7</td><td class="num">8</td><td class="num">7</td><td class="num">6</td><td class="num">37</td></tr>
+    <tr><td>Patrol Officer</td><td>Ganger, Specialist</td><td class="num">40</td><td class="num">5″</td><td class="num">4+</td><td class="num">4+</td><td class="num">3</td><td class="num">3</td><td class="num">1</td><td class="num">4</td><td class="num">1</td><td class="num">6+</td><td class="num">6</td><td class="num">6</td><td class="num">6</td><td class="num">6</td><td class="num">13</td></tr>
+    <tr><td>Subjugator Patrol Officer</td><td>Ganger, Specialist</td><td class="num">60</td><td class="num">5″</td><td class="num">4+</td><td class="num">4+</td><td class="num">3</td><td class="num">3</td><td class="num">1</td><td class="num">4</td><td class="num">2</td><td class="num">5+</td><td class="num">6</td><td class="num">6</td><td class="num">6</td><td class="num">6</td><td class="num">13</td></tr>
+    <tr><td>Rookie</td><td>Prospect</td><td class="num">20</td><td class="num">6″</td><td class="num">5+</td><td class="num">5+</td><td class="num">3</td><td class="num">3</td><td class="num">1</td><td class="num">4</td><td class="num">1</td><td class="num">6+</td><td class="num">5</td><td class="num">5</td><td class="num">5</td><td class="num">5</td><td class="num">1</td></tr>
+    <tr><td>Haunt</td><td>Prospect, Wyrd</td><td class="num">50</td><td class="num">6″</td><td class="num">5+</td><td class="num">5+</td><td class="num">3</td><td class="num">3</td><td class="num">1</td><td class="num">3</td><td class="num">1</td><td class="num">6+</td><td class="num">5</td><td class="num">7</td><td class="num">7</td><td class="num">5</td><td class="num">4</td></tr>
+    <tr><td>Hardcase Cyber-Mastiff</td><td>Beast, Pet</td><td class="num">75</td><td class="num">5″</td><td class="num">3+</td><td class="num">6+</td><td class="num">3</td><td class="num">4</td><td class="num">1</td><td class="num">3</td><td class="num">2</td><td class="num">5+</td><td class="num">6</td><td class="num">6</td><td class="num">6</td><td class="num">4</td><td class="num">13</td></tr>
+    <tr><td>Sanctioner Pattern Automata</td><td>Brute</td><td class="num">235</td><td class="num">5″</td><td class="num">4+</td><td class="num">4+</td><td class="num">4</td><td class="num">5</td><td class="num">3</td><td class="num">3</td><td class="num">2</td><td class="num">4+</td><td class="num">7</td><td class="num">7</td><td class="num">7</td><td class="num">7</td><td class="num">25</td></tr>
+    <tr><td>Tauros Venator</td><td>Vehicle (Wheeled)</td><td class="num">250</td><td class="num">7″</td><td class="num">5+</td><td class="num">4+</td><td class="num">4</td><td class="num">5</td><td class="num">3</td><td class="num">4</td><td class="num">2</td><td class="num">4+</td><td class="num">6</td><td class="num">7</td><td class="num">7</td><td class="num">6</td><td class="num">13</td></tr>
+    
+  </table></div>
+
+  <h2>Fighter rules</h2>
+  <h3>Enforcer Captain, Sergeant, Patrol Officer, Rookie</h3>
+  <p>Equipment is taken from the Palanite Enforcer list. Sergeants, Patrol Officers and Rookies can't buy Subjugator items.</p>
+  <h3>Subjugator Sergeant and Subjugator Patrol Officer</h3>
+  <p>Equipment is taken from the Palanite Enforcer list. The Subjugator Patrol Officer must pick one specialism: Gunner, Brawler or Medic.</p>
+  <h3>Haunt</h3>
+  <p><strong>Sanctioned Wyrd:</strong> when added to a roster, a Haunt picks one of two types. A <em>Psyrender</em> knows one Psyrender Wyrd Power of the player's choice and can gain more as Primary skills. A <em>Bonecrusher</em> knows one Bonecrusher Wyrd Power of the player's choice and can gain more as Primary skills. The Haunt can't buy Subjugator items.</p>
+  <h3>Hardcase Cyber-Mastiff</h3>
+  <p>Leash range 3″. <strong>Tenacious:</strong> if it goes Out of Action before it has activated this round, it stays on the battlefield to act as an Active model, then leaves once its activation ends. <strong>Loyal Protector:</strong> enemy fighters can't perform a Coup de Grâce against its owner while the owner is within its leash range. Armed with a shock bite. It can't buy other weapons or wargear.</p>
+  <h3>Enforcer 'Sanctioner' Pattern Automata</h3>
+  <p><strong>Automated Repair Systems:</strong> when it tries to recover from Seriously Injured, it doesn't roll on the Injury dice and recovers automatically. <strong>Mobile Bulwark:</strong> a friendly fighter in cover from being obscured by it gets +1 to its Save. Armed with a pacifier assault claw, heavy shock baton and a grenade launcher array with smoke grenades. Those two weapons can be swapped for a concussion cannon (+25 Cr), a Sanction pattern man-catcher (+10 Cr) or an SLHG assault ram with auxiliary grenade launcher (+80 Cr). The array can also take choke gas (+50 Cr) or stun grenades (+15 Cr).</p>
+  <h3>Enforcer Tauros Venator</h3>
+  <p>Armed with a Tauros concussion cannon and a Tauros hull. It can swap the cannon for a Tauros heavy stubber (+20 Cr). It can't buy other weapons or wargear.</p>
+
+  <h2>Skill access</h2>
+  <p class="muted">Primary and Secondary skill sets each fighter can use.</p>
+  <div class="scroll"><table>
+    <tr><th>Fighter</th><th>Agility</th><th>Brawn</th><th>Combat</th><th>Cunning</th><th>Savant</th><th>Shooting</th></tr>
+    <tr><td>Captain</td><td>-</td><td>Secondary</td><td>Secondary</td><td>-</td><td>Primary</td><td>Primary</td></tr>
+    <tr><td>Sergeant</td><td>-</td><td>-</td><td>Secondary</td><td>-</td><td>Primary</td><td>Primary</td></tr>
+    <tr><td>Subjugator Sergeant</td><td>-</td><td>Primary</td><td>Primary</td><td>-</td><td>-</td><td>Secondary</td></tr>
+    <tr><td>Patrol Officer</td><td>-</td><td>Secondary</td><td>Secondary</td><td>-</td><td>-</td><td>Primary</td></tr>
+    <tr><td>Subjugator Patrol Officer</td><td>-</td><td>Primary</td><td>Secondary</td><td>-</td><td>-</td><td>Secondary</td></tr>
+    <tr><td>Rookie</td><td>-</td><td>-</td><td>Secondary</td><td>-</td><td>-</td><td>Secondary</td></tr>
+    <tr><td>Haunt</td><td>-</td><td>-</td><td>Secondary</td><td>-</td><td>-</td><td>Primary</td></tr>
+    <tr><td>Hardcase Cyber-Mastiff</td><td>Secondary</td><td>Primary</td><td>-</td><td>Secondary</td><td>Primary</td><td>-</td></tr>
+    <tr><td>Sanctioner Pattern Automata</td><td>-</td><td>Primary</td><td>Secondary</td><td>-</td><td>-</td><td>-</td></tr>
+    <tr><td>Tauros Venator</td><td>-</td><td>Secondary</td><td>-</td><td>-</td><td>-</td><td>Primary</td></tr>
+  </table></div>
+
+  <h2>Palanite Enforcer equipment list</h2>
+  <p class="muted">Prices in credits as printed.</p>
+  <div class="scroll"><table>
+    <tr><th>Category</th><th>Item</th><th class="num">Cr</th></tr>
+    <tr><td>Auto/stub</td><td>Autogun / Autopistol / Heavy stubber / Long rifle / Stub gun</td><td class="num">20 / 10 / 70 / 55 / 5</td></tr>
+    <tr><td>Bolt</td><td>Boltgun / Bolt pistol</td><td class="num">55 / 45</td></tr>
+    <tr><td>Combi-weapons</td><td>Bolter / grenade launcher with frag grenades</td><td class="num">60</td></tr>
+    <tr><td>Esoteric</td><td>Concussive carbine</td><td class="num">25</td></tr>
+    <tr><td>Flamers / Plasma</td><td>Flamer / Plasma pistol</td><td class="num">70 / 70</td></tr>
+    <tr><td>Shotguns</td><td>Shotgun with solid &amp; scatter ammo</td><td class="num">35</td></tr>
+    <tr><td>Subjugator ranged</td><td>Heavy concussion ram / Subjugator grenade launcher (frag &amp; stun) / choke gas (+55) / krak (+60) / smoke (+20) / Repulsion pattern chem-thrower</td><td class="num">45 / 45 / +55 / +60 / +20 / 80</td></tr>
+    <tr><td>Web</td><td>Web gun</td><td class="num">65</td></tr>
+    <tr><td>Power melee</td><td>Power knife / Power maul / Power sword</td><td class="num">30 / 45 / 40</td></tr>
+    <tr><td>Shields</td><td>Riot shield</td><td class="num">35</td></tr>
+    <tr><td>Shock</td><td>Shock baton / Shock stave</td><td class="num">20 / 25</td></tr>
+    <tr><td>Subjugator melee</td><td>SLHG 'Sledge Hammer' assault ram with auxiliary grenade launcher (choke &amp; frag) / Vigilance assault shield</td><td class="num">120 / 45</td></tr>
+    <tr><td>Grenades</td><td>Choke gas / Frag / Smoke</td><td class="num">45 / 30 / 15</td></tr>
+    <tr><td>Armour</td><td>Mesh armour / Refractor field</td><td class="num">40 / 50</td></tr>
+    <tr><td>Personal</td><td>Bio-booster / Drop rig / Medicae kit / Photo-lumens / Photo-goggles / Respirator / Stimm-slug stash / Magnacles</td><td class="num">25 / 10 / 20 / 15 / 35 / 15 / 25 / 20</td></tr>
+    <tr><td>Accessories</td><td>Infrasight / Las-projector / Mono-sight</td><td class="num">10 / 20 / 20</td></tr>
+    <tr><td>Mounts</td><td>Dirt bike</td><td class="num">35</td></tr>
+    <tr><td>Pets</td><td>Hardcase Cyber-Mastiff</td><td class="num">75</td></tr>
+  </table></div>
+
+  <h2>Weapon profiles</h2>
+  <div class="scroll"><table>
+    <tr><th>Weapon</th><th class="num">SR</th><th class="num">LR</th><th class="num">Str</th><th class="num">AP</th><th class="num">L</th><th>Traits</th></tr>
+    <tr><td>Tauros heavy stubber</td><td class="num">20″</td><td class="num">40″</td><td class="num">4</td><td class="num">-1</td><td class="num">1</td><td>Rapid Fire (2), Twin-linked</td></tr>
+    <tr><td>Concussion cannon</td><td class="num">9″</td><td class="num">18″</td><td class="num">4</td><td class="num">-1</td><td class="num">1</td><td>Blast (3″), Concussive (5+), Knockback (5+)</td></tr>
+    <tr><td>Concussive carbine</td><td class="num">9″</td><td class="num">18″</td><td class="num">3</td><td class="num">-</td><td class="num">1</td><td>Concussive (5+), Knockback (6+), Rapid Fire (1)</td></tr>
+    <tr><td>Tauros concussion cannon</td><td class="num">9″</td><td class="num">18″</td><td class="num">4</td><td class="num">-1</td><td class="num">1</td><td>Blast (3″), Concussive (5+), Knockback (5+), Rapid Fire (1)</td></tr>
+    <tr><td>Heavy concussion ram</td><td class="num">15″</td><td class="num">30″</td><td class="num">4</td><td class="num">-1</td><td class="num">1</td><td>Concussive (5+), Knockback (5+)</td></tr>
+    <tr><td>Pacifier assault claw</td><td class="num">E</td><td class="num">-</td><td class="num">S</td><td class="num">-2</td><td class="num">2</td><td>Breaching (5+), Melee</td></tr>
+    <tr><td>Shock bite</td><td class="num">E</td><td class="num">-</td><td class="num">S</td><td class="num">-1</td><td class="num">1</td><td>Melee, Shock (5+)</td></tr>
+    <tr><td>Heavy shock baton</td><td class="num">E</td><td class="num">-</td><td class="num">S+1</td><td class="num">-</td><td class="num">1</td><td>Melee, Parry, Shock (5+)</td></tr>
+    <tr><td>SLHG assault ram 'Sledge Hammer'</td><td class="num">E</td><td class="num">-</td><td class="num">S+2</td><td class="num">-1</td><td class="num">2</td><td>Concussive (5+), Knockback (5+), Melee</td></tr>
+    <tr><td>Tauros hull</td><td class="num">E</td><td class="num">-</td><td class="num">S</td><td class="num">-</td><td class="num">1</td><td>Melee, Ram</td></tr>
+    <tr><td>Subjugator grenade launcher (frag)</td><td class="num">6″</td><td class="num">24″</td><td class="num">3</td><td class="num">-</td><td class="num">1</td><td>Ammo (4+), Blast (3″), Knockback (5+)</td></tr>
+    <tr><td>Subjugator grenade launcher (stun)</td><td class="num">6″</td><td class="num">24″</td><td class="num">3</td><td class="num">-</td><td class="num">1</td><td>Ammo (4+), Blast (3″), Concussive (5+)</td></tr>
+    <tr><td>Subjugator grenade launcher (krak)</td><td class="num">6″</td><td class="num">24″</td><td class="num">6</td><td class="num">-2</td><td class="num">1</td><td>Ammo (4+), Demolitions</td></tr>
+    <tr><td>Subjugator grenade launcher (choke gas)</td><td class="num">6″</td><td class="num">24″</td><td class="num">-</td><td class="num">-</td><td class="num">1</td><td>Ammo (5+), Blast (3″), Gas</td></tr>
+    <tr><td>Repulsion pattern chem-thrower</td><td class="num">T</td><td class="num">-</td><td class="num">-</td><td class="num">-</td><td class="num">1</td><td>Ammo (6+), Gas, Knockback (4+), Template</td></tr>
+    <tr><td>Sanction pattern man-catcher</td><td class="num">E</td><td class="num">-</td><td class="num">S+1</td><td class="num">-1</td><td class="num">1</td><td>Entangle, Melee, Shock (5+), Versatile (2″)</td></tr>
+    <tr><td>Shock baton</td><td class="num">E</td><td class="num">-</td><td class="num">S</td><td class="num">-</td><td class="num">1</td><td>Melee, Parry, Shock (5+)</td></tr>
+    <tr><td>Shock stave</td><td class="num">E</td><td class="num">-</td><td class="num">S+1</td><td class="num">-</td><td class="num">1</td><td>Melee, Parry, Shock (5+), Versatile (2″)</td></tr>
+    <tr><td>Riot shield / Vigilance assault shield</td><td class="num">E</td><td class="num">-</td><td class="num">S</td><td class="num">-</td><td class="num">1</td><td>Knockback (6+), Melee, Shield<br><span class="muted">Grants +2 Armour Save against frontal melee and ranged attacks, +1 from the side.</span></td></tr>
+    <tr><td>Magnacles (wargear)</td><td class="num">-</td><td class="num">-</td><td class="num">-</td><td class="num">-</td><td class="num">-</td><td>While engaged with a Broken or Seriously Injured enemy, a Basic action shackles them. They can't move or stand until freed.</td></tr>
+    
+  </table></div>
+  
+</section>
+</main>
+</body>
+</html>

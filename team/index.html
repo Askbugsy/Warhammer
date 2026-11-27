@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Blades of the Crown — Game Card</title>
+<style>
+
+  :root {
+    --bg: #0a080d;
+    --panel: #130f1a;
+    --panel-2: #1a1424;
+    --panel-3: #221a30;
+    --border: #2e243d;
+    --gold: #e2b857;
+    --gold-dim: #9e7e34;
+    --plum: #9d4edd;
+    --crimson: #e63946;
+    --emerald: #2ec4b6;
+    --amber: #f4a261;
+    --slate: #6c757d;
+    --text: #f3effa;
+    --muted: #a69bb8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    background: radial-gradient(circle at top right, #1b1128 0%, var(--bg) 55%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+    padding-bottom: 32px;
+  }
+
+  /* Top Command Bar */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(12, 9, 17, 0.94);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 14px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+  }
+  .brand-crest {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid var(--gold);
+    background: linear-gradient(135deg, #2b183d, #120c1a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .brand-crest img { width: 100%; height: 100%; object-fit: cover; }
+  .brand-title h1 {
+    font-size: 16px;
+    letter-spacing: 0.6px;
+    color: var(--gold);
+    text-transform: uppercase;
+    font-weight: 800;
+  }
+  .brand-title p {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* Round Counter & Controls */
+  .controls-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .round-box {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #241934, #161021);
+    border: 1px solid var(--gold-dim);
+    border-radius: 10px;
+    padding: 5px 10px;
+  }
+  .round-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--gold);
+    letter-spacing: 0.4px;
+    min-width: 78px;
+    text-align: center;
+  }
+  .btn {
+    background: var(--panel-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.15s ease;
+  }
+  .btn:hover, .btn:active { border-color: var(--gold); background: var(--panel-3); }
+  .btn-gold {
+    background: linear-gradient(135deg, #d4a63f, #9c7421);
+    color: #0b080f;
+    border-color: var(--gold);
+  }
+  .btn-gold:hover { filter: brightness(1.08); }
+  .btn-sm { padding: 4px 8px; font-size: 11px; border-radius: 6px; }
+
+  /* Gang Summary Strip */
+  .gang-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
+    gap: 8px;
+    padding: 10px 14px 4px;
+    max-width: 1380px;
+    margin: 0 auto;
+  }
+  .metric-pill {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 7px 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  .metric-pill span { font-size: 10px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.5px; }
+  .metric-pill strong { font-size: 14px; color: var(--gold); margin-top: 2px; }
+
+  /* Main Split Deck */
+  .deck-layout {
+    display: grid;
+    grid-template-columns: 310px 1fr;
+    gap: 14px;
+    padding: 10px 14px;
+    max-width: 1380px;
+    margin: 0 auto;
+    align-items: start;
+  }
+  @media (max-width: 860px) {
+    .deck-layout { grid-template-columns: 1fr; }
+  }
+
+  /* Left Sidebar */
+  .sidebar {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 10px;
+    position: sticky;
+    top: 66px;
+  }
+  @media (max-width: 860px) {
+    .sidebar { position: static; }
+  }
+  .filter-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .filter-btn {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 8px;
+    padding: 6px 4px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+  }
+  .filter-btn.active {
+    background: linear-gradient(135deg, #2d1b46, #1b112b);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+  .roster-list {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 190px);
+    overflow-y: auto;
+    padding-right: 2px;
+  }
+  @media (max-width: 860px) {
+    .roster-list { max-height: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  }
+  .nav-card {
+    display: flex;
+    align-items: center;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 7px 9px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    position: relative;
+  }
+  .nav-card:hover { border-color: var(--gold-dim); }
+  .nav-card.selected {
+    border-color: var(--gold);
+    background: linear-gradient(135deg, #28193d, #181124);
+    box-shadow: 0 0 0 1px rgba(226, 184, 87, 0.35);
+  }
+  .nav-card.is-unavailable { opacity: 0.48; filter: grayscale(0.65); }
+  .nav-card.is-done { opacity: 0.72; }
+  .nav-thumb {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    border: 1px solid var(--gold-dim);
+    background: #1c1429;
+    overflow: hidden;
+    flex-shrink: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    color: var(--gold);
+    font-size: 13px;
+  }
+  .nav-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
+  .nav-info { flex: 1; min-width: 0; }
+  .nav-name-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-name {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .nav-xp {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--gold);
+    background: rgba(226, 184, 87, 0.14);
+    border: 1px solid rgba(226, 184, 87, 0.35);
+    padding: 1px 5px;
+    border-radius: 5px;
+    flex-shrink: 0;
+  }
+  .nav-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .status-dot {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 1px 6px;
+    border-radius: 5px;
+    text-transform: uppercase;
+  }
+  .st-ready { background: rgba(46, 196, 182, 0.16); color: var(--emerald); border: 1px solid rgba(46, 196, 182, 0.4); }
+  .st-done { background: rgba(108, 117, 125, 0.22); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.4); }
+  .st-pinned { background: rgba(244, 162, 97, 0.18); color: var(--amber); border: 1px solid rgba(244, 162, 97, 0.45); }
+  .st-injured { background: rgba(230, 57, 70, 0.2); color: #ff758f; border: 1px solid rgba(230, 57, 70, 0.45); }
+  .st-unavailable { background: rgba(120, 113, 108, 0.25); color: #a8a29e; border: 1px solid #57534e; }
+
+  /* Center Fighter Sheet */
+  .fighter-stage {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 14px 34px rgba(0,0,0,0.45);
+  }
+  .hero-header {
+    position: relative;
+    padding: 18px;
+    background: linear-gradient(135deg, #251538 0%, #140e1f 65%, #1d1429 100%);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .portrait-frame {
+    width: 118px;
+    height: 118px;
+    border-radius: 14px;
+    border: 2px solid var(--gold);
+    background: linear-gradient(180deg, #261838, #0f0b16);
+    overflow: hidden;
+    position: relative;
+    cursor: zoom-in;
+    flex-shrink: 0;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.55);
+  }
+  .portrait-frame::after {
+    content: "🔍 Full Art";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(10,8,13,0.92), transparent);
+    color: var(--gold);
+    font-size: 10px;
+    font-weight: 800;
+    text-align: center;
+    padding: 10px 4px 4px;
+  }
+  .portrait-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
+  .portrait-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--gold);
+  }
+  .hero-meta { flex: 1; min-width: 230px; }
+  /* Small screens: photo sits to the right so the name and text have room */
+  @media (max-width: 600px) {
+    .hero-header { flex-wrap: nowrap; padding: 14px; }
+    .hero-meta { order: 1; min-width: 0; }
+    .portrait-frame { order: 2; width: 96px; height: 96px; }
+    .hero-name { font-size: 20px; }
+  }
+  .badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  .squad-badge {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .sq-crown { background: rgba(226, 184, 87, 0.16); color: var(--gold); border: 1px solid var(--gold-dim); }
+  .sq-venom { background: rgba(157, 78, 221, 0.18); color: #d8b4fe; border: 1px solid #7e22ce; }
+  .rating-badge {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+  .hero-name {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--text);
+    letter-spacing: 0.3px;
+  }
+  .hero-role {
+    font-size: 13px;
+    color: var(--gold);
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .hero-quote {
+    margin-top: 8px;
+    font-size: 12px;
+    font-style: italic;
+    color: var(--muted);
+    border-left: 2px solid var(--gold-dim);
+    padding-left: 9px;
+  }
+
+  /* Interactive Status & XP Bar */
+  .action-strip {
+    padding: 12px 18px;
+    background: var(--panel-2);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .status-buttons {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .st-btn {
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .st-btn.active[data-st="ready"] { background: rgba(46, 196, 182, 0.2); border-color: var(--emerald); color: var(--emerald); }
+  .st-btn.active[data-st="done"] { background: rgba(148, 163, 184, 0.22); border-color: #cbd5e1; color: #f8fafc; }
+  .st-btn.active[data-st="pinned"] { background: rgba(244, 162, 97, 0.22); border-color: var(--amber); color: var(--amber); }
+  .st-btn.active[data-st="injured"] { background: rgba(230, 57, 70, 0.24); border-color: var(--crimson); color: #ff8fa3; }
+  .st-btn.active[data-st="unavailable"] { background: rgba(120, 113, 108, 0.3); border-color: #a8a29e; color: #e7e5e4; }
+
+  .xp-box {
+    display: flex;
+    align-items: center;
+    background: var(--panel);
+    border: 1px solid var(--gold-dim);
+    padding: 5px 10px;
+    border-radius: 9px;
+  }
+  .xp-display {
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--gold);
+    margin-right: 4px;
+  }
+  .xp-btn {
+    background: var(--panel-3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 7px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .xp-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* 12-Stat Necromunda Grid */
+  .sheet-body { padding: 16px 18px; display: flex; flex-direction: column; }
+  .section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--gold);
+    font-weight: 800;
+    margin-bottom: 7px;
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 4px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 6px;
+    text-align: center;
+  }
+  @media (max-width: 600px) {
+    .stats-grid { grid-template-columns: repeat(6, 1fr); gap: 6px; }
+  }
+  .stat-cell {
+    background: var(--panel);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 6px;
+    padding: 5px 2px;
+  }
+  .stat-cell span { display: block; font-size: 10px; color: var(--muted); font-weight: 700; }
+  .stat-cell strong { display: block; font-size: 14px; color: var(--text); font-weight: 900; margin-top: 2px; }
+  .stat-cell.mental strong { color: #d8b4fe; }
+
+  /* Weapons Table */
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--panel-2);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    min-width: 540px;
+  }
+  th {
+    background: #1f172b;
+    color: var(--gold);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 8px 8px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  th:first-child, td:first-child { text-align: left; padding-left: 12px; }
+  td {
+    padding: 9px 8px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    color: var(--text);
+  }
+  tr:last-child td { border-bottom: none; }
+  .w-name { font-weight: 800; color: #fff; }
+  .trait-pill {
+    display: inline-block;
+    background: rgba(157, 78, 221, 0.16);
+    border: 1px solid rgba(157, 78, 221, 0.4);
+    color: #e9d5ff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 5px;
+    margin: 1px 2px;
+  }
+  .trait-toxin {
+    background: rgba(46, 196, 182, 0.16);
+    border-color: rgba(46, 196, 182, 0.45);
+    color: #99f6e4;
+  }
+
+  /* Info Cards Grid */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 10px;
+  }
+  .info-box {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 12px;
+  }
+  .info-box h4 {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--gold);
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .info-box p, .info-box li {
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--text);
+  }
+  .injury-alert {
+    background: rgba(230, 57, 70, 0.12);
+    border-color: rgba(230, 57, 70, 0.45);
+  }
+  .injury-alert h4 { color: #ff8fa3; }
+
+  /* Munda Manager tick boxes (per fighter) */
+  .tick-panel {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px 18px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+  }
+  .tick-group { display: flex; align-items: center; }
+  .tick-label {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .tick-boxes { display: inline-flex; }
+  .tick-box {
+    width: 16px;
+    height: 16px;
+    border: 1px solid var(--gold-dim);
+    border-radius: 3px;
+    background: var(--panel-2);
+    cursor: pointer;
+    padding: 0;
+  }
+  .tick-box.on { background: var(--gold); border-color: var(--gold); }
+
+  /* Touch devices (iPad/iPhone) only fire taps on elements with a pointer cursor.
+     Keep the zoom cursor on desktop, but use a pointer on touch screens. */
+  @media (hover: none) {
+    .portrait-frame { cursor: pointer; }
+    .lightbox { cursor: pointer; }
+  }
+
+  /* Full Portrait Lightbox */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(6, 4, 10, 0.92);
+    backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox-card {
+    background: var(--panel);
+    border: 2px solid var(--gold);
+    border-radius: 16px;
+    max-width: 460px;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+  }
+  .lightbox-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--panel-2);
+    border-bottom: 1px solid var(--border);
+  }
+  .lightbox-top strong { color: var(--gold); font-size: 14px; }
+  .lightbox-img-wrap {
+    width: 100%;
+    max-height: 72vh;
+    background: #09070c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .lightbox-img-wrap img {
+    width: 100%;
+    height: auto;
+    max-height: 72vh;
+    object-fit: contain;
+  }
+  /* Flex spacing via margins, for browsers that ignore flexbox gap (e.g. Safari on iOS 13) */
+  .topbar > * { margin: 5px; }
+  .brand > * { margin: 0 5px; }
+  .controls-group > * { margin: 4px; }
+  .round-box > * { margin: 0 3px; }
+  .roster-list > * { margin: 3.5px 0; }
+  .nav-card > * { margin: 0 5px; }
+  .nav-name-row > * { margin: 0 2px; }
+  .nav-sub > * { margin: 0 2px; }
+  .hero-header > * { margin: 8px; }
+  .badge-row > * { margin: 3px; }
+  .action-strip > * { margin: 5px; }
+  .status-buttons > * { margin: 3px; }
+  .xp-box > * { margin: 0 3px; }
+  .sheet-body > * { margin: 8px 0; }
+  .tick-panel > * { margin: 5px 9px; }
+  .tick-group > * { margin: 0 3px; }
+  .tick-boxes > * { margin: 0 2px; }
+
+
+  /* Demo-only additions: import panel and header controls */
+  .import-panel {
+    max-width: 640px;
+    margin: 40px auto;
+    padding: 22px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+  }
+  .import-panel h2 { color: var(--gold); font-size: 18px; margin-bottom: 8px; }
+  .import-panel p { color: var(--muted); font-size: 13px; line-height: 1.5; margin-bottom: 12px; }
+  .import-panel input[type=file] { color: var(--text); margin: 10px 0; }
+  .import-status { font-size: 13px; color: var(--muted); min-height: 20px; }
+  .import-status.error { color: #ff8fa3; }
+  .hidden { display: none !important; }
+  .filter-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
+  .filter-btn { background: var(--panel-2); border: 1px solid var(--border); color: var(--muted); border-radius: 8px; padding: 6px 4px; font-size: 11px; font-weight: 700; cursor: pointer; text-align: center; }
+  .filter-btn.active { background: linear-gradient(135deg, #2d1b46, #1b112b); border-color: var(--gold); color: var(--gold); }
+  .pick-bar { display: flex; align-items: center; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+  .pick-bar > * { margin: 4px 6px 4px 0; }
+  .pick-bar input { width: 64px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: 4px 6px; font-size: 12px; }
+  .pick-bar .filter-btn { padding: 4px 10px; }
+  .pick-btn { flex: 0 0 auto; margin: 0 0 0 auto; width: 24px; height: 24px; line-height: 1; font-size: 15px; padding: 0; border-radius: 50%; border: 1px solid var(--border); background: var(--panel-2); color: var(--muted); font-weight: 800; cursor: pointer; }
+  .pick-btn.on { background: var(--gold); border-color: var(--gold); color: #1b112b; }
+  .tag-pill {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+</style>
+</head>
+<body>
+<nav class="team-nav" style="display:flex;gap:8px;flex-wrap:wrap;padding:12px">
+  <a class="btn btn-active" href="index.html">⚔️ Game Card</a>
+  <a class="btn" href="campaigns.html">🗺️ Campaigns</a>
+  <a class="btn" href="n23.html">📘 N23 Rules</a>
+  <a class="btn" href="reference.html">📚 Reference</a>
+</nav>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-crest">👑</div>
+    <div class="brand-title">
+      <h1 id="gangTitle">Gang Tracker</h1>
+      <p id="gangSub">Load a Munda Manager PDF to start</p>
+    </div>
+  </div>
+  <div class="controls-group" id="controls" class="hidden">
+    <div class="round-box">
+      <button class="btn btn-sm" onclick="changeRound(-1)" aria-label="Previous round">◀</button>
+      <span class="round-label" id="roundDisplay" aria-live="polite">Round 1</span>
+      <button class="btn btn-sm btn-gold" onclick="nextRound()" aria-label="Next round">Next ▶</button>
+      <button class="btn btn-sm" onclick="resetRound()" aria-label="Reset to round 1">↺</button>
+    </div>
+    <button class="btn" onclick="newTurnReset()" aria-label="New turn">↺ New Turn</button>
+    <button class="btn" onclick="openImport()" aria-label="Load another PDF">📄 New PDF</button>
+  </div>
+</header>
+
+<section class="import-panel" id="importPanel">
+  <h2>Load your Munda Manager printout</h2>
+  <p>Choose the PDF exported from Munda Manager. It is read in your browser and saved only on this device. Nothing is uploaded.</p>
+  <input type="file" id="pdfInput" accept="application/pdf" />
+  <div class="import-status" id="importStatus"></div>
+</section>
+
+<section class="gang-strip hidden" id="gangMetrics"></section>
+
+<main class="deck-layout hidden" id="deck">
+  <aside class="sidebar">
+    <div class="filter-bar">
+      <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">All</button>
+      <button class="filter-btn" data-filter="picked" onclick="setFilter('picked')">⭐ Picked</button>
+    </div>
+    <div class="pick-bar">
+      <label>Max <input type="number" id="pickMax" min="0" max="30" value="0" onchange="setPickMax(this.value)" aria-label="Maximum fighters to pick"> fighters</label>
+      <label>or <input type="number" id="pickCr" min="0" step="25" value="0" onchange="setPickCr(this.value)" aria-label="Maximum Cr to pick"> Cr</label>
+    </div>
+    <div class="pick-bar">
+      <span id="pickCount">Picked 0</span>
+      <button class="filter-btn" onclick="clearPicks()" aria-label="Clear all picks">Clear</button>
+    </div>
+    <div class="roster-list" id="rosterList"></div>
+  </aside>
+  <section class="fighter-stage" id="fighterDetail"></section>
+</main>
+
+<script type="module">
+import * as pdfjsLib from "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs";
+pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs";
+window.pdfjsLib = pdfjsLib;
+</script>
+
+<script>
+const STORAGE_KEY = "munda_play_v1";
+const STAT_KEYS = ["M","WS","BS","S","T","W","I","A","Ld","Cl","Wil","Int"];
+const FOOTER_RE = /^(SI|OOA|R\s*\/\s*A|Ld\s*\/\s*Ch|Misc|Participation)\b/;
+
+let GANG = null;      // { title, house, credits, rating, wealth, reputation }
+let ROSTER = [];      // parsed fighters
+let state = { selectedId: null, round: 1, statuses: {}, ticks: {}, picks: {}, pickMax: 0, pickCr: 0 };
+
+/* ---------- PDF reading ---------- */
+
+async function readRows(buffer) {
+  const doc = await window.pdfjsLib.getDocument({ data: new Uint8Array(buffer) }).promise;
+  const items = [];
+  for (let p = 1; p <= doc.numPages; p++) {
+    const page = await doc.getPage(p);
+    const content = await page.getTextContent();
+    const pageOffset = (p - 1) * 5000;   // later pages sort after earlier ones
+    for (const it of content.items) {
+      const s = it.str.trim();
+      if (!s) continue;
+      items.push({ x: it.transform[4], y: Math.round(it.transform[5]) - pageOffset, s });
+    }
+  }
+  // Group into visual rows (same baseline), top to bottom, items left to right
+  const byY = new Map();
+  for (const it of items) {
+    if (!byY.has(it.y)) byY.set(it.y, []);
+    byY.get(it.y).push(it);
+  }
+  return [...byY.keys()].sort((a, b) => b - a).map(y => {
+    const row = byY.get(y).sort((a, b) => a.x - b.x);
+    const col = (lo, hi) => row.filter(i => i.x >= lo && i.x < hi).map(i => i.s).join(" ").replace(/\s+/g, " ").trim();
+    return { y, all: row.map(i => i.s).join(" "), c1: col(0, 300), c2: col(300, 575), c3: col(575, 9999), row };
+  });
+}
+
+/* The PDF text comes out with a space around every token ("( Leader )", "won ' t").
+   Put the spacing back the way it reads on the printed sheet. */
+function clean(s) {
+  return (s || "")
+    .replace(/\s+/g, " ")
+    .replace(/([(\[])\s+/g, "$1")
+    .replace(/\s+([)\]])/g, "$1")
+    .replace(/\s+([,.;:!?])/g, "$1")
+    .replace(/\s+\*/g, "*")
+    .replace(/(\w)\s+-\s+(\w)/g, "$1-$2")
+    .replace(/\s+'\s*(\w)/g, "'$1")
+    .replace(/\s+ʼ\s*/g, "ʼ")
+    .replace(/\s+…/g, "…")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function tidyName(s) {
+  return clean(s).replace(/(\d)\s+(st|nd|rd|th)\b/g, "$1$2");
+}
+
+function parseStatsLine(c1) {
+  const t = c1.split(" ");
+  if (t.length !== 12 || !/^\d+["”]$/.test(t[0])) return null;
+  const out = {};
+  STAT_KEYS.forEach((k, i) => out[k] = t[i]);
+  return out;
+}
+
+const isRange = t => /^(\d+["”]|E|-)$/.test(t);
+const isAcc = t => /^([+-]\d+|-)$/.test(t);
+
+function parseWeapon(text) {
+  const t = text.split(" ");
+  for (let k = 1; k + 3 < t.length; k++) {
+    if (isRange(t[k]) && isRange(t[k + 1]) && isAcc(t[k + 2]) && isAcc(t[k + 3]) && t.length >= k + 8) {
+      let i = k + 4;
+      let str = t[i];
+      if (str === "S" && /^\+\d/.test(t[i + 1] || "")) { str = "S" + t[i + 1]; i++; }
+      return {
+        name: clean(t.slice(0, k).join(" ")),
+        rngS: t[k], rngL: t[k + 1], accS: t[k + 2], accL: t[k + 3],
+        str: str, ap: t[i + 1], d: t[i + 2], am: t[i + 3],
+        traitsRaw: t.slice(i + 4).join(" ")
+      };
+    }
+  }
+  return null;
+}
+
+const splitList = s => clean(s).split(/\s*,\s*(?![^(]*\))/).map(x => x.trim()).filter(Boolean);
+
+function slug(s) { return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
+
+function initials(name) {
+  return name.split(/\s+/).filter(w => /^[A-Za-z]/.test(w)).slice(0, 2).map(w => w[0].toUpperCase()).join("");
+}
+
+async function parseMundaPdf(buffer) {
+  const rows = await readRows(buffer);
+
+  // Gang header: the row containing "Credits" and "Rating"
+  const hdr = rows.find(r => /Credits/.test(r.all) && /Wealth/.test(r.all));
+  if (!hdr) throw new Error("Could not find the gang header (Credits / Wealth) in this PDF.");
+  const num = re => { const m = hdr.all.match(re); return m ? parseInt(m[1], 10) : 0; };
+  const creditsRow = hdr.row;
+  const creditsItem = creditsRow.find(i => /Credits/.test(i.s));
+  const house = creditsRow.filter(i => i.x < creditsItem.x && !/^(—|-)$/.test(i.s)).map(i => i.s).join(" ");
+  const titleRow = rows.find(r => r.y > hdr.y - 30 && r.y < hdr.y && r.c1 && !/ID|Name/.test(r.all) && r.row.every(i => i.x < 300));
+  const title = titleRow ? tidyName(titleRow.c1) : "Gang";
+
+  const gang = {
+    title,
+    house: house.replace(/\s+/g, " ").trim(),
+    credits: num(/Credits\s*:\s*(\d+)/),
+    rating: num(/Rating\s*:\s*(\d+)/),
+    wealth: num(/Wealth\s*:\s*(\d+)/),
+    reputation: num(/Reputation\s*:\s*(\d+)/)
+  };
+
+  // Fighter starts: a left-column line like "1 Name Rating : 245"
+  const starts = [];
+  rows.forEach((r, idx) => {
+    const m = r.c1.match(/^(\d+) (.+?) Rating\s*:\s*(\d+)/);
+    if (m) starts.push({ idx, id: m[1], name: tidyName(m[2]), rating: parseInt(m[3], 10) });
+  });
+  if (!starts.length) throw new Error("No fighters found. Is this a Munda Manager gang printout?");
+
+  const fighters = starts.map((s, n) => {
+    const end = n + 1 < starts.length ? starts[n + 1].idx : rows.length;
+    const f = {
+      id: slug(s.name) + "-" + s.id,
+      name: s.name,
+      role: "",
+      rating: s.rating,
+      stats: {},
+      skills: [],
+      weapons: [],
+      wargear: "",
+      rules: "",
+      injuries: "",
+      note: "",
+      defaultXp: 0,
+      defaultStatus: "ready",
+      squad: "all"
+    };
+    let field = null;       // which right-hand field a continuation line belongs to
+    let lastWeapon = null;
+    for (let i = s.idx; i < end; i++) {
+      const r = rows[i];
+      // Left column: role, stats, skills
+      if (i > s.idx && /•/.test(r.c1) && !f.role) {
+        f.role = clean(r.c1.replace(/(\s+(W|FW))+\s*$/, ""));
+      }
+      if (i === s.idx) {
+        // Role can sit on the line after the name, on the same baseline or next row
+        const next = rows[i + 1];
+        if (next && /•/.test(next.c1) && !f.role) f.role = clean(next.c1.replace(/(\s+(W|FW))+\s*$/, ""));
+      }
+      const st = parseStatsLine(r.c1);
+      if (st && !Object.keys(f.stats).length) f.stats = st;
+      const sk = r.c1.match(/^Skills\s*:\s*(.*)$/);
+      if (sk) f.skills = splitList(sk[1]);
+
+      // Right column: wargear, rules, injuries, notes
+      const c3 = r.c3;
+      if (c3) {
+        const label = c3.match(/^(Wargear|Rules|Lasting Injuries|Note)\s*:\s*(.*)$/);
+        if (label) {
+          const key = { "Wargear": "wargear", "Rules": "rules", "Lasting Injuries": "injuries", "Note": "note" }[label[1]];
+          field = key;
+          f[key] = label[2];
+        } else if (FOOTER_RE.test(c3)) {
+          field = null;
+        } else if (field) {
+          f[field] = (f[field] + " " + c3).trim();
+        }
+      }
+
+      // Middle column: weapon rows (with wrapped continuation lines)
+      const c2 = r.c2;
+      if (c2 && !/^(Rng Acc|Weapon\b|Rng$)/.test(c2) && !/^Weapon S L S L Str AP D Am Traits$/.test(c2)) {
+        const w = parseWeapon(c2);
+        if (w) {
+          lastWeapon = w;
+          f.weapons.push(w);
+        } else if (lastWeapon) {
+          lastWeapon.traitsRaw = (lastWeapon.traitsRaw + " " + c2).trim();
+        }
+      }
+    }
+    // Tidy weapons and split traits
+    f.weapons = f.weapons.map(w => ({
+      name: w.name,
+      rngS: w.rngS, rngL: w.rngL, accS: w.accS, accL: w.accL,
+      str: w.str, ap: w.ap, d: w.d, am: w.am,
+      traits: splitList(w.traitsRaw)
+    }));
+    f.wargear = splitList(f.wargear);
+    f.rules = splitList(f.rules);
+    f.injuries = splitList(f.injuries);
+    f.quote = clean(f.note).replace(/^"|"$/g, "");
+    f.tactics = "";
+    return f;
+  });
+
+  return { gang, fighters };
+}
+
+/* ---------- Saved state ---------- */
+
+function saveAll() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ gang: GANG, roster: ROSTER, state }));
+  } catch (e) {}
+}
+
+function loadAll() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+    const saved = JSON.parse(raw);
+    if (!saved || !Array.isArray(saved.roster) || !saved.gang) return false;
+    GANG = saved.gang;
+    ROSTER = saved.roster;
+    state = Object.assign({ selectedId: null, round: 1, statuses: {}, ticks: {}, picks: {}, pickMax: 0, pickCr: 0 }, saved.state || {});
+    return true;
+  } catch (e) { return false; }
+}
+
+function ensureDefaults() {
+  ROSTER.forEach(f => {
+    if (!state.statuses[f.id]) state.statuses[f.id] = f.defaultStatus;
+    if (!state.ticks[f.id]) state.ticks[f.id] = {};
+  });
+  if (!ROSTER.some(f => f.id === state.selectedId)) state.selectedId = ROSTER[0] ? ROSTER[0].id : null;
+}
+
+/* ---------- Import ---------- */
+
+function openImport() {
+  document.getElementById("importPanel").classList.remove("hidden");
+  document.getElementById("importStatus").textContent = "";
+  document.getElementById("importStatus").classList.remove("error");
+  document.getElementById("pdfInput").value = "";
+}
+
+function showPlay() {
+  document.getElementById("importPanel").classList.add("hidden");
+  document.getElementById("controls").classList.remove("hidden");
+  document.getElementById("gangMetrics").classList.remove("hidden");
+  document.getElementById("deck").classList.remove("hidden");
+  document.getElementById("gangTitle").textContent = GANG.title;
+  document.getElementById("gangSub").textContent = GANG.house + " • Live Tabletop Deck";
+  ensureDefaults();
+  renderAll();
+}
+
+document.getElementById("pdfInput").addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  const status = document.getElementById("importStatus");
+  if (!file) return;
+  status.classList.remove("error");
+  status.textContent = "Reading " + file.name + "…";
+  try {
+    const buf = await file.arrayBuffer();
+    const parsed = await parseMundaPdf(buf);
+    GANG = parsed.gang;
+    ROSTER = parsed.fighters;
+    state = { selectedId: null, round: 1, statuses: {}, ticks: {}, picks: {}, pickMax: 0, pickCr: 0 };
+    ensureDefaults();
+    saveAll();
+    showPlay();
+  } catch (err) {
+    status.classList.add("error");
+    status.textContent = "Could not read this PDF: " + err.message;
+  }
+});
+
+/* ---------- Play screen (same behaviour as the Game Card) ---------- */
+
+function changeRound(d) { state.round = Math.max(1, state.round + d); saveAll(); renderAll(); }
+function nextRound() {
+  state.round += 1;
+  ROSTER.forEach(f => { if (state.statuses[f.id] === "done") state.statuses[f.id] = "ready"; });
+  saveAll(); renderAll();
+}
+function resetRound() { if (!confirm("Reset the round counter to Round 1?")) return; state.round = 1; saveAll(); renderAll(); }
+function newTurnReset() {
+  if (!confirm("Start a new turn? Activated fighters go back to Ready.")) return;
+  ROSTER.forEach(f => { if (state.statuses[f.id] === "done") state.statuses[f.id] = "ready"; });
+  saveAll(); renderAll();
+}
+function setStatus(id, st) { state.statuses[id] = st; saveAll(); renderAll(); }
+function selectFighter(id) { state.selectedId = id; saveAll(); renderAll(); }
+
+function statusMeta(st) {
+  switch (st) {
+    case "done": return { label: "Done", cls: "st-done" };
+    case "pinned": return { label: "Pinned", cls: "st-pinned" };
+    case "injured": return { label: "Injured", cls: "st-injured" };
+    case "unavailable": return { label: "Unavail.", cls: "st-unavailable" };
+    default: return { label: "Ready", cls: "st-ready" };
+  }
+}
+
+const TICK_GROUPS = [
+  { key: "W", label: "Wounds" },
+  { key: "FW", label: "Flesh wounds" },
+  { key: "SI", label: "Serious injury" },
+  { key: "OOA", label: "Out of action" }
+];
+
+/* Munda Manager rule: Wounds boxes = W - 1, Flesh Wounds boxes = T - 1.
+   Serious Injury (6) and Out of Action (7) as printed on the sheet. */
+function tickMax(f, key) {
+  const w = parseInt(f.stats.W, 10), t = parseInt(f.stats.T, 10);
+  if (key === "W") return Math.max(0, (isNaN(w) ? 0 : w) - 1);
+  if (key === "FW") return Math.max(0, (isNaN(t) ? 0 : t) - 1);
+  if (key === "SI") return 6;
+  if (key === "OOA") return 7;
+  return 0;
+}
+
+function setTick(id, key, i) {
+  const ft = state.ticks[id] || {};
+  const current = ft[key] || 0;
+  ft[key] = current === i + 1 ? i : i + 1;
+  state.ticks[id] = ft;
+  saveAll(); renderAll();
+}
+
+function tickPanelHtml(f) {
+  const t = state.ticks[f.id] || {};
+  const groups = TICK_GROUPS.map(g => {
+    const max = tickMax(f, g.key);
+    if (!max) return "";
+    const count = Math.min(t[g.key] || 0, max);
+    const boxes = Array.from({ length: max }, (_, i) =>
+      `<button class="tick-box ${i < count ? "on" : ""}" onclick="setTick('${f.id}','${g.key}',${i})" aria-label="${g.label} ${i + 1} of ${max}" aria-pressed="${i < count}"></button>`
+    ).join("");
+    return `<div class="tick-group"><span class="tick-label">${g.label} (${g.key})</span><span class="tick-boxes">${boxes}</span></div>`;
+  }).join("");
+  return `<div class="tick-panel">${groups}</div>`;
+}
+
+function renderMetrics() {
+  document.getElementById("roundDisplay").textContent = `Round ${state.round}`;
+  let active = 0, activeRating = 0;
+  ROSTER.forEach(f => {
+    if (state.statuses[f.id] !== "unavailable") { active++; activeRating += f.rating; }
+  });
+  document.getElementById("gangMetrics").innerHTML = `
+    <div class="metric-pill"><span>Active Squad</span><strong>${active} / ${ROSTER.length} Fighters</strong></div>
+    <div class="metric-pill"><span>Deployed Rating</span><strong>${activeRating.toLocaleString()} Cr</strong></div>
+    <div class="metric-pill"><span>Gang Wealth / Stash</span><strong>${GANG.wealth.toLocaleString()} / ${GANG.credits} Cr</strong></div>
+    <div class="metric-pill"><span>Reputation</span><strong>${GANG.reputation}</strong></div>
+    `;
+  document.querySelector('.filter-btn[data-filter="all"]').textContent = `All (${ROSTER.length})`;
+}
+
+function renderSidebar() {
+  document.querySelectorAll(".filter-btn[data-filter]").forEach(b => b.classList.toggle("active", b.dataset.filter === (state.filter || "all")));
+  const filtered = ROSTER.filter(f => {
+    if (!state.filter || state.filter === "all") return true;
+    if (state.filter === "picked") return !!state.picks[f.id];
+    return true;
+  });
+  const pickCountEl = document.getElementById("pickCount");
+  if (pickCountEl && !pickCountEl.dataset.flash) pickCountEl.textContent = pickSummary();
+  ["pickMax", "pickCr"].forEach(id => {
+    const el = document.getElementById(id);
+    const v = id === "pickMax" ? state.pickMax : state.pickCr;
+    if (el && document.activeElement !== el) el.value = v;
+  });
+  if (!filtered.length && state.filter === "picked") {
+    document.getElementById("rosterList").innerHTML = `<div class="nav-card"><div class="nav-info"><span class="nav-sub">No fighters picked yet. Tap + on a fighter.</span></div></div>`;
+    return;
+  }
+  document.getElementById("rosterList").innerHTML = filtered.map(f => {
+    const st = state.statuses[f.id] || "ready";
+    const meta = statusMeta(st);
+    const picked = !!state.picks[f.id];
+    return `
+      <div class="nav-card ${state.selectedId === f.id ? "selected" : ""} ${st === "unavailable" ? "is-unavailable" : ""} ${st === "done" ? "is-done" : ""}" onclick="selectFighter('${f.id}')">
+        <div class="nav-thumb">${initials(f.name)}</div>
+        <div class="nav-info">
+          <div class="nav-name-row">
+            <span class="nav-name">${f.name}</span>
+            <button class="pick-btn ${picked ? "on" : ""}" aria-pressed="${picked}" aria-label="${picked ? "Remove" : "Pick"} ${f.name}" onclick="event.stopPropagation(); togglePick('${f.id}')">+</button>
+          </div>
+          <div class="nav-sub">
+            <span>${(f.role.split("•")[0] || "").trim()} • ${f.rating}</span>
+            <span class="status-dot ${meta.cls}">${meta.label}</span>
+          </div>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+function pickedFighters() { return ROSTER.filter(f => state.picks[f.id]); }
+function pickedCount() { return pickedFighters().length; }
+function pickedRating() { return pickedFighters().reduce((sum, f) => sum + f.rating, 0); }
+
+function pickSummary() {
+  return `Picked ${pickedCount()}${state.pickMax ? " / " + state.pickMax : ""} • ${pickedRating()}${state.pickCr ? " / " + state.pickCr : ""} Cr`;
+}
+
+function flashPick(msg) {
+  const el = document.getElementById("pickCount");
+  el.dataset.flash = "1";
+  el.textContent = msg;
+  setTimeout(() => { delete el.dataset.flash; renderSidebar(); }, 1800);
+}
+
+function togglePick(id) {
+  if (state.picks[id]) {
+    delete state.picks[id];
+  } else {
+    const f = ROSTER.find(x => x.id === id);
+    if (state.pickMax > 0 && pickedCount() >= state.pickMax) {
+      flashPick(`Max of ${state.pickMax} fighters reached. Untick someone first.`);
+      return;
+    }
+    if (state.pickCr > 0 && pickedRating() + f.rating > state.pickCr) {
+      flashPick(`${f.name} (${f.rating} Cr) would go over ${state.pickCr} Cr.`);
+      return;
+    }
+    state.picks[id] = true;
+  }
+  saveAll();
+  renderSidebar();
+}
+
+function setPickMax(v) {
+  const n = parseInt(v, 10);
+  const next = isNaN(n) || n < 0 ? 0 : n;
+  if (next === state.pickMax) return;
+  state.pickMax = next; saveAll(); renderSidebar();
+}
+
+function setPickCr(v) {
+  const n = parseInt(v, 10);
+  const next = isNaN(n) || n < 0 ? 0 : n;
+  if (next === state.pickCr) return;
+  state.pickCr = next; saveAll(); renderSidebar();
+}
+
+function clearPicks() {
+  if (!confirm("Clear all picked fighters?")) return;
+  state.picks = {}; saveAll(); renderSidebar();
+}
+
+function setFilter(flt) {
+  state.filter = flt; saveAll(); renderSidebar();
+}
+
+function renderDetail() {
+  const f = ROSTER.find(x => x.id === state.selectedId) || ROSTER[0];
+  if (!f) { document.getElementById("fighterDetail").innerHTML = ""; return; }
+  const st = state.statuses[f.id] || "ready";
+  const statOrder = ["M","WS","BS","S","T","W","I","A","Ld","Cl","Wil","Int"];
+  const mental = new Set(["Ld","Cl","Wil","Int"]);
+
+  const weaponsHtml = f.weapons.map(w => `
+    <tr>
+      <td class="w-name">${w.name}</td>
+      <td>${w.rngS}</td><td>${w.rngL}</td><td>${w.accS}</td><td>${w.accL}</td>
+      <td><strong>${w.str}</strong></td><td>${w.ap}</td><td>${w.d}</td><td>${w.am}</td>
+      <td style="text-align:left;">${w.traits.map(t => `<span class="trait-pill ${t.toLowerCase().includes('toxin') ? 'trait-toxin' : ''}">${t}</span>`).join("")}</td>
+    </tr>`).join("");
+
+  document.getElementById("fighterDetail").innerHTML = `
+    <div class="hero-header">
+      <div class="portrait-frame" aria-hidden="true"><div class="portrait-fallback">${initials(f.name)}</div></div>
+      <div class="hero-meta">
+        <div class="badge-row">
+          <span class="rating-badge">Rating: ${f.rating} Cr</span>
+          ${f.skills.length ? `<span class="rating-badge" style="color:var(--gold);border-color:var(--gold-dim);">Skill: ${f.skills.join(", ")}</span>` : ""}
+        </div>
+        <div class="hero-name">${f.name}</div>
+        <div class="hero-role">${f.role}</div>
+        ${f.quote ? `<div class="hero-quote">"${f.quote}"</div>` : ""}
+      </div>
+    </div>
+
+    <div class="action-strip">
+      <div class="status-buttons">
+        <button class="st-btn ${st==='ready'?'active':''}" data-st="ready" onclick="setStatus('${f.id}','ready')">Ready</button>
+        <button class="st-btn ${st==='done'?'active':''}" data-st="done" onclick="setStatus('${f.id}','done')">Activated</button>
+        <button class="st-btn ${st==='pinned'?'active':''}" data-st="pinned" onclick="setStatus('${f.id}','pinned')">Pinned</button>
+        <button class="st-btn ${st==='injured'?'active':''}" data-st="injured" onclick="setStatus('${f.id}','injured')">Ser. Injured</button>
+        <button class="st-btn ${st==='unavailable'?'active':''}" data-st="unavailable" onclick="setStatus('${f.id}','unavailable')">Unavailable</button>
+      </div>
+    </div>
+
+    ${tickPanelHtml(f)}
+
+    <div class="sheet-body">
+      <div>
+        <div class="section-label">Fighter Characteristics</div>
+        <div class="stats-grid">
+          ${statOrder.map(k => `<div class="stat-cell ${mental.has(k) ? 'mental' : ''}"><span>${k}</span><strong>${f.stats[k] || "–"}</strong></div>`).join("")}
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label">Weapons & Attack Profiles</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Weapon</th><th>Rng S</th><th>Rng L</th><th>Acc S</th><th>Acc L</th>
+              <th>Str</th><th>AP</th><th>D</th><th>Am</th><th style="text-align:left;">Traits</th>
+            </tr></thead>
+            <tbody>${weaponsHtml || '<tr><td colspan="10">No weapons found</td></tr>'}</tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-box">
+          <h4>🛡️ Wargear & Special Rules</h4>
+          <p><strong>Wargear:</strong> ${f.wargear.length ? f.wargear.join(", ") : "None"}</p>
+          <p style="margin-top:5px;"><strong>Rules:</strong> ${f.rules.length ? f.rules.join(", ") : "None"}</p>
+        </div>
+        ${f.injuries.length ? `<div class="info-box injury-alert"><h4>🩹 Lasting Injuries</h4><p><strong>${f.injuries.join(", ")}</strong></p></div>` : ""}
+      </div>
+    </div>`;
+}
+
+function renderAll() {
+  renderMetrics();
+  renderSidebar();
+  renderDetail();
+}
+
+/* ---------- Start ---------- */
+if (loadAll()) {
+  showPlay();
+} else {
+  openImport();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blades of the Crown — N23 Rules</title>
+<style>
+  :root {
+    --bg: #09070c;
+    --panel: #130f19;
+    --panel2: #1b1524;
+    --plum: #3b1742;
+    --plum-bright: #6b2478;
+    --gold: #d4af37;
+    --gold-dim: #8f7322;
+    --crimson: #c93b4b;
+    --emerald: #34a875;
+    --cyan: #3da5d9;
+    --amber: #e08e36;
+    --text: #f0ebf5;
+    --muted: #a598b3;
+    --border: rgba(212, 175, 55, 0.24);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: radial-gradient(circle at top right, #211229 0%, var(--bg) 55%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.45;
+    min-height: 100vh;
+  }
+  a { text-decoration: none; color: inherit; }
+
+  /* Sticky Top Command Bar */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(9, 7, 12, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 18px;
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .crest {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1.5px solid var(--gold);
+    background: var(--plum);
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: var(--gold); font-size: 14px;
+  }
+  .crest img { width: 100%; height: 100%; object-fit: cover; }
+  .brand-title { font-size: 15px; font-weight: 800; letter-spacing: 0.6px; color: var(--gold); text-transform: uppercase; }
+  .brand-sub { font-size: 11px; color: var(--muted); }
+  .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    padding: 7px 12px; border-radius: 7px; font-size: 12px; font-weight: 700;
+    border: 1px solid var(--border); background: var(--panel2); color: var(--text);
+    cursor: pointer; transition: 0.15s;
+  }
+  .btn:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-active {
+    background: linear-gradient(135deg, var(--plum), #261430);
+    border-color: var(--gold); color: var(--gold);
+  }
+
+  /* Two-Column Split Deck Layout (Replicating index.html) */
+  .deck-shell {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 16px;
+    display: grid;
+    grid-template-columns: 310px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  @media (max-width: 860px) {
+    .deck-shell {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Left Sidebar: Teams Roster Selector */
+  .sidebar {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    position: sticky;
+    top: 68px;
+  }
+  @media (max-width: 860px) {
+    .sidebar { position: static; }
+  }
+  .sidebar-header {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--gold);
+    padding: 4px 6px 10px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .team-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .team-item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    width: 100%;
+    text-align: left;
+    background: var(--panel2);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 9px;
+    padding: 9px 11px;
+    cursor: pointer;
+    transition: 0.15s;
+    color: var(--text);
+  }
+  .team-item:hover {
+    border-color: var(--gold-dim);
+    background: #231b2e;
+  }
+  .team-item.selected {
+    background: linear-gradient(135deg, rgba(59, 23, 66, 0.9), rgba(27, 21, 36, 0.95));
+    border-color: var(--gold);
+    box-shadow: 0 0 14px rgba(212, 175, 55, 0.2);
+  }
+  .team-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    background: rgba(11, 9, 14, 0.85);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    flex-shrink: 0;
+  }
+  .team-item.selected .team-icon {
+    border-color: var(--gold);
+    background: rgba(212, 175, 55, 0.14);
+  }
+  .team-info { min-width: 0; flex: 1; }
+  .team-owner-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .team-owner {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--gold);
+  }
+  .team-badge {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: rgba(212, 175, 55, 0.16);
+    color: var(--gold);
+    border: 1px solid var(--gold-dim);
+  }
+  .team-name {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .team-sub {
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Centre Content Panel */
+  .centre-stage {
+    min-width: 0;
+  }
+  .stage-header {
+    background: linear-gradient(135deg, rgba(59, 23, 66, 0.78), rgba(19, 15, 25, 0.96));
+    border: 1px solid var(--gold);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+  .stage-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .stage-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .stage-big-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: rgba(11, 9, 14, 0.85);
+    border: 1.5px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  .stage-kicker {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--gold);
+  }
+  .stage-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+  }
+  .stage-meta {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .pill {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(11, 9, 14, 0.78);
+    border: 1px solid var(--border);
+    color: var(--gold);
+  }
+  .exploit-box {
+    background: rgba(52, 168, 117, 0.13);
+    border: 1px solid rgba(52, 168, 117, 0.38);
+    border-radius: 8px;
+    padding: 10px 13px;
+    font-size: 13px;
+    color: #d7f7e7;
+  }
+
+  /* Sub-tabs inside Centre Stage */
+  .sub-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .sub-btn {
+    padding: 8px 13px;
+    border-radius: 8px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.15s;
+  }
+  .sub-btn:hover { color: var(--text); border-color: var(--gold-dim); }
+  .sub-btn.active {
+    background: var(--plum);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* Cards & Hit-Lists */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 13px; margin-bottom: 14px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 13px; margin-bottom: 14px; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    padding: 14px 16px;
+  }
+  .card h2 { font-size: 15px; color: var(--gold); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .card h3 { font-size: 13.5px; color: #f3d678; margin: 8px 0 4px; }
+  .card p, .card li { font-size: 13px; color: #e0d8e8; margin-bottom: 6px; }
+  .card ul { padding-left: 18px; }
+  .callout {
+    background: rgba(59, 23, 66, 0.36);
+    border-left: 3px solid var(--gold);
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 12.5px;
+  }
+  .warn {
+    background: rgba(201, 59, 75, 0.14);
+    border-left: 3px solid var(--crimson);
+    padding: 8px 11px;
+    border-radius: 6px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #f7c6cc;
+  }
+
+  .target-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 11px;
+  }
+  .target-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .rank-badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    margin-right: 6px;
+  }
+  .r1 { background: rgba(201, 59, 75, 0.25); color: #ff8c99; border: 1px solid var(--crimson); }
+  .r2 { background: rgba(224, 142, 54, 0.22); color: #ffc078; border: 1px solid var(--amber); }
+  .r3 { background: rgba(212, 175, 55, 0.2); color: var(--gold); border: 1px solid var(--gold-dim); }
+  .r4 { background: rgba(61, 165, 217, 0.18); color: #8ad4f7; border: 1px solid var(--cyan); }
+  .r5 { background: rgba(52, 168, 117, 0.18); color: #87e6ba; border: 1px solid var(--emerald); }
+  .target-title { font-size: 15px; font-weight: 800; color: #fff; }
+  .target-gear { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .meta-strip { display: flex; flex-wrap: wrap; gap: 7px; }
+  .tag {
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 5px;
+    background: var(--panel2);
+    border: 1px solid var(--border);
+  }
+  .tag-posture { color: #ffd479; }
+  .tag-hunter { color: #82e8b8; }
+
+
+  .page-main { max-width: 980px; margin: 0 auto; padding: 16px; }
+  .camp-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+  .camp-card h2 { color: var(--gold); font-size: 18px; margin: 0 0 8px; }
+  .camp-card h3 { color: var(--gold); font-size: 16px; margin: 14px 0 6px; }
+  .camp-card h4 { color: var(--text); font-size: 14px; margin: 12px 0 4px; }
+  .camp-card p, .camp-card li { color: var(--text); font-size: 14px; line-height: 1.55; margin-bottom: 6px; }
+  .camp-card ul { padding-left: 18px; }
+  .camp-card table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0; }
+  .camp-card th, .camp-card td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+  .camp-card th { color: var(--gold); font-weight: 700; }
+  .camp-card .muted { color: var(--muted); font-size: 13px; }
+  .camp-card .chapter { color: var(--gold); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="crest" data-img="gangcrest">👑</div>
+    <div>
+      <div class="brand-title">N23 Rules</div>
+      <div class="brand-sub">N23 rulebook • campaign amendments</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a class="btn" href="index.html">⚔️ Game Card</a>
+    <a class="btn" href="campaigns.html">🗺️ Campaigns</a>
+    <a class="btn btn-active" href="n23.html">📘 N23 Rules</a>
+    <a class="btn" href="reference.html">📚 Reference</a>
+  </div>
+</div>
+
+<main class="page-main">
+<section class="camp-card" style="border:2px solid var(--gold);background:var(--panel2)">
+  <h2 style="color:var(--gold)">⚠️ Lost Dome Campaign Amendments</h2>
+  <p class="muted">These override the core rules below.</p>
+  <ul>
+    <li>Fighters may leave by their own starting edge (they count as Out of Action for Bottle tests).</li>
+    <li><strong>Psychic powers, Blasts, Templates, Group Activations and ranged effects need line of sight to their target.</strong></li>
+    <li>Hangers On who are hurt in a way that would change their fighter card leave the gang. You can't hire that type again this campaign.</li>
+    <li>Only the N23 Trading Post is used. Special Ammo can be bought for any weapon that can use it.</li>
+    <li>Downtime comes once, after Round 4: 250 credits, not spendable at the Trading Post except on items a Hanger On gives access to.</li>
+    <li>Rules from the Necromunda Apocrypha PDFs aren't used, except the Venator gang rules and the Underhive Racing rules for the Ring Road Run.</li>
+  </ul>
+</section>
+
+<section class="camp-card">
+  <h2>🔄 Battle Round and Turn Sequence</h2>
+  <h3>Phase 1: Priority</h3>
+  <ol>
+    <li><strong>Roll for Priority:</strong> both players roll a D6. The higher roll takes Priority. Ties go to the player who did not have Priority last round.</li>
+    <li><strong>Ready fighters:</strong> put a Ready marker on every Standing fighter.</li>
+  </ol>
+  <h3>Phase 2: Action</h3>
+  <ul>
+    <li><strong>Alternating activations:</strong> starting with the Priority player, activate one Ready fighter at a time.</li>
+    <li><strong>Group Activation (X):</strong> Leaders (2) and Champions (1) can activate nearby Ready friendly fighters within 3″, who need line of sight in The Lost Dome. Nominate all the fighters before moving any of them, and finish each activation before starting the next.</li>
+  </ul>
+  <h3>Phase 3: End (strict order)</h3>
+  <ol>
+    <li><strong>Bottle test:</strong> needed if the gang has at least one fighter Out of Action or Seriously Injured. Roll D6 plus the number Out of Action plus the number Seriously Injured. If the total is strictly greater than the starting crew size, the gang Bottles Out.</li>
+    <li><strong>Fleeing (N23):</strong> if the gang Bottles Out, each active or pinned fighter takes a Cool test. Seriously Injured fighters fail automatically and go Out of Action.
+      <ul>
+        <li><strong>Leading by example:</strong> Active Leaders (12″) and Champions (6″) share their Cool. If it passes, friendly fighters in range pass automatically.</li>
+        <li>Failed fighters flee at once. They count as Out of Action for the battle but don't roll for Lasting Injuries.</li>
+      </ul>
+    </li>
+    <li><strong>Recovery:</strong> roll an Injury dice for each Seriously Injured fighter.
+      <ul>
+        <li><strong>Flesh Wound:</strong> gain 1 Flesh Wound (-1 Toughness) and become Prone and Pinned.</li>
+        <li><strong>Serious Injury (N23):</strong> stay Prone and Seriously Injured, and gain 1 Flesh Wound.</li>
+        <li><strong>Out of Action:</strong> remove from play and roll on the Lasting Injury table after the battle.</li>
+      </ul>
+    </li>
+    <li><strong>Rally tests:</strong> Broken fighters take a Cool test to remove Broken and become Standing or Pinned.</li>
+  </ol>
+</section>
+
+<section class="camp-card">
+  <h2>⚡ Actions and Movement</h2>
+  <p class="muted">Two actions per activation, unless the fighter is Seriously Injured or Broken.</p>
+  <h3>Simple (can repeat)</h3>
+  <ul>
+    <li><strong>Move:</strong> up to M″. Can't move within 1″ of an enemy unless charging.</li>
+    <li><strong>Reload:</strong> an Ammo check (D6 at or above the Ammo value) for one weapon that is Out of Ammo.</li>
+    <li><strong>Operate door or terminal:</strong> interact within 1″.</li>
+  </ul>
+  <h3>Basic (once per activation)</h3>
+  <ul>
+    <li><strong>Shoot:</strong> ranged attack on an eligible target in the 90° vision arc with line of sight. Must target the closest eligible enemy unless the fighter passes a Cool test.</li>
+    <li><strong>Aim:</strong> +1 to hit on the next Shoot action in the same activation.</li>
+    <li><strong>Fight:</strong> melee attacks against engaged enemies.</li>
+    <li><strong>Stand up:</strong> change from Prone and Pinned to Standing and Active, facing any direction.</li>
+    <li><strong>Retreat:</strong> pass an Initiative test to leave melee and move D6″. On a fail, the enemy makes free Reaction attacks.</li>
+    <li><strong>Coup de Grâce:</strong> take an engaged Prone and Seriously Injured enemy Out of Action. A free action after melee consolidation.</li>
+  </ul>
+  <h3>Double (uses both actions)</h3>
+  <ul>
+    <li><strong>Charge:</strong> move M plus D3″ into base contact, ignoring the 1″ exclusion. If engaged, make a free Fight action. -1 to hit if the target wasn't in line of sight at the start of the charge.</li>
+    <li><strong>Crawl (Seriously Injured only):</strong> move up to half M″.</li>
+    <li><strong>Blind fire:</strong> shoot outside the vision arc at -2 to hit.</li>
+  </ul>
+  <h3>Free actions</h3>
+  <p>Hurl, Headbutt, and Coup de Grâce (after consolidating).</p>
+  <h3>Terrain and falling</h3>
+  <ul>
+    <li><strong>Climbing:</strong> 2″ of movement per 1″ climbed (1:1 on ladders). Can't end an activation mid-climb.</li>
+    <li><strong>Obstacles (1″ high or less):</strong> +2″ movement to cross.</li>
+    <li><strong>Jumping gaps:</strong> up to M″, on a passed Initiative test. On a fail, the fighter falls straight down.</li>
+    <li><strong>Falling:</strong> 3″ or less means an Initiative test or Pinned, with no damage. More than 3″ is an automatic hit (Strength equal to inches fallen, rounded up, AP -1, D1) and Pinned.</li>
+  </ul>
+</section>
+
+<section class="camp-card">
+  <h2>🎯 Combat, Cover and To-Wound</h2>
+  <h3>Shooting modifiers</h3>
+  <ul>
+    <li><strong>Cover:</strong> -1 to hit for partial cover (up to 50% obscured). -2 to hit for full cover (more than 50% obscured).</li>
+    <li><strong>Pinning:</strong> any Standing fighter hit by a ranged attack is Pinned, even if unwounded, unless protected by Spring Up or Nerves of Steel.</li>
+    <li><strong>Target priority:</strong> shoot the closest visible enemy (ignoring Seriously Injured ones) unless the fighter passes a Cool test.</li>
+  </ul>
+  <h3>To-Wound roll (weapon Strength against target Toughness)</h3>
+  <div class="scroll"><table>
+<tr><th>Comparison</th><th>Roll needed</th></tr>
+<tr><td>Strength at least 2x Toughness</td><td>2+</td></tr>
+<tr><td>Strength above Toughness</td><td>3+</td></tr>
+<tr><td>Strength equal to Toughness</td><td>4+</td></tr>
+<tr><td>Strength below Toughness</td><td>5+</td></tr>
+<tr><td>Strength at most half Toughness</td><td>6+</td></tr>
+</table></div>
+  <h3>Close combat sequence</h3>
+  <ol>
+    <li><strong>Attack dice:</strong> base A, +1 if charging, +1 for dual melee or sidearm weapons.</li>
+    <li><strong>Assists and interference:</strong> +1 to hit per friendly fighter engaged with the same target (and no one else). -1 to hit per extra enemy engaged with the attacker.</li>
+    <li><strong>No pinning:</strong> melee hits never Pin.</li>
+    <li><strong>Reaction attacks:</strong> surviving Standing and Engaged defenders strike back, without the charge bonus.</li>
+    <li><strong>Consolidate:</strong> if no enemy is left Standing and Engaged, either consolidate 2″ or take a free Coup de Grâce.</li>
+  </ol>
+</section>
+
+<section class="camp-card">
+  <h2>🧪 Weapon Traits and Wargear Lookup</h2>
+  <p class="muted">Blades of the Crown roster traits are listed first. Type in the box to filter.</p>
+  <input id="trait-search" type="search" placeholder="Filter traits, e.g. toxin, shock, gas" style="width:100%;padding:8px;margin:8px 0 12px;background:var(--panel);color:inherit;border:1px solid var(--plum);border-radius:6px">
+  <ul id="trait-list">
+  <li class="trait" data-text="toxin (x+) escher core: stilettos and needle pistol. no to-wound roll. both players roll a d6: the attacker adds the weapon strength (or the user's strength for melee), the defender adds toughness. if the attacker's total is equal or higher, roll an injury dice straight away. armour saves still apply first. with chem-synth, the target takes -1 toughness on the roll if the attacker passes an intelligence check."><strong>Toxin (X+)</strong> Escher core: stilettos and needle pistol. No To-Wound roll. Both players roll a D6: the attacker adds the weapon Strength (or the user's Strength for melee), the defender adds Toughness. If the attacker's total is equal or higher, roll an Injury dice straight away. Armour saves still apply first. With Chem-Synth, the target takes -1 Toughness on the roll if the attacker passes an Intelligence check.</li>
+  <li class="trait" data-text="versatile (x″) black widow and miss whips. while standing and active, the fighter can engage and make melee attacks against enemies up to x″ away, without base contact. enemies without an equal or longer versatile range can't make reaction attacks against it."><strong>Versatile (X″)</strong> Black Widow and Miss Whips. While Standing and Active, the fighter can engage and make melee attacks against enemies up to X″ away, without base contact. Enemies without an equal or longer Versatile range can't make Reaction attacks against it.</li>
+  <li class="trait" data-text="shock (x+) miss whips. any hit roll of x+ (usually 5+ or a natural 6) wounds automatically, skipping the to-wound roll. armour saves still apply."><strong>Shock (X+)</strong> Miss Whips. Any hit roll of X+ (usually 5+ or a natural 6) wounds automatically, skipping the To-Wound roll. Armour saves still apply.</li>
+  <li class="trait" data-text="rapid fire (x) copperhead's heavy stubber. roll x firepower dice; each hit symbol is one hit. in the lost dome, extra hits can be spread across other eligible targets within 3″ of the primary target. any ammo symbol triggers an ammo check straight away."><strong>Rapid Fire (X)</strong> Copperhead's heavy stubber. Roll X Firepower dice; each hit symbol is one hit. In The Lost Dome, extra hits can be spread across other eligible targets within 3″ of the primary target. Any Ammo symbol triggers an Ammo check straight away.</li>
+  <li class="trait" data-text="plentiful lasguns. ammo checks pass automatically. if an ammo symbol comes up, the weapon reloads automatically or passes on a 2+."><strong>Plentiful</strong> Lasguns. Ammo checks pass automatically. If an Ammo symbol comes up, the weapon reloads automatically or passes on a 2+.</li>
+  <li class="trait" data-text="silent her majesty's needle pistol. doesn't trigger sentry alarms in sneak attack scenarios."><strong>Silent</strong> Her Majesty's needle pistol. Doesn't trigger Sentry alarms in Sneak Attack scenarios.</li>
+  <li class="trait" data-text="displacer field black widow's wargear. gives a 4+ invulnerable save against any hit. if the save is passed, scatter the fighter d6″, stopping 1″ short of enemies or impassable terrain. if that takes them off a ledge, they fall."><strong>Displacer Field</strong> Black Widow's wargear. Gives a 4+ invulnerable save against any hit. If the save is passed, scatter the fighter D6″, stopping 1″ short of enemies or impassable terrain. If that takes them off a ledge, they fall.</li>
+  <li class="trait" data-text="parry stiletto sword. forces the attacker to re-roll one successful melee hit die per parry weapon the defender has."><strong>Parry</strong> Stiletto sword. Forces the attacker to re-roll one successful melee hit die per Parry weapon the defender has.</li>
+  <li class="trait" data-text="backstab stiletto knives. +1 strength when attacking in melee from outside the target's 90° vision arc."><strong>Backstab</strong> Stiletto knives. +1 Strength when attacking in melee from outside the target's 90° vision arc.</li>
+  <li class="trait" data-text="gas no to-wound roll. the target rolls a d6; on a result at or below toughness (or a natural 1), it resists. otherwise roll an injury dice straight away. ignores armour saves. respirators give +1 to resist; hazard suits give a 6+ save."><strong>Gas</strong> No To-Wound roll. The target rolls a D6; on a result at or below Toughness (or a natural 1), it resists. Otherwise roll an Injury dice straight away. Ignores armour saves. Respirators give +1 to resist; hazard suits give a 6+ save.</li>
+  <li class="trait" data-text="blaze (x+) on a x+ after the hits are resolved, the target catches fire. at the start of its activation it takes an s3, ap -1, d1 hit, then either runs 2d6″ at random and goes prone to put the fire out (6+ on a d6, +1 per friendly fighter within 1″, +2 if prone), or acts normally while burning."><strong>Blaze (X+)</strong> On a X+ after the hits are resolved, the target catches fire. At the start of its activation it takes an S3, AP -1, D1 hit, then either runs 2D6″ at random and goes Prone to put the fire out (6+ on a D6, +1 per friendly fighter within 1″, +2 if Prone), or acts normally while burning.</li>
+  <li class="trait" data-text="blast (3″ / 5″) and template needs line of sight to the target or to the point in the lost dome. aiming at a point on the ground takes -2 to the bs roll; misses scatter d6″."><strong>Blast (3″ / 5″) and Template</strong> Needs line of sight to the target or to the point in The Lost Dome. Aiming at a point on the ground takes -2 to the BS roll; misses scatter D6″.</li>
+  </ul>
+</section>
+
+<section class="camp-card">
+  <h2>🏆 Post-Battle, XP and Lasting Injuries</h2>
+  <h3>In-battle XP</h3>
+  <ul>
+    <li><strong>+1 XP:</strong> inflict a Serious Injury on an enemy.</li>
+    <li><strong>+2 XP:</strong> take an enemy Out of Action (+3 XP if it is an enemy Leader or Champion).</li>
+    <li><strong>+1 XP:</strong> rally from Broken, or assist a friendly fighter's Recovery roll.</li>
+    <li><strong>+1 XP:</strong> complete a scenario objective, such as banking a cache in Below the Hatch.</li>
+  </ul>
+
+  <h3>Lasting injuries (D66)</h3>
+  <div class="scroll"><table>
+<tr><th>D66</th><th>Result</th><th>Effect</th></tr>
+<tr><td>11–26</td><td>Out Cold</td><td>Misses the rest of the battle; no lasting effect.</td></tr>
+<tr><td>31–45</td><td>Convalescence</td><td>Misses the gang's next campaign game.</td></tr>
+<tr><td>46</td><td>Old Battle Wound</td><td>Roll a D6 before each battle; on a 1, misses that battle.</td></tr>
+<tr><td>51–56</td><td>Stat Injury</td><td>51 Partially Deafened (-1 I); 52 Humiliated (-1 Ld, -1 Cl); 53 Eye Injury (-1 BS); 54 Hand Injury (-1 WS); 55 Hobbled (-1 M); 56 Spinal Injury (-1 S).</td></tr>
+<tr><td>61–65</td><td>Critical Injury</td><td>Dies at the end of the battle unless saved by a Rogue Doc or a passed Medicae check.</td></tr>
+<tr><td>66</td><td>Memorable Death</td><td>Killed immediately; the enemy fighter who caused it gains +1 XP.</td></tr>
+</table></div>
+  <h3>Advancement costs (N23)</h3>
+  <div class="scroll"><table>
+<tr><th>XP</th><th>Advancement</th></tr>
+<tr><td>3</td><td>+1 Willpower or Intelligence</td></tr>
+<tr><td>4</td><td>+1 Leadership or Cool</td></tr>
+<tr><td>5</td><td>+1 Movement or Initiative</td></tr>
+<tr><td>6</td><td>+1 WS or BS, or a random Primary skill</td></tr>
+<tr><td>8</td><td>+1 Strength or Toughness</td></tr>
+<tr><td>9</td><td>A chosen Primary skill</td></tr>
+<tr><td>12</td><td>+1 Wound or Attack, or a chosen Secondary skill</td></tr>
+</table></div>
+</section>
+
+<script>
+  (function () {
+    var box = document.getElementById('trait-search');
+    var items = document.querySelectorAll('#trait-list .trait');
+    if (!box) return;
+    box.addEventListener('input', function () {
+      var q = box.value.trim().toLowerCase();
+      items.forEach(function (li) {
+        li.style.display = (!q || li.getAttribute('data-text').indexOf(q) !== -1) ? '' : 'none';
+      });
+    });
+  })();
+</script>
+</main>
+</body>
+</html>
