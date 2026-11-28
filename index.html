@@ -689,6 +689,28 @@
     max-height: 72vh;
     object-fit: contain;
   }
+  .round-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .turn-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+  .guest-btn {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex: 0 0 auto;
+  }
+  .topbar > .guest-btn { margin-left: auto; }
   /* Flex spacing via margins, for browsers that ignore flexbox gap (e.g. Safari on iOS 13) */
   .topbar > * { margin: 5px; }
   .brand > * { margin: 0 5px; }
@@ -786,22 +808,26 @@
   </div>
 
   <div class="controls-group">
-    <div class="round-box">
-      <button class="btn btn-sm" onclick="changeRound(-1)" title="Previous round" aria-label="Previous round">◀</button>
-      <span class="round-label" id="roundDisplay" aria-live="polite">🎲 Round 1</span>
-      <button class="btn btn-sm btn-gold" onclick="nextRound()" title="Advance round and reset Activated" aria-label="Next round">Next ▶</button>
-      <button class="btn btn-sm" onclick="resetRound()" title="Reset to Round 1" aria-label="Reset to round 1">↺</button>
+    <div class="round-stack">
+      <div class="round-box">
+        <button class="btn btn-sm" onclick="changeRound(-1)" title="Previous round" aria-label="Previous round">◀</button>
+        <span class="round-label" id="roundDisplay" aria-live="polite">🎲 Round 1</span>
+        <button class="btn btn-sm btn-gold" onclick="nextRound()" title="Advance round and reset Activated" aria-label="Next round">Next ▶</button>
+        <button class="btn btn-sm" onclick="resetRound()" title="Reset to Round 1" aria-label="Reset to round 1">↺</button>
+      </div>
+      <div class="turn-row">
+        <button class="btn" onclick="newTurnReset()" aria-label="New turn: set Activated fighters back to Ready">↺ New Turn</button>
+        <button class="btn" onclick="syncDefaultXp()" aria-label="Reset all fighter XP to defaults">↺ Sync XP</button>
+      </div>
     </div>
-    <button class="btn" onclick="newTurnReset()" aria-label="New turn: set Activated fighters back to Ready">↺ New Turn</button>
-    <button class="btn" onclick="syncDefaultXp()" aria-label="Reset all fighter XP to defaults">↺ Sync XP</button>
     <a class="btn" href="myteam.html">📖 My Team</a>
     <a class="btn" href="tactics.html">🛡️ Tactics</a>
     <a class="btn" href="campaigns.html">🗺️ Campaigns</a>
+    <a class="btn" href="escher.html">📚 Escher Rules</a>
     <a class="btn" href="n23.html">📘 N23 Rules</a>
     <a class="btn" href="reference.html">📚 Reference</a>
-    <a class="btn" href="escher.html">📚 Escher Rules</a>
-    <a class="btn" href="team/index.html">👥 Guest</a>
   </div>
+  <a class="btn guest-btn" href="team/index.html" title="Guest" aria-label="Guest">👥</a>
 </header>
 
 <section class="gang-strip" id="gangMetrics"></section>
