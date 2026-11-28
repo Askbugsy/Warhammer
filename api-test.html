@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Munda API test</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; background: #0c0911; color: #f4f1ea; margin: 0; padding: 16px; }
+  h1 { font-size: 18px; color: #e2b857; margin: 0 0 6px; }
+  h2 { font-size: 15px; color: #e2b857; margin: 18px 0 6px; }
+  p, label { font-size: 14px; line-height: 1.5; color: #c9c3d6; }
+  input, select, button { font-size: 15px; padding: 10px 12px; border-radius: 8px; border: 1px solid #5a4520; background: #1b1126; color: #f4f1ea; max-width: 100%; }
+  input { width: 100%; box-sizing: border-box; margin: 4px 0 10px; }
+  button { margin: 4px 4px 4px 0; }
+  button:disabled { opacity: .5; }
+  #log { font-family: ui-monospace, Menlo, monospace; font-size: 12px; background: #140e1f; border: 1px solid #2d2140; padding: 10px; border-radius: 8px; height: 180px; overflow: auto; white-space: pre-wrap; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 6px 4px; border-bottom: 1px solid #2d2140; }
+  th { color: #e2b857; font-weight: 700; }
+  td.num { text-align: right; }
+  .ok { color: #7ee2a8; } .bad { color: #ff8fa3; }
+</style>
+</head>
+<body>
+<h1>Munda Manager API test</h1>
+<p>Loads a campaign, lists its gangs, then loads one gang and each of its fighters. Requests are spaced six seconds apart to stay under the API's 10-per-minute limit. Results are cached on this device for 15 minutes. Nothing is uploaded.</p>
+
+<label for="campaignId">Campaign ID</label>
+<input id="campaignId" value="d62f4efa-08f9-4ca0-a596-226919f47325">
+<button id="btnCampaign" onclick="loadCampaign()">1. Load campaign</button>
+
+<label for="gangSelect">Gang</label>
+<select id="gangSelect" disabled></select>
+<button id="btnGang" onclick="loadGang()" disabled>2. Load gang and fighters</button>
+
+<h2>Progress</h2>
+<div id="status" class=""></div>
+<div id="log"></div>
+
+<h2>Result</h2>
+<div id="result"></div>
+
+<script>
+const API = "https://www.mundamanager.com/api";
+const GAP_MS = 6000;          // spacing between calls (10 per minute limit)
+const CACHE_MS = 15 * 60000;  // reuse cached responses for 15 minutes
+const CACHE_PREFIX = "mm-test-cache:";
+let lastCallAt = 0;
+let requestCount = 0;
+
+function log(msg) {
+  const el = document.getElementById("log");
+  const t = new Date().toLocaleTimeString();
+  el.textContent += t + "  " + msg + "\n";
+  el.scrollTop = el.scrollHeight;
+}
+function setStatus(msg, cls) {
+  const s = document.getElementById("status");
+  s.className = cls || ""; s.textContent = msg;
+}
+
+function readCache(key) {
+  try {
+    const raw = localStorage.getItem(CACHE_PREFIX + key);
+    if (!raw) return null;
+    const c = JSON.parse(raw);
+    return (Date.now() - c.at) < CACHE_MS ? c.data : null;
+  } catch (e) { return null; }
+}
+function writeCache(key, data) {
+  try { localStorage.setItem(CACHE_PREFIX + key, JSON.stringify({ at: Date.now(), data })); } catch (e) {}
+}
+
+async function paced(url) {
+  const wait = lastCallAt + GAP_MS - Date.now();
+  if (wait > 0) await new Promise(r => setTimeout(r, wait));
+  lastCallAt = Date.now();
+  requestCount++;
+  log("request " + requestCount + ": " + url.replace(API, ""));
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("status " + res.status + " for " + url.replace(API, ""));
+  return res.json();
+}
+
+async function cachedGet(kind, id) {
+  const key = kind + "/" + id;
+  const hit = readCache(key);
+  if (hit) { log("cache hit: " + key); return hit; }
+  const data = await paced(API + "/" + kind + "/" + id + "/data?format=json");
+  writeCache(key, data);
+  return data;
+}
+
+// Find the list of gangs in a campaign response, whatever the nesting
+function findGangs(obj) {
+  const out = [];
+  (function walk(o) {
+    if (Array.isArray(o)) { o.forEach(walk); return; }
+    if (!o || typeof o !== "object") return;
+    if (Array.isArray(o.gangs)) {
+      o.gangs.forEach(g => { if (g && g.id) out.push({ id: g.id, name: g.name || g.gang_name || g.id, owner: o.name || o.username || "" }); });
+    }
+    Object.values(o).forEach(walk);
+  })(obj);
+  const seen = new Set();
+  return out.filter(g => !seen.has(g.id) && seen.add(g.id));
+}
+
+let campaignData = null;
+let gangs = [];
+
+async function loadCampaign() {
+  const id = document.getElementById("campaignId").value.trim();
+  const btn = document.getElementById("btnCampaign");
+  btn.disabled = true;
+  setStatus("Loading campaign…");
+  try {
+    campaignData = await cachedGet("campaigns", id);
+    gangs = findGangs(campaignData);
+    const sel = document.getElementById("gangSelect");
+    sel.innerHTML = "";
+    gangs.forEach((g, i) => {
+      const o = document.createElement("option");
+      o.value = i;
+      o.textContent = (g.owner ? g.owner + " — " : "") + g.name;
+      sel.appendChild(o);
+    });
+    sel.disabled = gangs.length === 0;
+    document.getElementById("btnGang").disabled = gangs.length === 0;
+    setStatus("Found " + gangs.length + " gangs.", gangs.length ? "ok" : "bad");
+    log("campaign loaded, top-level keys: " + Object.keys(campaignData).join(", "));
+  } catch (e) {
+    setStatus("Campaign failed: " + e.message, "bad");
+    log("ERROR " + e.message);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function loadGang() {
+  const g = gangs[document.getElementById("gangSelect").value];
+  if (!g) return;
+  document.getElementById("btnGang").disabled = true;
+  document.getElementById("result").textContent = "";
+  try {
+    setStatus("Loading gang…");
+    const gang = await cachedGet("gangs", g.id);
+    const fighters = Array.isArray(gang.fighters) ? gang.fighters : [];
+    log("gang has " + fighters.length + " fighters; total calls needed about " + (fighters.length + 1));
+    const full = [];
+    for (let i = 0; i < fighters.length; i++) {
+      setStatus("Loading fighter " + (i + 1) + " of " + fighters.length + "…");
+      full.push(await cachedGet("fighters", fighters[i].id));
+    }
+    setStatus("Done: " + fighters.length + " fighters loaded.", "ok");
+    render(gang, full);
+  } catch (e) {
+    setStatus("Failed: " + e.message, "bad");
+    log("ERROR " + e.message);
+  } finally {
+    document.getElementById("btnGang").disabled = false;
+  }
+}
+
+// Text only: no API content is inserted as HTML
+function render(gang, fighters) {
+  const out = document.getElementById("result");
+  const h = document.createElement("p");
+  h.textContent = (gang.name || "Gang") + " — rating " + (gang.rating ?? "?") + ", wealth " + (gang.wealth ?? "?") + ", credits " + (gang.credits ?? "?") + ", reputation " + (gang.reputation ?? "?");
+  out.appendChild(h);
+  const cols = ["movement", "weapon_skill", "ballistic_skill", "strength", "toughness", "wounds", "initiative", "attacks", "leadership", "cool", "willpower", "intelligence"];
+  const short = ["M", "WS", "BS", "S", "T", "W", "I", "A", "Ld", "Cl", "Wil", "Int"];
+  const table = document.createElement("table");
+  const head = document.createElement("tr");
+  ["Fighter", "Type", "XP", "Weapons", ...short].forEach((t, i) => {
+    const th = document.createElement("th");
+    th.textContent = t;
+    head.appendChild(th);
+  });
+  table.appendChild(head);
+  fighters.forEach(f => {
+    const tr = document.createElement("tr");
+    const cells = [f.name || "?", f.type || "", f.xp ?? "", (f.weapons || []).length];
+    cols.forEach(c => cells.push(f.stats && f.stats[c] != null ? f.stats[c] : "–"));
+    cells.forEach((v, i) => {
+      const td = document.createElement("td");
+      td.textContent = String(v);
+      if (i >= 2) td.className = "num";
+      tr.appendChild(td);
+    });
+    table.appendChild(tr);
+  });
+  out.appendChild(table);
+}
+</script>
+</body>
+</html>
