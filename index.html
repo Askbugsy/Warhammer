@@ -711,7 +711,11 @@
     flex: 0 0 auto;
   }
   .guest-btn img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .topbar > .guest-btn { margin-left: auto; align-self: flex-start; }
+  /* Nav links match the round counter box height (36px) */
+  .controls-group > a.btn { height: 36px; box-sizing: border-box; }
+  /* Pin Guest to the top-right corner so it stays level with the crest when the controls wrap */
+  .topbar { position: relative; }
+  .topbar > .guest-btn { position: absolute; top: 15px; right: 19px; margin: 0; }
   .topbar > .brand { align-self: flex-start; }
   /* Flex spacing via margins, for browsers that ignore flexbox gap (e.g. Safari on iOS 13) */
   .topbar > * { margin: 5px; }
