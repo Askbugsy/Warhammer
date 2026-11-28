@@ -694,12 +694,17 @@
     flex-direction: column;
     align-items: stretch;
   }
-  .turn-row {
+  /* Sync XP and New Turn, stacked under the Guest icon at the top right */
+  .topbar > .turn-stack {
+    position: absolute;
+    top: 59px;
+    right: 19px;
+    margin: 0;
     display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-top: 6px;
+    flex-direction: column;
+    gap: 6px;
   }
+  .turn-stack .btn { justify-content: center; min-width: 96px; }
   .guest-btn {
     width: 38px;
     height: 38px;
@@ -821,10 +826,6 @@
         <button class="btn btn-sm btn-gold" onclick="nextRound()" title="Advance round and reset Activated" aria-label="Next round">Next ▶</button>
         <button class="btn btn-sm" onclick="resetRound()" title="Reset to Round 1" aria-label="Reset to round 1">↺</button>
       </div>
-      <div class="turn-row">
-        <button class="btn" onclick="newTurnReset()" aria-label="New turn: set Activated fighters back to Ready">↺ New Turn</button>
-        <button class="btn" onclick="syncDefaultXp()" aria-label="Reset all fighter XP to defaults">↺ Sync XP</button>
-      </div>
     </div>
     <a class="btn" href="myteam.html">📖 My Team</a>
     <a class="btn" href="tactics.html">🛡️ Tactics</a>
@@ -834,6 +835,10 @@
     <a class="btn" href="reference.html">📚 Reference</a>
   </div>
   <a class="guest-btn" href="team/index.html" title="Guest" aria-label="Guest"><img src="images/guest-icon.jpg" alt="Guest"></a>
+  <div class="turn-stack">
+    <button class="btn" onclick="syncDefaultXp()" aria-label="Reset all fighter XP to defaults">↺ Sync XP</button>
+    <button class="btn" onclick="newTurnReset()" aria-label="New turn: set Activated fighters back to Ready">↺ New Turn</button>
+  </div>
 </header>
 
 <section class="gang-strip" id="gangMetrics"></section>
