@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Munda API browser check</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; background: #0c0911; color: #f4f1ea; margin: 0; padding: 20px; }
+  h1 { font-size: 18px; color: #e2b857; }
+  p { font-size: 14px; line-height: 1.5; color: #c9c3d6; }
+  button { font-size: 16px; padding: 12px 18px; border-radius: 8px; border: 1px solid #9e7e34; background: #1b1126; color: #f4f1ea; }
+  pre { white-space: pre-wrap; word-break: break-all; background: #140e1f; border: 1px solid #2d2140; padding: 12px; border-radius: 8px; font-size: 13px; }
+  .ok { color: #7ee2a8; } .bad { color: #ff8fa3; }
+</style>
+</head>
+<body>
+<h1>Munda Manager browser check</h1>
+<p>This page asks Munda Manager for the Lost Dome campaign from inside your browser, the same way the guest page would. It doesn't save anything.</p>
+<button id="run" onclick="runCheck()">Run check</button>
+<p id="result"></p>
+<pre id="detail"></pre>
+<script>
+const URL = "https://www.mundamanager.com/api/campaigns/d62f4efa-08f9-4ca0-a596-226919f47325/data?format=json";
+async function runCheck() {
+  const result = document.getElementById("result");
+  const detail = document.getElementById("detail");
+  result.className = ""; result.textContent = "Checking…"; detail.textContent = "";
+  try {
+    const res = await fetch(URL);
+    const text = await res.text();
+    let gangs = [];
+    try {
+      const data = JSON.parse(text);
+      gangs = (data.gangs || data.campaign?.gangs || data.members || []).map(g => g.name || g.gang_name || JSON.stringify(g).slice(0, 80));
+    } catch (e) { /* not JSON, shown below */ }
+    if (res.ok) {
+      result.className = "ok";
+      result.textContent = "Worked: status " + res.status + ". Your browser can read the campaign data.";
+    } else {
+      result.className = "bad";
+      result.textContent = "Reached the server but got status " + res.status + ".";
+    }
+    detail.textContent = (gangs.length ? "Gangs found: " + gangs.length + "\n" + gangs.join("\n") + "\n\n" : "") + text.slice(0, 600);
+  } catch (err) {
+    result.className = "bad";
+    result.textContent = "Blocked or failed: " + err.message + ". This usually means the site is not allowed to read the data (CORS).";
+  }
+}
+</script>
+</body>
+</html>
