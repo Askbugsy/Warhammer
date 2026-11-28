@@ -91,6 +91,11 @@ async function cachedGet(kind, id) {
   return data;
 }
 
+// Some responses wrap the record, e.g. { "fighter": {...} }; use the inner object if present
+function unwrap(data, key) {
+  return data && data[key] && typeof data[key] === "object" ? data[key] : data;
+}
+
 // Find the list of gangs in a campaign response, whatever the nesting
 function findGangs(obj) {
   const out = [];
@@ -144,13 +149,15 @@ async function loadGang() {
   document.getElementById("result").textContent = "";
   try {
     setStatus("Loading gang…");
-    const gang = await cachedGet("gangs", g.id);
-    const fighters = Array.isArray(gang.fighters) ? gang.fighters : [];
+    const raw = await cachedGet("gangs", g.id);
+    const gang = unwrap(raw, "gang");
+    // The fighter list sits beside the gang record in the response, not inside it
+    const fighters = Array.isArray(raw.fighters) ? raw.fighters : (Array.isArray(gang.fighters) ? gang.fighters : []);
     log("gang has " + fighters.length + " fighters; total calls needed about " + (fighters.length + 1));
     const full = [];
     for (let i = 0; i < fighters.length; i++) {
       setStatus("Loading fighter " + (i + 1) + " of " + fighters.length + "…");
-      full.push(await cachedGet("fighters", fighters[i].id));
+      full.push(unwrap(await cachedGet("fighters", fighters[i].id), "fighter"));
     }
     setStatus("Done: " + fighters.length + " fighters loaded.", "ok");
     render(gang, full);
