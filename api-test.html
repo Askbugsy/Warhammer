@@ -14,7 +14,9 @@
   button { margin: 4px 4px 4px 0; }
   button:disabled { opacity: .5; }
   #log { font-family: ui-monospace, Menlo, monospace; font-size: 12px; background: #140e1f; border: 1px solid #2d2140; padding: 10px; border-radius: 8px; height: 180px; overflow: auto; white-space: pre-wrap; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { width: 100%; min-width: 620px; border-collapse: collapse; font-size: 13px; }
+  th, td { white-space: nowrap; }
   th, td { text-align: left; padding: 6px 4px; border-bottom: 1px solid #2d2140; }
   th { color: #e2b857; font-weight: 700; }
   td.num { text-align: right; }
@@ -197,7 +199,10 @@ function render(gang, fighters) {
     });
     table.appendChild(tr);
   });
-  out.appendChild(table);
+  const wrap = document.createElement("div");
+  wrap.className = "scroll";
+  wrap.appendChild(table);
+  out.appendChild(wrap);
 }
 </script>
 </body>
