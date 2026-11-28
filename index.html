@@ -701,16 +701,18 @@
     margin-top: 6px;
   }
   .guest-btn {
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
     padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
+    border-radius: 10px;
+    border: 1px solid var(--gold);
+    overflow: hidden;
+    display: block;
     flex: 0 0 auto;
   }
-  .topbar > .guest-btn { margin-left: auto; }
+  .guest-btn img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .topbar > .guest-btn { margin-left: auto; align-self: flex-start; }
+  .topbar > .brand { align-self: flex-start; }
   /* Flex spacing via margins, for browsers that ignore flexbox gap (e.g. Safari on iOS 13) */
   .topbar > * { margin: 5px; }
   .brand > * { margin: 0 5px; }
@@ -827,7 +829,7 @@
     <a class="btn" href="n23.html">📘 N23 Rules</a>
     <a class="btn" href="reference.html">📚 Reference</a>
   </div>
-  <a class="btn guest-btn" href="team/index.html" title="Guest" aria-label="Guest">👥</a>
+  <a class="guest-btn" href="team/index.html" title="Guest" aria-label="Guest"><img src="images/guest-icon.jpg" alt="Guest"></a>
 </header>
 
 <section class="gang-strip" id="gangMetrics"></section>
